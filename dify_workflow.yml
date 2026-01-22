@@ -1,0 +1,202 @@
+app:
+  name: Local News Automation Workflow
+  description: Workflow that fetches content via Jina, rewrites using OpenAI, and publishes to WordPress.
+  mode: workflow
+  
+inputs:
+  - name: item_id
+    type: string
+    required: true
+    description: UUID of the item from Supabase to process.
+
+nodes:
+  - name: start
+    type: start
+    
+  - name: get_item_data
+    type: http-request
+    description: Fetch item details and source config from Supabase.
+    inputs:
+      url: "${SUPABASE_URL}/rest/v1/items?select=*,sources(*)&id=eq.${inputs.item_id}"
+      method: GET
+      headers:
+        apikey: "${SUPABASE_KEY}"
+        Authorization: "Bearer ${SUPABASE_KEY}"
+    outputs:
+      original_url: body[0].original_url
+      source_endpoint: body[0].sources.wp_api_endpoint
+      source_user: body[0].sources.wp_username
+      source_pass: body[0].sources.wp_app_password
+      source_id: body[0].sources.id
+      
+  - name: fetch_content_jina
+    type: http-request
+    description: Extract clean content using Jina Reader.
+    inputs:
+      url: "https://r.jina.ai/${get_item_data.outputs.original_url}"
+      method: GET
+    outputs:
+      raw_text: body
+      
+  - name: check_duplicate_content
+    type: code
+    description: Calculate hash and check Supabase for duplicates.
+    inputs:
+      text: "${fetch_content_jina.outputs.raw_text}"
+      current_id: "${inputs.item_id}"
+      supabase_url: "${SUPABASE_URL}"
+      supabase_key: "${SUPABASE_KEY}"
+    code: |
+      import hashlib
+      import requests
+      
+      def main(text, current_id, supabase_url, supabase_key):
+          content_hash = hashlib.sha256(text.encode('utf-8')).hexdigest()
+          
+          # Check DB
+          headers = {"apikey": supabase_key, "Authorization": f"Bearer {supabase_key}"}
+          url = f"{supabase_url}/rest/v1/items?select=id&content_hash=eq.{content_hash}&id=neq.{current_id}"
+          resp = requests.get(url, headers=headers)
+          duplicates = resp.json()
+          
+          # Update current item hash
+          requests.patch(f"{supabase_url}/rest/v1/items?id=eq.{current_id}", 
+                         headers=headers, 
+                         json={"content_hash": content_hash})
+                         
+          return {
+              "is_duplicate": len(duplicates) > 0,
+              "cleaned_text": text
+          }
+          
+  - name: duplicate_branch
+    type: if-else
+    inputs:
+      condition: "${check_duplicate_content.outputs.is_duplicate}"
+      operator: is_true
+    branches:
+      true: update_duplicate_status
+      false: ai_rewrite
+      
+  - name: update_duplicate_status
+    type: http-request
+    inputs:
+      url: "${SUPABASE_URL}/rest/v1/items?id=eq.${inputs.item_id}"
+      method: PATCH
+      headers:
+        apikey: "${SUPABASE_KEY}"
+        Authorization: "Bearer ${SUPABASE_KEY}"
+        Content-Type: "application/json"
+      body:
+        status: "SKIPPED_DUPLICATE"
+        
+  - name: ai_rewrite
+    type: llm
+    model: gpt-4o-mini
+    prompt: |
+      You are a local news journalist for the city associated with this source.
+      Rewrite the following article to be unique, engaging, and suitable for a local news portal.
+      
+      Source Text:
+      ${check_duplicate_content.outputs.cleaned_text}
+      
+      Output ONLY a JSON object with the following structure:
+      {
+        "title": "New Polish Title",
+        "content": "HTML body content (use h2, p only)",
+        "excerpt": "Short summary"
+      }
+    outputs:
+      text: text
+      
+  - name: sanity_check_and_parse
+    type: code
+    inputs:
+      llm_output: "${ai_rewrite.outputs.text}"
+    code: |
+      import json
+      
+      def main(llm_output):
+          try:
+              data = json.loads(llm_output)
+              content = data.get("content", "")
+              
+              if len(content) < 300:
+                  raise ValueError("Content too short")
+              
+              forbidden = ["Lorem ipsum", "[tekst usunięty]"]
+              for word in forbidden:
+                  if word in content:
+                       raise ValueError(f"Forbidden phrase found: {word}")
+                       
+              return {
+                  "title": data["title"],
+                  "content": content,
+                  "status": "pass"
+              }
+          except Exception as e:
+              return {"error": str(e), "status": "fail"}
+              
+  - name: sanity_branch
+    type: if-else
+    inputs:
+      condition: "${sanity_check_and_parse.outputs.status}"
+      operator: equal
+      value: "pass"
+    branches:
+      true: publish_wordpress
+      false: update_failed_sanity
+      
+  - name: publish_wordpress
+    type: http-request
+    inputs:
+      url: "${get_item_data.outputs.source_endpoint}/posts"
+      method: POST
+      auth_type: basic
+      username: "${get_item_data.outputs.source_user}"
+      password: "${get_item_data.outputs.source_pass}"
+      body:
+        title: "${sanity_check_and_parse.outputs.title}"
+        content: "${sanity_check_and_parse.outputs.content}"
+        status: "publish"
+    outputs:
+      post_id: body.id
+      post_link: body.link
+      
+  - name: update_success
+    type: http-request
+    inputs:
+      url: "${SUPABASE_URL}/rest/v1/items?id=eq.${inputs.item_id}"
+      method: PATCH
+      headers:
+        apikey: "${SUPABASE_KEY}"
+        Authorization: "Bearer ${SUPABASE_KEY}"
+        Content-Type: "application/json"
+      body:
+        status: "PUBLISHED"
+        wp_post_id: "${publish_wordpress.outputs.post_id}"
+        published_url: "${publish_wordpress.outputs.post_link}"
+        published_at: "{{now}}"
+        
+  - name: update_failed_sanity
+    type: http-request
+    inputs:
+      url: "${SUPABASE_URL}/rest/v1/items?id=eq.${inputs.item_id}"
+      method: PATCH
+      headers:
+        apikey: "${SUPABASE_KEY}"
+        Authorization: "Bearer ${SUPABASE_KEY}"
+        Content-Type: "application/json"
+      body:
+        status: "FAILED_SANITY"
+        error_message: "${sanity_check_and_parse.outputs.error}"
+
+error_handling:
+  - if_node_fails: update_error_status
+    action:
+       http-request:
+          url: "${SUPABASE_URL}/rest/v1/items?id=eq.${inputs.item_id}"
+          method: PATCH
+          body:
+            status: "ERROR"
+            error_message: "{{last_error}}"

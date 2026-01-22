@@ -1,0 +1,1241 @@
+app:
+  description: ''
+  icon: 🤖
+  icon_background: '#FFEAD5'
+  mode: workflow
+  name: '[SEO 3.0] Generowanie contentu'
+  use_icon_as_answer_icon: false
+dependencies:
+- current_identifier: null
+  type: marketplace
+  value:
+    marketplace_plugin_unique_identifier: langgenius/openai:0.0.26@c1e643ac6a7732f6333a783320b4d3026fa5e31d8e7026375b98d44418d33f26
+    version: null
+kind: app
+version: 0.5.0
+workflow:
+  conversation_variables: []
+  environment_variables: []
+  features:
+    file_upload:
+      allowed_file_extensions:
+      - .JPG
+      - .JPEG
+      - .PNG
+      - .GIF
+      - .WEBP
+      - .SVG
+      allowed_file_types:
+      - image
+      allowed_file_upload_methods:
+      - local_file
+      - remote_url
+      enabled: false
+      fileUploadConfig:
+        audio_file_size_limit: 50
+        batch_count_limit: 5
+        file_size_limit: 15
+        image_file_batch_limit: 10
+        image_file_size_limit: 10
+        single_chunk_attachment_limit: 10
+        video_file_size_limit: 100
+        workflow_file_upload_limit: 10
+      image:
+        enabled: false
+        number_limits: 3
+        transfer_methods:
+        - local_file
+        - remote_url
+      number_limits: 3
+    opening_statement: ''
+    retriever_resource:
+      enabled: true
+    sensitive_word_avoidance:
+      enabled: false
+    speech_to_text:
+      enabled: false
+    suggested_questions: []
+    suggested_questions_after_answer:
+      enabled: false
+    text_to_speech:
+      enabled: false
+      language: ''
+      voice: ''
+  graph:
+    edges:
+    - data:
+        isInIteration: false
+        sourceType: knowledge-retrieval
+        targetType: llm
+      id: 1723059142238-source-1723059672725-target
+      source: '1723059142238'
+      sourceHandle: source
+      target: '1723059672725'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: llm
+        targetType: llm
+      id: 1723121012659-source-1723121137036-target
+      source: '1723121012659'
+      sourceHandle: source
+      target: '1723121137036'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: llm
+        targetType: llm
+      id: 1723121137036-source-1723121255187-target
+      source: '1723121137036'
+      sourceHandle: source
+      target: '1723121255187'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: llm
+        targetType: end
+      id: 1723121255187-source-1723059149848-target
+      source: '1723121255187'
+      sourceHandle: source
+      target: '1723059149848'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: llm
+        targetType: if-else
+      id: 1723059672725-source-1739792246016-target
+      source: '1723059672725'
+      sourceHandle: source
+      target: '1739792246016'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: if-else
+        targetType: llm
+      id: 1739792246016-true-17397922757130-target
+      source: '1739792246016'
+      sourceHandle: 'true'
+      target: '17397922757130'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: llm
+        targetType: end
+      id: 17429206056130-source-1742920613245-target
+      source: '17429206056130'
+      sourceHandle: source
+      target: '1742920613245'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: llm
+        targetType: llm
+      id: 17429205961290-source-17429206056130-target
+      source: '17429205961290'
+      sourceHandle: source
+      target: '17429206056130'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: llm
+        targetType: llm
+      id: 17429205878600-source-17429205961290-target
+      source: '17429205878600'
+      sourceHandle: source
+      target: '17429205961290'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: llm
+        targetType: llm
+      id: 17397922757130-source-17429205878600-target
+      source: '17397922757130'
+      sourceHandle: source
+      target: '17429205878600'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: if-else
+        targetType: llm
+      id: 1739792246016-false-1723121012659-target
+      source: '1739792246016'
+      sourceHandle: 'false'
+      target: '1723121012659'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: start
+        targetType: code
+      id: 1723059116095-source-1750972310359-target
+      source: '1723059116095'
+      sourceHandle: source
+      target: '1750972310359'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: code
+        targetType: knowledge-retrieval
+      id: 1750972310359-source-1723059142238-target
+      source: '1750972310359'
+      sourceHandle: source
+      target: '1723059142238'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    nodes:
+    - data:
+        desc: ''
+        selected: false
+        title: Start
+        type: start
+        variables:
+        - label: naglowek
+          max_length: 256
+          options: []
+          required: true
+          type: text-input
+          variable: naglowek
+        - label: language
+          max_length: 48
+          options: []
+          required: true
+          type: text-input
+          variable: language
+        - label: knowledge
+          max_length: 48000000
+          options: []
+          required: true
+          type: paragraph
+          variable: knowledge
+        - label: keywords
+          max_length: 4000000000
+          options: []
+          required: true
+          type: paragraph
+          variable: keywords
+        - label: headings
+          max_length: 48000000
+          options: []
+          required: true
+          type: paragraph
+          variable: headings
+        - label: done
+          max_length: 4800000000000
+          options: []
+          required: false
+          type: paragraph
+          variable: done
+        - label: keyword
+          max_length: 256
+          options: []
+          required: true
+          type: text-input
+          variable: keyword
+        - label: instruction
+          max_length: 4800000
+          options: []
+          required: false
+          type: paragraph
+          variable: instruction
+      height: 290
+      id: '1723059116095'
+      position:
+        x: -201.5796232010221
+        y: 282
+      positionAbsolute:
+        x: -201.5796232010221
+        y: 282
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        dataset_ids:
+        - NIPeQf+XKwbNsFW3bqBD/Yf1GYTwzLQ+RQYibkqdQRMQWJLEzIjWRnwmubiCwUna
+        desc: ''
+        metadata_filtering_mode: disabled
+        metadata_model_config:
+          completion_params:
+            temperature: 0
+          mode: chat
+          name: gpt-4o-mini
+          provider: langgenius/openai/openai
+        multiple_retrieval_config:
+          reranking_enable: true
+          reranking_mode: reranking_model
+          reranking_model:
+            model: jina-reranker-v2-base-multilingual
+            provider: langgenius/jina/jina
+          score_threshold: 0.7
+          top_k: 3
+          weights:
+            keyword_setting:
+              keyword_weight: 0.3
+            vector_setting:
+              embedding_model_name: text-embedding-3-large
+              embedding_provider_name: openai
+              vector_weight: 0.7
+            weight_type: customized
+        query_attachment_selector: []
+        query_variable_selector:
+        - '1750972310359'
+        - result
+        retrieval_mode: multiple
+        selected: false
+        title: Knowledge Retrieval
+        type: knowledge-retrieval
+      height: 89
+      id: '1723059142238'
+      position:
+        x: 486.59028105170614
+        y: 282
+      positionAbsolute:
+        x: 486.59028105170614
+        y: 282
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        desc: ''
+        outputs:
+        - value_selector:
+          - '1723121255187'
+          - text
+          variable: result
+        selected: false
+        title: End
+        type: end
+      height: 88
+      id: '1723059149848'
+      position:
+        x: 2775.139031016473
+        y: 363.4056029376792
+      positionAbsolute:
+        x: 2775.139031016473
+        y: 363.4056029376792
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        context:
+          enabled: true
+          variable_selector:
+          - '1723059142238'
+          - result
+        desc: ''
+        model:
+          completion_params: {}
+          mode: chat
+          name: gpt-4o-mini
+          provider: langgenius/openai/openai
+        prompt_template:
+        - id: 049fb600-2972-443c-884e-4bf5e0b5b746
+          role: system
+          text: "You are an AI assistant tasked with writing SEO-optimized content\
+            \ in <language>. Your goal is to create high-quality, informative content\
+            \ for a specific heading while following best practices for search engine\
+            \ optimization. Here are your instructions:\n\n1. Review the following\
+            \ inputs carefully:\n\n<heading>\n\nThis is the specific heading you will\
+            \ be writing content for. Focus solely on this heading and avoid writing\
+            \ content for other headings. Don't add any new headings.\n\n###\n\n<knowledge>\n\
+            \nUse this knowledge as the foundation for your content. Ensure that your\
+            \ writing is accurate and well-informed based on this information.\n\n\
+            ###\n\n<keywords>\n\nIncorporate these keywords naturally throughout your\
+            \ content. Avoid keyword stuffing.\n\nUse semantically related keywords\
+            \ to cover the topic comprehensively\n\nUse contextually relevant and\
+            \ diverse keywords\n\n###\n\n<context>\n\nUse this additional context\
+            \ to enrich your content with relevant informations, data, examples, statistics.\n\
+            \n###\n\n<already_written_part>\n\nIf this section is empty you are writing\
+            \ content from the beginning.\n\nIf this section is not empty, ensure\
+            \ that your new content maintains the same language, tone of voice, and\
+            \ style as the already written part. \n\nAvoid duplicating information\
+            \ and context already written in <already_written_part>.\n\nMaintain contextual\
+            \ flow based on <already_written_part> - Ensure a smooth transition between\
+            \ headings and Logical progression and Contextual relevance.\n\n###\n\n\
+            <headings>\n\nThis is the content brief for all headings. Use it for context,\
+            \ but remember to focus only on writing content for the specific <heading>\
+            \ provided earlier. Don't add any new headings.\n\n###\n<macro_context>\n\
+            \nThis is the overall subject area and related concepts that give meaning\
+            \ to your specific content.\n\nRelevant entities, attributes, and values\
+            \ should be added to the macro context.\n\n###\n<additional_informations>\n\
+            \nThis is variable is with specific instructions, rules, or contextual\
+            \ details to guide you in producing tailored content. Make sure the generated\
+            \ output aligns with unique requirements in <additional_informations>\n\
+            \n\n2. Follow these steps to write your SEO-optimized content:\n\na) Start\
+            \ by outlining the main points you want to cover based on the heading,\
+            \ knowledge, and keywords provided.\n\n- Begin writing your content, focusing\
+            \ on addressing the main topic of the heading.\n\n- Naturally incorporate\
+            \ the provided keywords throughout your content.\n\n- Use the knowledge\
+            \ provided to ensure your content is accurate and informative.\n\n- Enhance\
+            \ your writing with relevant information from the context provided.\n\n\
+            - If there's an already written part, ensure your new content flows seamlessly\
+            \ from it, maintaining consistency in style and tone.\n\n- Don't write\
+            \ summary at the end \n\n- Don't add heading at the beginning of content\n\
+            \n3. Adhere to these general rules:\n\n- Write in <language>, maintaining\
+            \ a consistent tone throughout.\n- Ensure your content is informative,\
+            \ engaging, and relevant to the heading.\n- Proofread your work to correct\
+            \ any grammatical errors or typos.\n- Structure your content logically,\
+            \ with a clear flow of ideas.\n- If you are writing <h3> heading connect\
+            \ it to previous <h2> heading and <already_written_part> content for previous\
+            \ <h2> heading. Avoid duplicate content in this case and treat <h2> and\
+            \ <h3> headings together as a group with same context.\n- For <h3> write\
+            \ short answers\n\n4. Follow these specific content writing rules:\n\n\
+            - Write concisely, using as few words as necessary while covering all\
+            \ perspectives.\n- Place the most important information at the beginning\
+            \ of your content.\n- Use simple language and avoid filler words or complex\
+            \ phrasing.\n- Include facts, statistics, numbers, and specific data to\
+            \ increase credibility.\n- Address user intent and aim for maximum user\
+            \ satisfaction.\n- Use precise language, avoiding vague terms like \"\
+            many\" or \"several\".\n- Place conditional statements (if, whether) in\
+            \ the second part of sentences.\n- Avoid personal beliefs and eliminate\
+            \ words like \"will\", \"should\", \"have to\", \"need to\".\n- Specify\
+            \ exact numbers, statistics where possible.\n- Maintain the same modality\
+            \ as the given heading.\n- Avoid adding a summary at the end.\n- Avoid\
+            \ duplicating information already written in  <already_written_part>\n\
+            - Write factual sentence structures (e.g., \"X is known for Y\") example\
+            \ \"The Sahara Desert is recognized for being the largest hot desert in\
+            \ the world\"\n- Use research and studies to prove points\n- Use proper\
+            \ word sequence\n- Ensure that content is comprehensive and covers the\
+            \ topic from multiple angles.\n- Avoid using unnecessary adjectives and\
+            \ adverbs to keep the text concise and focused.\n\nExample correct word\
+            \ sequence: \"Elephants are the largest land mammals that are herbivores\
+            \ and live in herds. They communicate through low-frequency sounds called\
+            \ infrasound.\"\n\nExample of incorrect word sequence: \"Elephants are\
+            \ the largest land mammals that live in herds and communicate through\
+            \ low-frequency sounds called infrasound, and they are herbivores.\"\n\
+            \n- Do not add fluff\n- Use short sentences. 40-word limit per answer\
+            \ where possible\n- Give the exact answer immediately\n- Delete unnecessary\
+            \ words\n- When using plural nouns, give examples after this\n- Use predicates\
+            \ correctly - example \"Trees are important. Examples include oaks, pines,\
+            \ and maples.\"\n- Avoid opinion-based statements such as \"will,\" \"\
+            should,\" \"have to,\"\n- Use numeric values\n\nInstead of saying, \"\
+            There are many benefits of eating apples,\" say, \"There are 5 main benefits\
+            \ of eating apples.\"\n\n- Do not create extra sentences without a logical\
+            \ reason.\n- Use lexical semantic concepts\n- Write micro context but\
+            \ use <h3> formats to give short answers\n- Ensure content is highly relevant\
+            \ to the search intent and user queries\n- Maintain consistency in terminology\
+            \ and concepts throughout the content\n- Use semantically related keywords\
+            \ to cover the topic comprehensively\n- Integrate core topics and subtopics\
+            \ naturally into your content\n\n5. Language rules:\n- Use correct <language>\
+            \ grammar and syntax.\n- Apply proper declension of nouns, adjectives,\
+            \ and verbs.\n- Avoid repetition by using synonyms and varied sentence\
+            \ structures.\n- Follow <language> punctuation rules.\n- Correct all grammatical\
+            \ mistakes.\n- Ensure the text sounds natural and fluent in <language>.\n\
+            \n\n6. Output format:\n\nPresent your content in plain text, ensuring\
+            \ it is well-structured and ready for publication. Do not include any\
+            \ HTML tags or formatting in your output.\n\n7. Final check:\n\nBefore\
+            \ submitting your content, review it to ensure:\n- It focuses solely on\
+            \ the provided heading\n- Keywords are naturally incorporated\n- The content\
+            \ is informative and based on the provided knowledge\n- It maintains consistency\
+            \ with any already written part\n- It adheres to all the general and specific\
+            \ content writing rules\n- It doesn't have summary at the end\n- Avoid\
+            \ duplicating information already written in  <already_written_part>\n\
+            - If you are writing <h3> heading connect it to previous <h2>. Remember\
+            \ to avoid duplicate content in this case and treat <h2> and <h3> headings\
+            \ together as a group with same context, contextual relevance and logical\
+            \ progression. \n- For <h3> write short answers\n- Avoid duplicating information\
+            \ and context already written in <already_written_part>\n\nWrite your\
+            \ SEO-optimized content now, focusing only on the provided <heading> don't\
+            \ add new headings."
+        - id: a7a6a9ec-7e07-4066-957c-eed18626e41f
+          role: user
+          text: '<language>
+
+            {{#1723059116095.language#}}
+
+            </language>
+
+
+            <heading>
+
+            {{#1723059116095.naglowek#}}
+
+            </heading>
+
+
+            <headings>
+
+            {{#1723059116095.headings#}}
+
+            </headings>
+
+
+            <knowledge>
+
+            {{#1723059116095.knowledge#}}
+
+            </knowledge>
+
+
+            <keywords>
+
+            {{#1723059116095.keywords#}}
+
+            </keywords>
+
+
+            <already_written_part>
+
+            {{#1723059116095.done#}}
+
+            </already_written_part>
+
+
+            <macro_context>
+
+            {{#1723059116095.keyword#}}
+
+            </macro_context>
+
+
+            <additional_informations>
+
+            {{#1723059116095.instruction#}}
+
+            </additional_informations>
+
+
+            <context>
+
+            {{#context#}}
+
+            </context>'
+        selected: false
+        title: Generowanie
+        type: llm
+        variables: []
+        vision:
+          configs:
+            detail: high
+          enabled: false
+      height: 87
+      id: '1723059672725'
+      position:
+        x: 780.2398745337377
+        y: 282
+      positionAbsolute:
+        x: 780.2398745337377
+        y: 282
+      selected: true
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        desc: ''
+        model:
+          completion_params: {}
+          mode: chat
+          name: gpt-4o-mini
+          provider: langgenius/openai/openai
+        prompt_template:
+        - id: 43718da2-704d-4a91-8896-a4e7a22b86da
+          role: system
+          text: "You are an experienced <language> copywriter tasked with improving\
+            \ the structure and language of a given content piece. Your goal is to\
+            \ enhance clarity and readability while preserving the original meaning.\
+            \ Follow these instructions carefully:\n\n1. Read the original content\
+            \ provided in <original_content></original_content>\n\n\n2. Rewrite the\
+            \ content for clarity and controlled perplexity:\n   - Use straightforward\
+            \ language that is easily understood by a general audience.\n   - Maintain\
+            \ the original message and technical accuracy.\n   - Avoid overly complex\
+            \ vocabulary and sentence structures.\n   - Aim for low perplexity in\
+            \ your writing, making the content accessible without oversimplifying.\n\
+            \n3. Incorporate high burstiness:\n   - Blend longer, informative sentences\
+            \ with shorter, impactful ones.\n   - Vary sentence length and structure\
+            \ to create a dynamic reading experience.\n   - Ensure no sentence exceeds\
+            \ 30 syllables.\n   - Create a natural rhythm to make the content more\
+            \ engaging.\n\n4. Maximize readability:\n   - Aim for a Flesch-Kincaid\
+            \ Reading Ease score between 40-50.\n   - Use active voice to make the\
+            \ text more engaging and understandable.\n   - Employ transitional phrases\
+            \ like \"jednak\" (however), \"na przykład\" (for example), and \"ponadto\"\
+            \ (in addition) to guide the reader.\n\n5. Output your revised content:\n\
+            \   - Provide the revised content in <language>\n   - Use proper HTML\
+            \ formatting for structure and readability.\n   - Don't add heading at\
+            \ the beginning of content\n\nRemember to preserve the original meaning\
+            \ while improving the structure and language of the content. Your goal\
+            \ is to make the text more accessible and engaging for a general <language>-speaking\
+            \ audience with a basic understanding of the language.\n\nOutput in plain\
+            \ text"
+        - id: cc445136-4d28-42e5-a370-2c108455944f
+          role: user
+          text: '<language>
+
+            {{#1723059116095.language#}}
+
+            </language>
+
+
+            <original_content>
+
+            {{#1723059672725.text#}}
+
+            </original_content>'
+        selected: false
+        title: Perplexity
+        type: llm
+        variables: []
+        vision:
+          configs:
+            detail: high
+          enabled: false
+      height: 87
+      id: '1723121012659'
+      position:
+        x: 1618.973744558697
+        y: 363.4056029376792
+      positionAbsolute:
+        x: 1618.973744558697
+        y: 363.4056029376792
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        desc: ''
+        model:
+          completion_params: {}
+          mode: chat
+          name: gpt-4o-mini
+          provider: langgenius/openai/openai
+        prompt_template:
+        - id: fd7386b6-226c-418b-af2d-fe6f581c6473
+          role: system
+          text: "You are tasked with humanizing in <language> a piece of text to make\
+            \ it more engaging and less repetitive. This process involves adding variety\
+            \ to the writing while maintaining the original meaning and intent.\n\n\
+            Output in <language>\n\nTo humanize this content, apply the following\
+            \ strategies:\n\n1. Use synonyms to avoid repeating the same words\n2.\
+            \ Vary sentence structures (mix short and long sentences)\n3. Combine\
+            \ related ideas into single sentences where appropriate\n4. Avoid overexplaining;\
+            \ trust the reader's understanding\n5. Focus on adding new information\
+            \ in each sentence\n6. Use pronouns and phrases to reduce repetition\n\
+            7. Eliminate redundant phrases\n8. Ensure each paragraph introduces fresh\
+            \ concepts\n\nInstructions:\n\n1. Read the original text carefully to\
+            \ understand its main points and tone.\n2. Apply the strategies listed\
+            \ above to rewrite the text in a more engaging and less repetitive manner.\n\
+            3. Maintain the original meaning and intent of the text while making it\
+            \ more readable and interesting.\n4. Ensure that the humanized version\
+            \ flows naturally and maintains a consistent tone.\n5. Don't add heading\
+            \ at the beginning of content\n6. Remove summary at the end if exists\
+            \ \n\nRemember to make the text sound natural and conversational, as if\
+            \ it were written by a human rather than an AI. Your goal is to create\
+            \ a version that is more engaging and easier to read while preserving\
+            \ the original information and message.\n\nOutput in plain text"
+        - id: dc490dd0-1d09-45cd-97d8-c6aa22bc39bb
+          role: user
+          text: '<language>
+
+            {{#1723059116095.language#}}
+
+            </language>
+
+
+            <original_text>
+
+            {{#1723121012659.text#}}
+
+            </original_text>'
+        selected: false
+        title: Humanizacja
+        type: llm
+        variables: []
+        vision:
+          configs:
+            detail: high
+          enabled: false
+      height: 87
+      id: '1723121137036'
+      position:
+        x: 2017.9327529187926
+        y: 363.4056029376792
+      positionAbsolute:
+        x: 2017.9327529187926
+        y: 363.4056029376792
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        desc: ''
+        model:
+          completion_params: {}
+          mode: chat
+          name: gpt-4o-mini
+          provider: langgenius/openai/openai
+        prompt_template:
+        - id: 69dc3747-e5b0-456e-914b-fa57f44b4795
+          role: system
+          text: "You are an experienced copywriter tasked with refining a given content\
+            \ in <language>. Your goal is to enhance clarity, engagement, and readability\
+            \ using HTML formatting where it truly adds value. Follow these steps\
+            \ to revise the content: \n\n1. Evaluate and Structure Content:\n- Review\
+            \ the initial content carefully.\n- Identify areas where structural enhancements\
+            \ (lists, tables) can improve clarity.\n- Use HTML tags for unordered\
+            \ lists (<ul> and <li>), ordered lists (<ol> and <li>), and tables (<table>,\
+            \ <tr>, <th>, and <td>) only when they significantly improve readability.\n\
+            - Create lists only for 3 or more related items that provide valuable\
+            \ insights to the consumer.\n\nExample list format:\n<ul>\n<li>information\
+            \ 1,</li>\n<li>information 2,</li>\n<li>last information.</li>\n</ul>\n\
+            \nIn each information start with small letter and put comma at the end\
+            \ \nIn last information start with small letter and put dot at the end\n\
+            \n- Don't add heading at the beginning of content\n\n2. Apply Effective\
+            \ Formatting:\n- Use bullet-pointed or numbered lists to summarize benefits,\
+            \ features, or instructions that serve as quick references. Do it if you\
+            \ see minimum of 5 elements\n- Employ tables to present comparative data\
+            \ or specifications too complex for list format.\n- Format step-by-step\
+            \ instructions as a list or in paragraph form, choosing the most suitable\
+            \ option for the context.\n\n3. Avoid Unnecessary Elements:\n- Do not\
+            \ use lists or tables if they don't enhance understanding or disrupt information\
+            \ flow.\n- Ensure each HTML element serves a clear purpose and improves\
+            \ user experience.\n- Prioritize engaging content that's easy to navigate.\n\
+            - Avoid summaries and extra content at the end.\n\n4. Refine Language:\n\
+            - Improve clarity and conciseness of the <language> text.\n- Enhance engagement\
+            \ by using compelling language appropriate for the product description.\n\
+            - Ensure the tone is consistent and suitable for the target audience.\n\
+            \n5. Final Review:\n- Check that all HTML tags are correctly implemented\
+            \ and nested.\n- If you open HTML any tag make sure it's correctly closed.\
+            \ For example you open <ul> make sure it's closed with </ul>\n- Ensure\
+            \ the revised content flows logically and maintains coherence.\n- Verify\
+            \ that the refinements have indeed improved clarity, engagement, and readability.\n\
+            \n6. Use <strong> tags to bold the most important keywords, parameters\
+            \ and information. For example: <strong>4K resolution</strong> or <strong>5-year\
+            \ warranty</strong>\n\n7. Use <strong> tags to bold the most sentences\
+            \ with most important informations. For example <strong>Głębszy bieżnik\
+            \ skuteczniej odprowadza wodę spod opony, co zmniejsza ryzyko poślizgu\
+            \ i polepsza warunki jazdy.</strong>\n\n8. You are allowed only to use\
+            \ following html tags\n<strong>\n<ul>\n<li>\n<ol>\n<table>\n<tr>\n<th>\n\
+            <td>\n<p>\n\n9. Remove summary at the end if exists\n\nOutput your revised\
+            \ content, without any additional comments, opening and closing tags or\
+            \ explanations in plaintext format with no extra opening ang closing tags"
+        - id: b9fcb07c-9fcf-4d7f-b528-08010c8ba7b4
+          role: user
+          text: 'Here is the original content you will be working with:
+
+
+            <original_content>
+
+            {{#1723121137036.text#}}
+
+            </original_content>
+
+
+
+            <language>
+
+            {{#1723059116095.language#}}
+
+            </language>'
+        selected: false
+        title: Formatowanie
+        type: llm
+        variables: []
+        vision:
+          configs:
+            detail: high
+          enabled: false
+      height: 87
+      id: '1723121255187'
+      position:
+        x: 2417.621846862508
+        y: 363.4056029376792
+      positionAbsolute:
+        x: 2417.621846862508
+        y: 363.4056029376792
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        cases:
+        - case_id: 'true'
+          conditions:
+          - comparison_operator: not empty
+            id: 9869c8cb-5e3c-42be-b3d2-800f401dbc32
+            value: ''
+            varType: string
+            variable_selector:
+            - '1723059116095'
+            - done
+          id: 'true'
+          logical_operator: and
+        desc: ''
+        selected: false
+        title: JEŚLI/W PRZECIWNYM WYPADKU
+        type: if-else
+      height: 123
+      id: '1739792246016'
+      position:
+        x: 1101.6379431365506
+        y: 282
+      positionAbsolute:
+        x: 1101.6379431365506
+        y: 282
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        desc: ''
+        model:
+          completion_params: {}
+          mode: chat
+          name: gpt-4o-mini
+          provider: langgenius/openai/openai
+        prompt_template:
+        - id: 049fb600-2972-443c-884e-4bf5e0b5b746
+          role: system
+          text: 'You are an expert <language> proofreader with in-depth knowledge
+            of the topic covered in the article. Your task is to check and improve
+            the provided article based on specific criteria, ensuring the output is
+            in <language>.
+
+
+            Please proofread and improve the article based on the following criteria:
+
+
+            1. Ensure there are no redundant or repetitive pieces of information.
+
+            2. Verify that sentences are concise and easy to understand.
+
+            6. Based on <already_written_part>, ensure your new content flows seamlessly
+            from it, maintaining consistency in style and tone.
+
+            7. If you are writing content for an <h3> heading, connect it to the previous
+            <h2> heading and the <already_written_part> content for the previous <h2>
+            heading. Avoid duplicate content in this case and treat <h2> and <h3>
+            headings together as a group with the same context.
+
+            8. Avoid and if needed remove duplicating information already written
+            in the <already_written_part>.
+
+            9. Avoid and if needed remove duplicating information and context already
+            written in the <already_written_part>.
+
+
+            When improving the article:
+
+            - Maintain the same language, tone of voice, and style as the <already_written_part>.
+
+            - Ensure a smooth transition between headings, logical progression, and
+            contextual relevance.
+
+            - Focus only on writing content for the specific headings provided, don''t
+            add any new headings.
+
+
+            After proofreading and improving the article, please return the corrected
+            version in Polish with all necessary improvements implemented. Strictly
+            enforce all the rules mentioned above.
+
+
+            Present your improved version of the article.
+
+
+            Output in plain text
+
+            '
+        - id: a7a6a9ec-7e07-4066-957c-eed18626e41f
+          role: user
+          text: 'Here is the article to be proofread and improved:
+
+
+            <article>
+
+            {{#1723059672725.text#}}
+
+            </article>
+
+
+            <language>
+
+            {{#1723059116095.language#}}
+
+            </language>
+
+
+            For context, here is the already written part:
+
+
+            <already_written_part>
+
+            {{#1723059116095.done#}}
+
+            </already_written_part>
+
+
+            And here are the headings for overall context:
+
+
+            <headings>
+
+            {{#1723059116095.headings#}}
+
+            </headings>
+
+            '
+        selected: false
+        title: Weryfikacja
+        type: llm
+        variables: []
+        vision:
+          configs:
+            detail: high
+          enabled: false
+      height: 87
+      id: '17397922757130'
+      position:
+        x: 1618.973744558697
+        y: 60.75678985482267
+      positionAbsolute:
+        x: 1618.973744558697
+        y: 60.75678985482267
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        desc: ''
+        model:
+          completion_params: {}
+          mode: chat
+          name: gpt-4o-mini
+          provider: langgenius/openai/openai
+        prompt_template:
+        - id: 43718da2-704d-4a91-8896-a4e7a22b86da
+          role: system
+          text: "You are an experienced <language> copywriter tasked with improving\
+            \ the structure and language of a given content piece. Your goal is to\
+            \ enhance clarity and readability while preserving the original meaning.\
+            \ Follow these instructions carefully:\n\n1. Read the original content\
+            \ provided in <original_content></original_content>\n\n\n2. Rewrite the\
+            \ content for clarity and controlled perplexity:\n   - Use straightforward\
+            \ language that is easily understood by a general audience.\n   - Maintain\
+            \ the original message and technical accuracy.\n   - Avoid overly complex\
+            \ vocabulary and sentence structures.\n   - Aim for low perplexity in\
+            \ your writing, making the content accessible without oversimplifying.\n\
+            \n3. Incorporate high burstiness:\n   - Blend longer, informative sentences\
+            \ with shorter, impactful ones.\n   - Vary sentence length and structure\
+            \ to create a dynamic reading experience.\n   - Ensure no sentence exceeds\
+            \ 30 syllables.\n   - Create a natural rhythm to make the content more\
+            \ engaging.\n\n4. Maximize readability:\n   - Aim for a Flesch-Kincaid\
+            \ Reading Ease score between 40-50.\n   - Use active voice to make the\
+            \ text more engaging and understandable.\n   - Employ transitional phrases\
+            \ like \"jednak\" (however), \"na przykład\" (for example), and \"ponadto\"\
+            \ (in addition) to guide the reader.\n\n5. Output your revised content:\n\
+            \   - Provide the revised content in <language>\n   - Use proper HTML\
+            \ formatting for structure and readability.\n   - Don't add heading at\
+            \ the beginning of content\n\nRemember to preserve the original meaning\
+            \ while improving the structure and language of the content. Your goal\
+            \ is to make the text more accessible and engaging for a general <language>-speaking\
+            \ audience with a basic understanding of the language.\n\nOutput in plain\
+            \ text"
+        - id: cc445136-4d28-42e5-a370-2c108455944f
+          role: user
+          text: '<language>
+
+            {{#1723059116095.language#}}
+
+            </language>
+
+
+            <original_content>
+
+            {{#17397922757130.text#}}
+
+            </original_content>'
+        selected: false
+        title: Perplexity (1)
+        type: llm
+        variables: []
+        vision:
+          configs:
+            detail: high
+          enabled: false
+      height: 87
+      id: '17429205878600'
+      position:
+        x: 2017.9327529187926
+        y: 60.75678985482267
+      positionAbsolute:
+        x: 2017.9327529187926
+        y: 60.75678985482267
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        desc: ''
+        model:
+          completion_params: {}
+          mode: chat
+          name: gpt-4o-mini
+          provider: langgenius/openai/openai
+        prompt_template:
+        - id: fd7386b6-226c-418b-af2d-fe6f581c6473
+          role: system
+          text: "You are tasked with humanizing in <language> a piece of text to make\
+            \ it more engaging and less repetitive. This process involves adding variety\
+            \ to the writing while maintaining the original meaning and intent.\n\n\
+            Output in <language>\n\nTo humanize this content, apply the following\
+            \ strategies:\n\n1. Use synonyms to avoid repeating the same words\n2.\
+            \ Vary sentence structures (mix short and long sentences)\n3. Combine\
+            \ related ideas into single sentences where appropriate\n4. Avoid overexplaining;\
+            \ trust the reader's understanding\n5. Focus on adding new information\
+            \ in each sentence\n6. Use pronouns and phrases to reduce repetition\n\
+            7. Eliminate redundant phrases\n8. Ensure each paragraph introduces fresh\
+            \ concepts\n\nInstructions:\n\n1. Read the original text carefully to\
+            \ understand its main points and tone.\n2. Apply the strategies listed\
+            \ above to rewrite the text in a more engaging and less repetitive manner.\n\
+            3. Maintain the original meaning and intent of the text while making it\
+            \ more readable and interesting.\n4. Ensure that the humanized version\
+            \ flows naturally and maintains a consistent tone.\n5. Don't add heading\
+            \ at the beginning of content\n6. Remove summary at the end if exists\
+            \ \n\nRemember to make the text sound natural and conversational, as if\
+            \ it were written by a human rather than an AI. Your goal is to create\
+            \ a version that is more engaging and easier to read while preserving\
+            \ the original information and message.\n\nOutput in plain text"
+        - id: dc490dd0-1d09-45cd-97d8-c6aa22bc39bb
+          role: user
+          text: '<language>
+
+            {{#1723059116095.language#}}
+
+            </language>
+
+
+            <original_text>
+
+            {{#17429205878600.text#}}
+
+            </original_text>'
+        selected: false
+        title: Humanizacja (1)
+        type: llm
+        variables: []
+        vision:
+          configs:
+            detail: high
+          enabled: false
+      height: 87
+      id: '17429205961290'
+      position:
+        x: 2411.2128320582906
+        y: 60.75678985482267
+      positionAbsolute:
+        x: 2411.2128320582906
+        y: 60.75678985482267
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        desc: ''
+        model:
+          completion_params: {}
+          mode: chat
+          name: gpt-4o-mini
+          provider: langgenius/openai/openai
+        prompt_template:
+        - id: 69dc3747-e5b0-456e-914b-fa57f44b4795
+          role: system
+          text: "You are an experienced copywriter tasked with refining a given content\
+            \ in <language>. Your goal is to enhance clarity, engagement, and readability\
+            \ using HTML formatting where it truly adds value. Follow these steps\
+            \ to revise the content: \n\n1. Evaluate and Structure Content:\n- Review\
+            \ the initial content carefully.\n- Identify areas where structural enhancements\
+            \ (lists, tables) can improve clarity.\n- Use HTML tags for unordered\
+            \ lists (<ul> and <li>), ordered lists (<ol> and <li>), and tables (<table>,\
+            \ <tr>, <th>, and <td>) only when they significantly improve readability.\n\
+            - Create lists only for 3 or more related items that provide valuable\
+            \ insights to the consumer.\n\nExample list format:\n<ul>\n<li>information\
+            \ 1,</li>\n<li>information 2,</li>\n<li>last information.</li>\n</ul>\n\
+            \nIn each information start with small letter and put comma at the end\
+            \ \nIn last information start with small letter and put dot at the end\n\
+            \n- Don't add heading at the beginning of content\n\n2. Apply Effective\
+            \ Formatting:\n- Use bullet-pointed or numbered lists to summarize benefits,\
+            \ features, or instructions that serve as quick references. Do it if you\
+            \ see minimum of 5 elements\n- Employ tables to present comparative data\
+            \ or specifications too complex for list format.\n- Format step-by-step\
+            \ instructions as a list or in paragraph form, choosing the most suitable\
+            \ option for the context.\n\n3. Avoid Unnecessary Elements:\n- Do not\
+            \ use lists or tables if they don't enhance understanding or disrupt information\
+            \ flow.\n- Ensure each HTML element serves a clear purpose and improves\
+            \ user experience.\n- Prioritize engaging content that's easy to navigate.\n\
+            - Avoid summaries and extra content at the end.\n\n4. Refine Language:\n\
+            - Improve clarity and conciseness of the <language> text.\n- Enhance engagement\
+            \ by using compelling language appropriate for the product description.\n\
+            - Ensure the tone is consistent and suitable for the target audience.\n\
+            \n5. Final Review:\n- Check that all HTML tags are correctly implemented\
+            \ and nested.\n- If you open HTML any tag make sure it's correctly closed.\
+            \ For example you open <ul> make sure it's closed with </ul>\n- Ensure\
+            \ the revised content flows logically and maintains coherence.\n- Verify\
+            \ that the refinements have indeed improved clarity, engagement, and readability.\n\
+            \n6. Use <strong> tags to bold the most important keywords, parameters\
+            \ and information. For example: <strong>4K resolution</strong> or <strong>5-year\
+            \ warranty</strong>\n\n7. Use <strong> tags to bold the most sentences\
+            \ with most important informations. For example <strong>Głębszy bieżnik\
+            \ skuteczniej odprowadza wodę spod opony, co zmniejsza ryzyko poślizgu\
+            \ i polepsza warunki jazdy.</strong>\n\n8. You are allowed only to use\
+            \ following html tags\n<strong>\n<ul>\n<li>\n<ol>\n<table>\n<tr>\n<th>\n\
+            <td>\n<p>\n\n9. Remove summary at the end if exists\n\nOutput your revised\
+            \ content, without any additional comments, opening and closing tags or\
+            \ explanations in plaintext format with no extra opening ang closing tags"
+        - id: b9fcb07c-9fcf-4d7f-b528-08010c8ba7b4
+          role: user
+          text: '<language>
+
+            {{#1723059116095.language#}}
+
+            </language>
+
+
+            Here is the original content you will be working with:
+
+
+            <original_content>
+
+            {{#17429205961290.text#}}
+
+            </original_content>'
+        selected: false
+        title: Formatowanie (1)
+        type: llm
+        variables: []
+        vision:
+          configs:
+            detail: high
+          enabled: false
+      height: 87
+      id: '17429206056130'
+      position:
+        x: 2775.139031016473
+        y: 60.75678985482267
+      positionAbsolute:
+        x: 2775.139031016473
+        y: 60.75678985482267
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        desc: ''
+        outputs:
+        - value_selector:
+          - '17429206056130'
+          - text
+          variable: result
+        selected: false
+        title: Koniec 2
+        type: end
+      height: 88
+      id: '1742920613245'
+      position:
+        x: 3129.2534037953774
+        y: 60.75678985482267
+      positionAbsolute:
+        x: 3129.2534037953774
+        y: 60.75678985482267
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        code: "import re\n\ndef main(html_string: str) -> dict:\n    \"\"\"\n    Removes\
+          \ all heading tags (<h1> to <h6> and their closing tags) from a given string.\n\
+          \n    Args:\n        html_string: The input string potentially containing\
+          \ HTML heading tags.\n\n    Returns:\n        A dictionary with a single\
+          \ key \"result\" containing the cleaned string.\n    \"\"\"\n    cleaned_string\
+          \ = re.sub(r'</?h[1-6]>', '', html_string, flags=re.IGNORECASE)\n    \n\
+          \    return {\n        \"result\": cleaned_string\n    }"
+        code_language: python3
+        desc: ''
+        outputs:
+          result:
+            children: null
+            type: string
+        selected: false
+        title: Kod
+        type: code
+        variables:
+        - value_selector:
+          - '1723059116095'
+          - naglowek
+          variable: html_string
+      height: 51
+      id: '1750972310359'
+      position:
+        x: 163.40761862928576
+        y: 282
+      positionAbsolute:
+        x: 163.40761862928576
+        y: 282
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    viewport:
+      x: 391.89168448532075
+      y: 221.78339339991442
+      zoom: 0.25
+  rag_pipeline_variables: []

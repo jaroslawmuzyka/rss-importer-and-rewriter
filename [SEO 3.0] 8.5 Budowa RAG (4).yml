@@ -1,0 +1,1105 @@
+app:
+  description: ''
+  icon: 🤖
+  icon_background: '#FFEAD5'
+  mode: workflow
+  name: '[SEO 3.0] 8.5 Budowa RAG'
+  use_icon_as_answer_icon: false
+dependencies:
+- current_identifier: null
+  type: marketplace
+  value:
+    marketplace_plugin_unique_identifier: langgenius/openai:0.0.26@c1e643ac6a7732f6333a783320b4d3026fa5e31d8e7026375b98d44418d33f26
+    version: null
+- current_identifier: null
+  type: marketplace
+  value:
+    marketplace_plugin_unique_identifier: langgenius/jina_tool:0.0.7@08d5935b56b9ddaa633204874c0fd796c14971489b6379fad1a430b5ec99b569
+    version: null
+kind: app
+version: 0.5.0
+workflow:
+  conversation_variables: []
+  environment_variables: []
+  features:
+    file_upload:
+      allowed_file_extensions:
+      - .JPG
+      - .JPEG
+      - .PNG
+      - .GIF
+      - .WEBP
+      - .SVG
+      allowed_file_types:
+      - image
+      allowed_file_upload_methods:
+      - local_file
+      - remote_url
+      enabled: false
+      fileUploadConfig:
+        audio_file_size_limit: 50
+        batch_count_limit: 5
+        file_size_limit: 15
+        image_file_batch_limit: 10
+        image_file_size_limit: 10
+        single_chunk_attachment_limit: 10
+        video_file_size_limit: 100
+        workflow_file_upload_limit: 10
+      image:
+        enabled: false
+        number_limits: 3
+        transfer_methods:
+        - local_file
+        - remote_url
+      number_limits: 3
+    opening_statement: ''
+    retriever_resource:
+      enabled: false
+    sensitive_word_avoidance:
+      enabled: false
+    speech_to_text:
+      enabled: false
+    suggested_questions: []
+    suggested_questions_after_answer:
+      enabled: false
+    text_to_speech:
+      enabled: false
+      language: ''
+      voice: ''
+  graph:
+    edges:
+    - data:
+        isInIteration: false
+        sourceType: code
+        targetType: iteration
+      id: 1718566825729-source-1718566787996-target
+      source: '1718566825729'
+      sourceHandle: source
+      target: '1718566787996'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: llm
+        targetType: code
+      id: 1723028732575-source-1718566825729-target
+      source: '1723028732575'
+      sourceHandle: source
+      target: '1718566825729'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: start
+        targetType: http-request
+      id: 1718558764026-source-1734462057043-target
+      source: '1718558764026'
+      sourceHandle: source
+      target: '1734462057043'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: http-request
+        targetType: llm
+      id: 1734462057043-source-1723028732575-target
+      source: '1734462057043'
+      sourceHandle: source
+      target: '1723028732575'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1718566787996'
+        sourceType: iteration-start
+        targetType: tool
+      id: 1718566787996start0-source-1750950178033-target
+      source: 1718566787996start0
+      sourceHandle: source
+      target: '1750950178033'
+      targetHandle: target
+      type: custom
+      zIndex: 1002
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: llm
+        targetType: end
+      id: 1750950298285-source-1718559325567-target
+      source: '1750950298285'
+      sourceHandle: source
+      target: '1718559325567'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: iteration
+        targetType: llm
+      id: 1718566787996-source-1723029663619-target
+      source: '1718566787996'
+      sourceHandle: source
+      target: '1723029663619'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: iteration
+        targetType: llm
+      id: 1718566787996-source-1750950298285-target
+      source: '1718566787996'
+      sourceHandle: source
+      target: '1750950298285'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: llm
+        targetType: end
+      id: 1723029663619-source-1718559325567-target
+      source: '1723029663619'
+      sourceHandle: source
+      target: '1718559325567'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    nodes:
+    - data:
+        desc: ''
+        selected: false
+        title: Start
+        type: start
+        variables:
+        - label: keyword
+          max_length: 256
+          options: []
+          required: true
+          type: paragraph
+          variable: keyword
+        - label: language
+          max_length: 48
+          options: []
+          required: true
+          type: text-input
+          variable: language
+        - label: headings
+          max_length: 48000000
+          options: []
+          required: true
+          type: paragraph
+          variable: headings
+      height: 160
+      id: '1718558764026'
+      position:
+        x: -147.03386874525438
+        y: 282
+      positionAbsolute:
+        x: -147.03386874525438
+        y: 282
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        desc: ''
+        outputs:
+        - value_selector:
+          - '1723029663619'
+          - text
+          variable: dokladne
+        - value_selector:
+          - '1750950298285'
+          - text
+          variable: ogolne
+        selected: false
+        title: Koniec
+        type: end
+      height: 114
+      id: '1718559325567'
+      position:
+        x: 2855.69274768473
+        y: 266.49645802067374
+      positionAbsolute:
+        x: 2855.69274768473
+        y: 266.49645802067374
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        desc: ''
+        error_handle_mode: terminated
+        height: 438
+        is_parallel: true
+        iterator_selector:
+        - '1718566825729'
+        - result
+        output_selector:
+        - '1750950178033'
+        - text
+        output_type: array[string]
+        parallel_nums: 6
+        selected: false
+        startNodeType: http-request
+        start_node_id: 1718566787996start0
+        title: Iteracja WEB
+        type: iteration
+        width: 439
+      height: 438
+      id: '1718566787996'
+      position:
+        x: 1375.4238898349113
+        y: 282
+      positionAbsolute:
+        x: 1375.4238898349113
+        y: 282
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 439
+      zIndex: 1
+    - data:
+        code: "function main(input) {\n    let jsonData;\n\n    // 1. Bezpieczne parsowanie\
+          \ wejścia\n    try {\n        // input.data to string JSON z odpowiedzi\
+          \ HTTP\n        jsonData = JSON.parse(input.data);\n    } catch (e) {\n\
+          \        console.error(\"Błąd parsowania JSON:\", e);\n        return {\
+          \ result: [] };\n    }\n\n    // 2. Ustalenie głównego źródła danych\n \
+          \   // API SerpData zazwyczaj zwraca 'organic_results' bezpośrednio w korzeniu\
+          \ (jsonData)\n    // Czasami API zwracają to w obiekcie 'results'. Ten kod\
+          \ obsłuży oba przypadki.\n    const sourceRoot = jsonData.results || jsonData;\n\
+          \n    let allUrls = [];\n\n    // 3. Pobranie adresów URL z \"organic_results\"\
+          \n    if (sourceRoot && sourceRoot.organic_results && Array.isArray(sourceRoot.organic_results))\
+          \ {\n        sourceRoot.organic_results.forEach(item => {\n            //\
+          \ SerpData zwykle używa pola 'url', ale czasem 'link'\n            if (item.url)\
+          \ {\n                allUrls.push(item.url);\n            } else if (item.link)\
+          \ {\n                allUrls.push(item.link);\n            }\n        });\n\
+          \    }\n\n    // 4. Obsługa \"ai_overview\" (opcjonalnie, jeśli struktura\
+          \ pasuje)\n    // Sprawdzamy czy istnieje snippets_data (częste w innych\
+          \ API) lub czy jest wprost w korzeniu\n    const snippetsSource = sourceRoot.snippets_data\
+          \ || sourceRoot;\n    \n    if (snippetsSource && snippetsSource.ai_overview\
+          \ && snippetsSource.ai_overview.sources) {\n        snippetsSource.ai_overview.sources.forEach(source\
+          \ => {\n            if (source.url) {\n                // Usuń fragment\
+          \ #:~:text=... z adresu URL.\n                const cleanedUrl = source.url.split('#:~:text=')[0];\n\
+          \                allUrls.push(cleanedUrl);\n            }\n        });\n\
+          \    }\n\n    // 5. Unikalne adresy URL i limit\n    const uniqueUrls =\
+          \ [...new Set(allUrls)];\n    \n    // Ograniczamy tablicę do pierwszych\
+          \ 25 elementów (zgodnie z Twoim założeniem)\n    const limitedUniqueUrlList\
+          \ = uniqueUrls.slice(0, 25);\n\n    // Zwróć wynik\n    return { result:\
+          \ limitedUniqueUrlList };\n}"
+        code_language: javascript
+        desc: ''
+        outputs:
+          result:
+            children: null
+            type: array[string]
+        selected: false
+        title: Kod
+        type: code
+        variables:
+        - value_selector:
+          - '1734462057043'
+          - body
+          variable: data
+      height: 51
+      id: '1718566825729'
+      position:
+        x: 965.5868352233781
+        y: 282
+      positionAbsolute:
+        x: 965.5868352233781
+        y: 282
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        desc: ''
+        model:
+          completion_params:
+            temperature: 0
+          mode: chat
+          name: gpt-4.1-mini
+          provider: langgenius/openai/openai
+        prompt_template:
+        - id: 3fd5bc20-ab53-411e-932d-10587708aa01
+          role: system
+          text: 'You will be given a list of text entries. Your task is to extract
+            brand names and domain names from this list.
+
+
+            Extract all brand names and domain names from the given list. A brand
+            name is typically a company or product name, while a domain name is a
+            web address (e.g., example.com).
+
+            Provide your output in the following format:
+
+            <brands>
+
+            [List of extracted brand names, one per line]
+
+            </brands>
+
+            <domains>
+
+            [List of extracted domain names, one per line]
+
+            </domains>
+
+            If you''re unsure whether an entry is a brand or domain, include it in
+            the category that seems most appropriate. If an entry could be both a
+            brand and a domain, include it in both lists.
+
+            Make sure to include all identified brands and domains, even if there
+            are multiple occurrences of the same name.
+
+            Please provide your output now.'
+        - id: c53a8ee2-2501-4863-9574-ceb5225adc87
+          role: user
+          text: 'Here is the list:
+
+            <list>
+
+            {{#1734462057043.body#}}
+
+            </list>'
+        selected: false
+        title: Ekstrakcja brandów
+        type: llm
+        variables: []
+        vision:
+          configs:
+            detail: high
+          enabled: false
+      height: 87
+      id: '1723028732575'
+      position:
+        x: 592.6768928338959
+        y: 282
+      positionAbsolute:
+        x: 592.6768928338959
+        y: 282
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        desc: ''
+        model:
+          completion_params: {}
+          mode: chat
+          name: gpt-4.1-mini
+          provider: langgenius/openai/openai
+        prompt_template:
+        - id: 72d13ea7-b4a0-4d6a-89b8-112cf8757be4
+          role: system
+          text: "You are an expert content analyst tasked with chunking and structuring\
+            \ information from a given text. Your goal is to create a set of headings\
+            \ and associated knowledge based on the content provided. Follow these\
+            \ instructions carefully.\n\nChunking Process:\n\na) Identify a main topic\
+            \ related to the primary keyword.\nb) Formulate a clear, concise heading\
+            \ that reflects this topic. \nc) List out relevant information from the\
+            \ content related to this topic.\nd) Consider potential subheadings or\
+            \ related topics.\ne) Extract and organize comprehensive knowledge about\
+            \ this topic from the listed information.\nf) Review the heading and knowledge\
+            \ pair to ensure they are well-matched and the knowledge is sufficiently\
+            \ detailed.\ng) Check that the chunk doesn't mention any excluded brands\
+            \ or entities.\nh) Verify that the heading-knowledge pair is relevant\
+            \ to the main keyword and fits within the scope of the provided headings\
+            \ list.\n\nIt's OK for this section to be quite long.\n\nOutput Format:\n\
+            Present your results in the following format:\n\n[Heading 1]\n[Comprehensive\
+            \ knowledge about Heading 1]\n###\n[Heading 2]\n[Comprehensive knowledge\
+            \ about Heading 2]\n###\n[Continue for all relevant headings]\n\nImportant\
+            \ notes:\n- Each heading should be on a single line.\n- The knowledge\
+            \ should be as comprehensive as possible while remaining relevant to the\
+            \ heading.\n- Use \"###\" as a separator between each heading-knowledge\
+            \ pair.\n- Do not include phrases like \"Ask Question\" or \"Give Answer\"\
+            \ in the output.\n- Do not use any HTML tags (like <h2> or any <hX>) in\
+            \ the output.\n\nFinal Review:\nBefore submitting your response, review\
+            \ your output to ensure:\n- All headings are relevant to the main keyword\
+            \ and content.\n- The knowledge provided for each heading is comprehensive\
+            \ and well-matched.\n- No excluded brands or entities are mentioned.\n\
+            - The output adheres to the specified format.\n\nBegin the chunking process\
+            \ now, following these instructions. Provide your output in plain text\
+            \ in the specified language."
+        - id: d621e81c-d1ba-4645-ac0a-2a93ba5dce27
+          role: user
+          text: 'Main Focus:
+
+            The primary keyword for this task is:
+
+            <main_keyword>
+
+            {{#1718558764026.keyword#}}
+
+            </main_keyword>
+
+
+            Output Language:
+
+            Please provide all output in the following language:
+
+            <output_language>
+
+            {{#1718558764026.language#}}
+
+            </output_language>
+
+
+            Headings to Consider:
+
+            Here is a list of headings to build knowledge for, based on the content:
+
+            <headings_to_answer>
+
+            {{#1718558764026.headings#}}
+
+            </headings_to_answer>
+
+            Note: If the content does not contain relevant information for any given
+            heading in this list, skip that heading.
+
+
+            Brands to Exclude:
+
+            Do not mention or include any of the following entities, brands, or names
+            in your output:
+
+            <brands_to_exclude>
+
+            {{#1723028732575.text#}}
+
+            </brands_to_exclude>
+
+
+            Content to Analyze:
+
+            Here is the content you need to chunk and structure:
+
+            <content_to_chunk>
+
+            {{#1718566787996.output#}}
+
+            </content_to_chunk>
+
+            '
+        selected: false
+        title: Pytania dokladne
+        type: llm
+        variables: []
+        vision:
+          configs:
+            detail: high
+          enabled: false
+      height: 87
+      id: '1723029663619'
+      position:
+        x: 2202.7598642591247
+        y: 121.79673288029485
+      positionAbsolute:
+        x: 2202.7598642591247
+        y: 121.79673288029485
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        desc: ''
+        isInIteration: true
+        selected: false
+        title: ''
+        type: iteration-start
+      draggable: false
+      height: 48
+      id: 1718566787996start0
+      parentId: '1718566787996'
+      position:
+        x: 24
+        y: 68
+      positionAbsolute:
+        x: 1399.4238898349113
+        y: 350
+      selectable: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom-iteration-start
+      width: 44
+      zIndex: 1002
+    - data:
+        authorization:
+          config: null
+          type: no-auth
+        body:
+          data:
+          - type: text
+            value: ''
+          type: none
+        desc: ''
+        headers: Authorization:Bearer serpdata_a57c07c7214a9495cbc0e43ac159cc2a-KupEOi7d38I
+        method: get
+        params: ''
+        retry_config:
+          max_retries: '2'
+          retry_enabled: true
+          retry_interval: 100
+        selected: false
+        ssl_verify: true
+        timeout:
+          max_connect_timeout: 0
+          max_read_timeout: 0
+          max_write_timeout: 0
+        title: Żądanie HTTP 2
+        type: http-request
+        url: https://api.serpdata.io/v1/search?keyword={{#1718558764026.keyword#}}&hl=pl&gl=pl
+        variables: []
+      height: 187
+      id: '1734462057043'
+      position:
+        x: 230.90516746462458
+        y: 282
+      positionAbsolute:
+        x: 230.90516746462458
+        y: 282
+      selected: true
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        desc: ''
+        isInIteration: true
+        isInLoop: false
+        is_team_authorization: true
+        iteration_id: '1718566787996'
+        output_schema: null
+        paramSchemas:
+        - auto_generate: null
+          default: null
+          form: llm
+          human_description:
+            en_US: Web link
+            ja_JP: Web link
+            pt_BR: URL da web
+            zh_Hans: 网页链接
+          label:
+            en_US: URL
+            ja_JP: URL
+            pt_BR: URL
+            zh_Hans: 网址
+          llm_description: url para scraping
+          max: null
+          min: null
+          name: url
+          options: []
+          placeholder: null
+          precision: null
+          required: true
+          scope: null
+          template: null
+          type: string
+        - auto_generate: null
+          default: null
+          form: llm
+          human_description:
+            en_US: 'request parameters, format: {"key1": "value1", "key2": "value2"}
+
+              '
+            ja_JP: 'request parameters, format: {"key1": "value1", "key2": "value2"}
+
+              '
+            pt_BR: 'parâmetros de solicitação, formato: {"key1": "value1", "key2":
+              "value2"}
+
+              '
+            zh_Hans: '请求参数，格式：{"key1": "value1", "key2": "value2"}
+
+              '
+          label:
+            en_US: Request params
+            ja_JP: Request params
+            pt_BR: Parâmetros de solicitação
+            zh_Hans: 请求参数
+          llm_description: request parameters
+          max: null
+          min: null
+          name: request_params
+          options: []
+          placeholder: null
+          precision: null
+          required: false
+          scope: null
+          template: null
+          type: string
+        - auto_generate: null
+          default: null
+          form: form
+          human_description:
+            en_US: css selector for scraping specific elements
+            ja_JP: css selector for scraping specific elements
+            pt_BR: css selector para scraping de elementos específicos
+            zh_Hans: css 选择器用于抓取特定元素
+          label:
+            en_US: Target selector
+            ja_JP: Target selector
+            pt_BR: Seletor de destino
+            zh_Hans: 目标选择器
+          llm_description: css selector of the target element to scrape
+          max: null
+          min: null
+          name: target_selector
+          options: []
+          placeholder: null
+          precision: null
+          required: false
+          scope: null
+          template: null
+          type: string
+        - auto_generate: null
+          default: null
+          form: form
+          human_description:
+            en_US: css selector for waiting for specific elements
+            ja_JP: css selector for waiting for specific elements
+            pt_BR: css selector para aguardar elementos específicos
+            zh_Hans: css 选择器用于等待特定元素
+          label:
+            en_US: Wait for selector
+            ja_JP: Wait for selector
+            pt_BR: Aguardar por seletor
+            zh_Hans: 等待选择器
+          llm_description: css selector of the target element to wait for
+          max: null
+          min: null
+          name: wait_for_selector
+          options: []
+          placeholder: null
+          precision: null
+          required: false
+          scope: null
+          template: null
+          type: string
+        - auto_generate: null
+          default: null
+          form: form
+          human_description:
+            en_US: Remove all images from the response.
+            ja_JP: Remove all images from the response.
+            pt_BR: Remove all images from the response.
+            zh_Hans: 从响应中删除所有图片。
+          label:
+            en_US: Remove images
+            ja_JP: Remove images
+            pt_BR: Remove images
+            zh_Hans: 删除图片
+          llm_description: Remove all images from the response
+          max: null
+          min: null
+          name: remove_images
+          options: []
+          placeholder: null
+          precision: null
+          required: false
+          scope: null
+          template: null
+          type: boolean
+        - auto_generate: null
+          default: 0
+          form: form
+          human_description:
+            en_US: 'Captions all images at the specified URL, adding ''Image [idx]:
+              [caption]'' as an alt tag for those without one. This allows downstream
+              LLMs to interact with the images in activities such as reasoning and
+              summarizing.'
+            ja_JP: 'Captions all images at the specified URL, adding ''Image [idx]:
+              [caption]'' as an alt tag for those without one. This allows downstream
+              LLMs to interact with the images in activities such as reasoning and
+              summarizing.'
+            pt_BR: 'Adiciona legendas a todas as imagens na URL especificada, adicionando
+              ''Imagem [idx]: [legenda]'' como uma tag alt para aquelas que não têm
+              uma. Isso permite que os modelos LLM inferiores interajam com as imagens
+              em atividades como raciocínio e resumo.'
+            zh_Hans: '为指定 URL 上的所有图像添加标题，为没有标题的图像添加“Image [idx]: [caption]”作为 alt
+              标签，以支持下游模型的图像交互。'
+          label:
+            en_US: Image caption
+            ja_JP: Image caption
+            pt_BR: Legenda da imagem
+            zh_Hans: 图片说明
+          llm_description: Captions all images at the specified URL
+          max: null
+          min: null
+          name: image_caption
+          options: []
+          placeholder: null
+          precision: null
+          required: false
+          scope: null
+          template: null
+          type: boolean
+        - auto_generate: null
+          default: 0
+          form: form
+          human_description:
+            en_US: A "Buttons & Links" section will be created at the end. This helps
+              the downstream LLMs or web agents navigating the page or take further
+              actions.
+            ja_JP: A "Buttons & Links" section will be created at the end. This helps
+              the downstream LLMs or web agents navigating the page or take further
+              actions.
+            pt_BR: Um "Botões & Links" section will be created at the end. This helps
+              the downstream LLMs or web agents navigating the page or take further
+              actions.
+            zh_Hans: 末尾将添加“按钮和链接”部分，方便下游模型或网络代理做页面导航或执行进一步操作。
+          label:
+            en_US: Gather all links at the end
+            ja_JP: Gather all links at the end
+            pt_BR: Coletar todos os links ao final
+            zh_Hans: 将所有链接集中到最后
+          llm_description: Gather all links at the end
+          max: null
+          min: null
+          name: gather_all_links_at_the_end
+          options: []
+          placeholder: null
+          precision: null
+          required: false
+          scope: null
+          template: null
+          type: boolean
+        - auto_generate: null
+          default: 0
+          form: form
+          human_description:
+            en_US: An "Images" section will be created at the end. This gives the
+              downstream LLMs an overview of all visuals on the page, which may improve
+              reasoning.
+            ja_JP: An "Images" section will be created at the end. This gives the
+              downstream LLMs an overview of all visuals on the page, which may improve
+              reasoning.
+            pt_BR: Um "Imagens" section will be created at the end. This gives the
+              downstream LLMs an overview of all visuals on the page, which may improve
+              reasoning.
+            zh_Hans: 末尾会新增“图片”部分，方便下游模型全面了解页面的视觉内容，提升推理效果。
+          label:
+            en_US: Gather all images at the end
+            ja_JP: Gather all images at the end
+            pt_BR: Coletar todas as imagens ao final
+            zh_Hans: 将所有图片集中到最后
+          llm_description: Gather all images at the end
+          max: null
+          min: null
+          name: gather_all_images_at_the_end
+          options: []
+          placeholder: null
+          precision: null
+          required: false
+          scope: null
+          template: null
+          type: boolean
+        - auto_generate: null
+          default: null
+          form: form
+          human_description:
+            en_US: Use proxy to access URLs
+            ja_JP: Use proxy to access URLs
+            pt_BR: Use proxy to access URLs
+            zh_Hans: 利用代理访问 URL
+          label:
+            en_US: Proxy server
+            ja_JP: Proxy server
+            pt_BR: Servidor de proxy
+            zh_Hans: 代理服务器
+          llm_description: Use proxy to access URLs
+          max: null
+          min: null
+          name: proxy_server
+          options: []
+          placeholder: null
+          precision: null
+          required: false
+          scope: null
+          template: null
+          type: string
+        - auto_generate: null
+          default: 0
+          form: form
+          human_description:
+            en_US: Bypass the Cache
+            ja_JP: Bypass the Cache
+            pt_BR: Ignorar o cache
+            zh_Hans: 是否绕过缓存
+          label:
+            en_US: Bypass the Cache
+            ja_JP: Bypass the Cache
+            pt_BR: Ignorar o cache
+            zh_Hans: 绕过缓存
+          llm_description: bypass the cache
+          max: null
+          min: null
+          name: no_cache
+          options: []
+          placeholder: null
+          precision: null
+          required: false
+          scope: null
+          template: null
+          type: boolean
+        - auto_generate: null
+          default: 0
+          form: form
+          human_description:
+            en_US: When enabled, request results won't be cached on jina servers.
+            ja_JP: When enabled, request results won't be cached on jina servers.
+            pt_BR: When enabled, request results won't be cached on jina servers.
+            zh_Hans: 启用后，请求结果将不会被缓存在 jina 服务器上。
+          label:
+            en_US: Do Not Cache/Track
+            ja_JP: Do Not Cache/Track
+            pt_BR: Do Not Cache/Track
+            zh_Hans: 请勿缓存/追踪
+          llm_description: Do Not Cache/Track
+          max: null
+          min: null
+          name: no_cache_track
+          options: []
+          placeholder: null
+          precision: null
+          required: false
+          scope: null
+          template: null
+          type: boolean
+        - auto_generate: null
+          default: 0
+          form: form
+          human_description:
+            en_US: Enable summary for the output
+            ja_JP: Enable summary for the output
+            pt_BR: Habilitar resumo para a saída
+            zh_Hans: 为输出启用摘要
+          label:
+            en_US: Enable summary
+            ja_JP: Enable summary
+            pt_BR: Habilitar resumo
+            zh_Hans: 是否启用摘要
+          llm_description: enable summary
+          max: null
+          min: null
+          name: summary
+          options: []
+          placeholder: null
+          precision: null
+          required: false
+          scope: null
+          template: null
+          type: boolean
+        - auto_generate: null
+          default: 3
+          form: form
+          human_description:
+            en_US: Number of times to retry the request if it fails
+            ja_JP: Number of times to retry the request if it fails
+            pt_BR: Número de vezes para repetir a solicitação se falhar
+            zh_Hans: 请求失败时重试的次数
+          label:
+            en_US: Retry
+            ja_JP: Retry
+            pt_BR: Repetir
+            zh_Hans: 重试
+          llm_description: Number of times to retry the request if it fails
+          max: null
+          min: null
+          name: max_retries
+          options: []
+          placeholder: null
+          precision: null
+          required: false
+          scope: null
+          template: null
+          type: number
+        params:
+          gather_all_images_at_the_end: ''
+          gather_all_links_at_the_end: ''
+          image_caption: ''
+          max_retries: ''
+          no_cache: ''
+          no_cache_track: ''
+          proxy_server: ''
+          remove_images: ''
+          request_params: ''
+          summary: ''
+          target_selector: ''
+          url: ''
+          wait_for_selector: ''
+        provider_id: langgenius/jina_tool/jina
+        provider_name: langgenius/jina_tool/jina
+        provider_type: builtin
+        selected: false
+        title: Fetch Single Page
+        tool_configurations:
+          gather_all_images_at_the_end:
+            type: constant
+            value: 0
+          gather_all_links_at_the_end:
+            type: constant
+            value: 0
+          image_caption:
+            type: constant
+            value: 0
+          max_retries:
+            type: constant
+            value: 3
+          no_cache:
+            type: constant
+            value: 0
+          no_cache_track:
+            type: constant
+            value: 0
+          proxy_server:
+            type: constant
+            value: null
+          remove_images:
+            type: constant
+            value: null
+          summary:
+            type: constant
+            value: 0
+          target_selector:
+            type: constant
+            value: null
+          wait_for_selector:
+            type: constant
+            value: null
+        tool_description: Fetch the target URL (can be a PDF) and convert it into
+          a LLM-friendly markdown.
+        tool_label: Fetch Single Page
+        tool_name: jina_reader
+        tool_node_version: '2'
+        tool_parameters:
+          url:
+            type: mixed
+            value: '{{#1718566787996.item#}}'
+        type: tool
+      height: 347
+      id: '1750950178033'
+      parentId: '1718566787996'
+      position:
+        x: 128
+        y: 65
+      positionAbsolute:
+        x: 1503.4238898349113
+        y: 347
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 1002
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        desc: ''
+        model:
+          completion_params: {}
+          mode: chat
+          name: gpt-4.1-mini
+          provider: langgenius/openai/openai
+        prompt_template:
+        - id: 9bc2d542-30a0-4c30-b069-49e686d59d8b
+          role: system
+          text: "You will be chunking content into a set of all possible questions\
+            \ and answers. Each chunk should focus on a main topic and be no more\
+            \ than 400 tokens long. Follow these steps:\n\n1. The main keyword to\
+            \ focus on is <keyword>\n\n2. Output should be in the following language\
+            \ <language>\n\n3. Exclude any entities, brands, or names from this list\
+            \ <brands_to_exclude>\n\n4. Chunk the content into sets of all possible\
+            \ questions and answers following these guidelines:\n   - Each question\
+            \ should reflect a main topic related to <keyword> from the content.\n\
+            \   - Ensure that each chunk (question + answer) does not exceed 400 tokens.\n\
+            \   - Write the question on one line.\n   - On the next line, write the\
+            \ answer as long as possible while staying within the 400 token limit.\n\
+            \   - After each question-answer pair, add \"###\" as a separator.\n \
+            \  - Do not include \"Ask Question\" or \"Give Answer\" in the output.\n\
+            \   - Do not mention or include any of the brands, entities, or names\
+            \ listed in the <brands_to_exclude> section.\n\n5. Here's an example of\
+            \ the desired output format:\n\nWhat is the capital of France?\nThe capital\
+            \ of France is Paris. It is known for its iconic landmarks such as the\
+            \ Eiffel Tower and the Louvre Museum.\n###\nHow does photosynthesis work?\n\
+            Photosynthesis is the process by which plants use sunlight, water, and\
+            \ carbon dioxide to produce oxygen and energy in the form of sugar.\n\
+            ###\n\n6. Begin chunking the content now, following the instructions above.\
+            \ Output in plain text in <language>."
+        - id: 1c4e1af1-413b-4add-882d-4f12385242db
+          role: user
+          text: '<keyword>
+
+            {{#1718558764026.keyword#}}
+
+            </keyword>
+
+
+            <language>
+
+            {{#1718558764026.language#}}.
+
+            </language>
+
+
+            <brands_to_exclude>
+
+            {{#1723028732575.text#}}
+
+            </brands_to_exclude>
+
+
+            Here is the content to be chunked:
+
+            <content>
+
+            {{#1718566787996.output#}}
+
+            </content>
+
+            '
+        selected: false
+        title: Pytania ogolne
+        type: llm
+        variables: []
+        vision:
+          enabled: false
+      height: 87
+      id: '1750950298285'
+      position:
+        x: 2202.7598642591247
+        y: 400.8604885081684
+      positionAbsolute:
+        x: 2202.7598642591247
+        y: 400.8604885081684
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    viewport:
+      x: -764.8126190959667
+      y: 81.40508095207667
+      zoom: 0.5743491774985183
+  rag_pipeline_variables: []

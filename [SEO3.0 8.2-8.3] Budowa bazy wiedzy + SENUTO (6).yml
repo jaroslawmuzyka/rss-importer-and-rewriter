@@ -1,0 +1,3043 @@
+app:
+  description: zmodyfikowany workflow SEO 3.0 o frazy z senuto
+  icon: 🤖
+  icon_background: '#FFEAD5'
+  mode: workflow
+  name: '[SEO3.0 8.2-8.3] Budowa bazy wiedzy + SENUTO'
+  use_icon_as_answer_icon: false
+dependencies:
+- current_identifier: null
+  type: marketplace
+  value:
+    marketplace_plugin_unique_identifier: langgenius/openai:0.0.26@c1e643ac6a7732f6333a783320b4d3026fa5e31d8e7026375b98d44418d33f26
+    version: null
+- current_identifier: null
+  type: marketplace
+  value:
+    marketplace_plugin_unique_identifier: langgenius/jina_tool:0.0.7@08d5935b56b9ddaa633204874c0fd796c14971489b6379fad1a430b5ec99b569
+    version: null
+kind: app
+version: 0.5.0
+workflow:
+  conversation_variables: []
+  environment_variables: []
+  features:
+    file_upload:
+      allowed_file_extensions:
+      - .JPG
+      - .JPEG
+      - .PNG
+      - .GIF
+      - .WEBP
+      - .SVG
+      allowed_file_types:
+      - image
+      allowed_file_upload_methods:
+      - local_file
+      - remote_url
+      enabled: false
+      fileUploadConfig:
+        audio_file_size_limit: 50
+        batch_count_limit: 5
+        file_size_limit: 15
+        image_file_batch_limit: 10
+        image_file_size_limit: 10
+        single_chunk_attachment_limit: 10
+        video_file_size_limit: 100
+        workflow_file_upload_limit: 10
+      image:
+        enabled: false
+        number_limits: 3
+        transfer_methods:
+        - local_file
+        - remote_url
+      number_limits: 3
+    opening_statement: ''
+    retriever_resource:
+      enabled: false
+    sensitive_word_avoidance:
+      enabled: false
+    speech_to_text:
+      enabled: false
+    suggested_questions: []
+    suggested_questions_after_answer:
+      enabled: false
+    text_to_speech:
+      enabled: false
+      language: ''
+      voice: ''
+  graph:
+    edges:
+    - data:
+        isInIteration: false
+        sourceType: iteration
+        targetType: llm
+      id: 1718566787996-source-1721305316764-target
+      selected: false
+      source: '1718566787996'
+      sourceHandle: source
+      target: '1721305316764'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: llm
+        targetType: iteration
+      id: 1721305316764-source-1718572989305-target
+      selected: false
+      source: '1721305316764'
+      sourceHandle: source
+      target: '1718572989305'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: true
+        iteration_id: '1718572989305'
+        sourceType: iteration-start
+        targetType: llm
+      id: 1718572989305start1-source-1718573002611-target
+      selected: false
+      source: 1718572989305start1
+      sourceHandle: source
+      target: '1718573002611'
+      targetHandle: target
+      type: custom
+      zIndex: 1002
+    - data:
+        isInIteration: true
+        iteration_id: '1721387035134'
+        sourceType: iteration-start
+        targetType: llm
+      id: 1721387035134start2-source-1721387053950-target
+      selected: false
+      source: 1721387035134start2
+      sourceHandle: source
+      target: '1721387053950'
+      targetHandle: target
+      type: custom
+      zIndex: 1002
+    - data:
+        isInIteration: true
+        iteration_id: '1722372492751'
+        sourceType: iteration-start
+        targetType: llm
+      id: 1722372492751start3-source-1722372527796-target
+      selected: false
+      source: 1722372492751start3
+      sourceHandle: source
+      target: '1722372527796'
+      targetHandle: target
+      type: custom
+      zIndex: 1002
+    - data:
+        isInIteration: false
+        sourceType: llm
+        targetType: iteration
+      id: 1721305316764-source-1721387035134-target
+      selected: false
+      source: '1721305316764'
+      sourceHandle: source
+      target: '1721387035134'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: llm
+        targetType: iteration
+      id: 1721305316764-source-1722372492751-target
+      selected: false
+      source: '1721305316764'
+      sourceHandle: source
+      target: '1722372492751'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: llm
+        targetType: end
+      id: 1721388402453-source-1718559325567-target
+      selected: false
+      source: '1721388402453'
+      sourceHandle: source
+      target: '1718559325567'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: llm
+        targetType: end
+      id: 1722373199087-source-1718559325567-target
+      selected: false
+      source: '1722373199087'
+      sourceHandle: source
+      target: '1718559325567'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: llm
+        targetType: end
+      id: 1749410327390-source-1718559325567-target
+      selected: false
+      source: '1749410327390'
+      sourceHandle: source
+      target: '1718559325567'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: iteration
+        targetType: llm
+      id: 1718566787996-source-1749410327390-target
+      selected: false
+      source: '1718566787996'
+      sourceHandle: source
+      target: '1749410327390'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: iteration
+        targetType: llm
+      id: 1721387035134-source-1721388402453-target
+      selected: false
+      source: '1721387035134'
+      sourceHandle: source
+      target: '1721388402453'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: iteration
+        targetType: llm
+      id: 1722372492751-source-1722373199087-target
+      selected: false
+      source: '1722372492751'
+      sourceHandle: source
+      target: '1722373199087'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: iteration
+        targetType: if-else
+      id: 1718572989305-source-1749475626202-target
+      selected: false
+      source: '1718572989305'
+      sourceHandle: source
+      target: '1749475626202'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: if-else
+        targetType: llm
+      id: 1749475626202-true-1749475555565-target
+      selected: false
+      source: '1749475626202'
+      sourceHandle: 'true'
+      target: '1749475555565'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: start
+        targetType: http-request
+      id: 1718558764026-source-1750934314359-target
+      selected: false
+      source: '1718558764026'
+      sourceHandle: source
+      target: '1750934314359'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: http-request
+        targetType: code
+      id: 1750934314359-source-1718566825729-target
+      selected: false
+      source: '1750934314359'
+      sourceHandle: source
+      target: '1718566825729'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: code
+        targetType: code
+      id: 1718566825729-source-17509357430220-target
+      selected: false
+      source: '1718566825729'
+      sourceHandle: source
+      target: '17509357430220'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: code
+        targetType: iteration
+      id: 17509357430220-source-1718566787996-target
+      selected: false
+      source: '17509357430220'
+      sourceHandle: source
+      target: '1718566787996'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1718566787996'
+        sourceType: iteration-start
+        targetType: tool
+      id: 1718566787996start0-source-1750936046624-target
+      selected: false
+      source: 1718566787996start0
+      sourceHandle: source
+      target: '1750936046624'
+      targetHandle: target
+      type: custom
+      zIndex: 1002
+    - data:
+        isInLoop: false
+        sourceType: llm
+        targetType: llm
+      id: 1749475555565-source-1718576445663-target
+      selected: false
+      source: '1749475555565'
+      sourceHandle: source
+      target: '1718576445663'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: if-else
+        targetType: llm
+      id: 1749475626202-false-17660848057870-target
+      selected: false
+      source: '1749475626202'
+      sourceHandle: 'false'
+      target: '17660848057870'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: llm
+        targetType: code
+      id: 1718576445663-source-1766085502482-target
+      selected: false
+      source: '1718576445663'
+      sourceHandle: source
+      target: '1766085502482'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: llm
+        targetType: code
+      id: 17660848057870-source-1766085502482-target
+      selected: false
+      source: '17660848057870'
+      sourceHandle: source
+      target: '1766085502482'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: code
+        targetType: end
+      id: 1766085502482-source-1718559325567-target
+      selected: false
+      source: '1766085502482'
+      sourceHandle: source
+      target: '1718559325567'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: start
+        targetType: http-request
+      id: 1718558764026-source-1768653366631-target
+      selected: false
+      source: '1718558764026'
+      sourceHandle: source
+      target: '1768653366631'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: code
+        targetType: code
+      id: 1718566825729-source-1768653585242-target
+      selected: false
+      source: '1718566825729'
+      sourceHandle: source
+      target: '1768653585242'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: http-request
+        targetType: code
+      id: 1768653366631-source-1768656013543-target
+      selected: false
+      source: '1768653366631'
+      sourceHandle: source
+      target: '1768656013543'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: code
+        targetType: code
+      id: 1768656013543-source-1768661139253-target
+      selected: false
+      source: '1768656013543'
+      sourceHandle: source
+      target: '1768661139253'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: code
+        targetType: iteration
+      id: 1768661139253-source-1768663199894-target
+      selected: false
+      source: '1768661139253'
+      sourceHandle: source
+      target: '1768663199894'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: code
+        targetType: iteration
+      id: 1768653585242-source-1768663199894-target
+      selected: false
+      source: '1768653585242'
+      sourceHandle: source
+      target: '1768663199894'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1768663199894'
+        sourceType: iteration-start
+        targetType: http-request
+      id: 1768663199894start-source-1768663233433-target
+      selected: false
+      source: 1768663199894start
+      sourceHandle: source
+      target: '1768663233433'
+      targetHandle: target
+      type: custom
+      zIndex: 1002
+    - data:
+        isInLoop: false
+        sourceType: iteration
+        targetType: code
+      id: 1768663199894-source-1768665310876-target
+      selected: false
+      source: '1768663199894'
+      sourceHandle: source
+      target: '1768665310876'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: code
+        targetType: end
+      id: 1768665310876-source-1718559325567-target
+      selected: false
+      source: '1768665310876'
+      sourceHandle: source
+      target: '1718559325567'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: code
+        targetType: llm
+      id: 1768665310876-source-1721388402453-target
+      selected: false
+      source: '1768665310876'
+      sourceHandle: source
+      target: '1721388402453'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    nodes:
+    - data:
+        desc: ''
+        selected: false
+        title: Start
+        type: start
+        variables:
+        - label: keyword
+          max_length: 256
+          options: []
+          required: true
+          type: text-input
+          variable: keyword
+        - label: language
+          max_length: 48
+          options: []
+          required: true
+          type: text-input
+          variable: language
+        - label: aio
+          max_length: 480000000
+          options: []
+          required: false
+          type: paragraph
+          variable: aio
+      height: 160
+      id: '1718558764026'
+      position:
+        x: -297.05595351969896
+        y: 282
+      positionAbsolute:
+        x: -297.05595351969896
+        y: 282
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        desc: ''
+        outputs:
+        - value_selector:
+          - '1721388402453'
+          - text
+          variable: frazy z serp
+        - value_selector:
+          - '1766085502482'
+          - result
+          value_type: string
+          variable: grafinformacji
+        - value_selector:
+          - '1722373199087'
+          - text
+          variable: naglowki
+        - value_selector:
+          - '1749410327390'
+          - text
+          variable: knowledge_graph
+        - value_selector:
+          - '1768665310876'
+          - frazy_senuto
+          value_type: string
+          variable: frazy_senuto
+        - value_selector:
+          - '1768665310876'
+          - raport_senuto
+          value_type: string
+          variable: raport_senuto
+        selected: false
+        title: Koniec
+        type: end
+      height: 218
+      id: '1718559325567'
+      position:
+        x: 5909.138806614426
+        y: 388.6145318317016
+      positionAbsolute:
+        x: 5909.138806614426
+        y: 388.6145318317016
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        desc: ''
+        error_handle_mode: terminated
+        height: 519
+        is_parallel: true
+        iterator_selector:
+        - '1718566825729'
+        - result
+        output_selector:
+        - '1750936046624'
+        - text
+        output_type: array[string]
+        parallel_nums: 6
+        selected: false
+        startNodeType: http-request
+        start_node_id: 1718566787996start0
+        title: Iteracja WEB
+        type: iteration
+        width: 566
+      height: 519
+      id: '1718566787996'
+      position:
+        x: 1534.4391355005732
+        y: 282
+      positionAbsolute:
+        x: 1534.4391355005732
+        y: 282
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 566
+      zIndex: 1
+    - data:
+        code: "function main(input) {\n    // 1. Parsowanie wejścia\n    let outerData;\n\
+          \    try {\n        outerData = JSON.parse(input.data);\n    } catch (e)\
+          \ {\n        console.error(\"JSON Parse Error\", e);\n        return { result:\
+          \ [] };\n    }\n\n    // 2. Naprawa logiki przypisania jsonData\n    //\
+          \ DIFY przekazuje body odpowiedzi. Sprawdzamy, gdzie leżą wyniki.\n    //\
+          \ Zazwyczaj wyniki są bezpośrednio w outerData lub w outerData.data (zależnie\
+          \ od API)\n    \n    let jsonData = null;\n\n    if (outerData && outerData.results)\
+          \ {\n        // Przypadek 1: Wyniki są bezpośrednio w głównym obiekcie (najczęstsze\
+          \ w SERP API)\n        jsonData = outerData;\n    } else if (outerData &&\
+          \ outerData.data) {\n        // Przypadek 2: Wyniki są w jednym wrapperze\
+          \ 'data'\n        jsonData = outerData.data;\n    } else {\n        // Fallback:\
+          \ traktujemy cały obiekt jako dane\n        jsonData = outerData;\n    }\n\
+          \n    // Jeśli po tych operacjach nadal nie mamy dostępu do struktury wyników,\
+          \ zwracamy pustą tablicę\n    // Zmieniam warunek na sprawdzenie czy istnieją\
+          \ jakiekolwiek results\n    if (!jsonData || (!jsonData.results && !jsonData.organic_results))\
+          \ {\n         console.error(\"Struktura JSON nie zawiera klucza 'results'\
+          \ ani 'organic_results'. Zwrócony JSON:\", JSON.stringify(outerData).substring(0,\
+          \ 200));\n         return { result: [] };\n    }\n\n    // Zmienna do przechowywania\
+          \ wszystkich znalezionych adresów URL.\n    let allUrls = [];\n\n    //\
+          \ --- PONIŻEJ ORYGINALNA LOGIKA EKSTRAKCJI (z drobnymi poprawkami bezpieczeństwa)\
+          \ ---\n\n    // 1. Pobierz adresy URL z \"organic_results\"\n    // Niektóre\
+          \ API zwracają organic_results bezpośrednio w roocie, inne w .results\n\
+          \    const organicResults = jsonData.organic_results || (jsonData.results\
+          \ ? jsonData.results.organic_results : null);\n\n    if (organicResults\
+          \ && Array.isArray(organicResults)) {\n        organicResults.forEach(item\
+          \ => {\n            if (item.url) {\n                allUrls.push(item.url);\n\
+          \            }\n        });\n    }\n\n    // 2. Jeśli istnieje, pobierz\
+          \ adresy URL z \"ai_overview\" / \"snippets_data\"\n    // Ścieżka może\
+          \ być różna, sprawdzamy bezpiecznie\n    if (jsonData.results && jsonData.results.snippets_data\
+          \ && jsonData.results.snippets_data.ai_overview) {\n        const aiOverview\
+          \ = jsonData.results.snippets_data.ai_overview;\n        if (aiOverview.sources)\
+          \ {\n            aiOverview.sources.forEach(source => {\n              \
+          \  if (source.url) {\n                    const cleanedUrl = source.url.split('#:~:text=')[0];\n\
+          \                    allUrls.push(cleanedUrl);\n                }\n    \
+          \        });\n        }\n    }\n\n    // 3. Utwórz listę unikalnych adresów\
+          \ URL.\n    const uniqueUrls = [...new Set(allUrls)];\n\n    // Platforma\
+          \ wymaga, aby tablica wyjściowa zawierała mniej niż 30 elementów.\n    const\
+          \ limitedUniqueUrlList = uniqueUrls.slice(0, 25);\n\n    return { result:\
+          \ limitedUniqueUrlList };\n}"
+        code_language: javascript
+        desc: ''
+        outputs:
+          result:
+            children: null
+            type: array[string]
+        selected: false
+        title: Zebranie URL
+        type: code
+        variables:
+        - value_selector:
+          - '1750934314359'
+          - body
+          variable: data
+      height: 51
+      id: '1718566825729'
+      position:
+        x: 719.5176294161422
+        y: 282
+      positionAbsolute:
+        x: 719.5176294161422
+        y: 282
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        desc: ''
+        error_handle_mode: terminated
+        height: 240
+        is_parallel: true
+        iterator_selector:
+        - '1718566787996'
+        - output
+        output_selector:
+        - '1718573002611'
+        - text
+        output_type: array[string]
+        parallel_nums: 6
+        selected: false
+        startNodeType: llm
+        start_node_id: 1718572989305start1
+        title: Ekstrakcja bazy wiedzy
+        type: iteration
+        width: 377
+      height: 240
+      id: '1718572989305'
+      position:
+        x: 3270.050176466005
+        y: 286.07800169969664
+      positionAbsolute:
+        x: 3270.050176466005
+        y: 286.07800169969664
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 377
+      zIndex: 1
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        desc: ''
+        isInIteration: true
+        isIterationStart: true
+        iteration_id: '1718572989305'
+        model:
+          completion_params:
+            temperature: 0
+          mode: chat
+          name: gpt-4o-mini
+          provider: langgenius/openai/openai
+        prompt_template:
+        - edition_type: basic
+          id: 592d7c26-2cb7-4680-a1cf-d69d6b16bd44
+          role: system
+          text: "You are an AI assistant tasked with extracting semantic predicates\
+            \ from provided content. Your objective is to identify subject-predicate-object\
+            \ relationships explicitly related to the <keyword>, while strictly adhering\
+            \ to the following constraints and exclusions.\n\n## Instructions\nFollow\
+            \ these steps to extract and refine semantic predicates:\n1. Identify\
+            \ Relationships: Extract subject-predicate-object triples from the content,\
+            \ where the subject or object directly involves the <keyword>.\n2.Relevance\
+            \ Filter: Include only triples where the <keyword> is the subject, object,\
+            \ or a core component of the relationship, ensuring direct relevance to\
+            \ the main topic.\n3. Exclude Personal Information: Remove any triples\
+            \ containing personal details, such as names or surnames of individuals.\n\
+            4. Maintain Topic Focus: Discard any triples not directly tied to the\
+            \ <keyword>, avoiding tangential or unrelated information.\n5. Apply Exclusion\
+            \ List: Exclude triples mentioning entities, brands, or names listed in\
+            \ the brands exclusion list <brands>\n\n## Output Format\nFor each relevant\
+            \ semantic predicate, format your output as:\n(\"subject\", \"predicate\"\
+            , \"object\", \"description\")  \n\n- Subject: A noun or noun phrase related\
+            \ to the <keyword>.\n- Predicate: A verb or verb phrase describing the\
+            \ relationship.\n- Object: A noun or noun phrase (optional if predicate\
+            \ is intransitive), relevant to the <keyword>.\n- Description: Context\
+            \ from which the triple is derived.\n\n## Requirements\n1. <keyword> Focus:\
+            \ Only include predicates where the is central to the relationship.\n\
+            2. Language: Extract in <language>\n3. No Personal Data: Avoid any mention\
+            \ of specific individuals.\n4. No Excluded Entities: Generalize subjects\
+            \ (e.g., \"various entities\" instead of \"Google\") to exclude brands\
+            \ in the exclusion list.\n5. Clarity and Precision: Ensure triples are\
+            \ concise, accurate, and reflect the content’s intent.\n\n## Output Presentation\n\
+            Present the final output as a list of semantic predicates, each on a new\
+            \ line.\n\n## Example\nIf <keyword> is \"artificial intelligence\" and\
+            \ the content includes:\n\n\"Artificial intelligence is advancing rapidly,\
+            \ and Google is developing AI tools.\"\n\nOutput:\n(\"artificial intelligence\"\
+            , \"has\", \"rapid advancement\", \"Artificial intelligence is advancing\
+            \ rapidly\")"
+        - id: d11434db-46ee-45e8-90f2-b34401bceef1
+          role: user
+          text: 'Focus on extracting semantic predicates related to the following
+            keyword:
+
+            <keyword>
+
+            {{#1718558764026.keyword#}}
+
+            </keyword>
+
+            Extract the predicates in this language:
+
+            <language>
+
+            {{#1718558764026.language#}}
+
+            </language>
+
+            Exclude any entities, brands, or names from this list:
+
+            <brands>
+
+            {{#1721305316764.text#}}
+
+            </brands>
+
+
+            Here is the content you will analyze:
+
+            <content>
+
+            {{#1718572989305.item#}}
+
+            </content>'
+        retry_config:
+          max_retries: 3
+          retry_enabled: true
+          retry_interval: 1000
+        selected: false
+        title: LLM 2
+        type: llm
+        variables: []
+        vision:
+          configs:
+            detail: high
+          enabled: false
+      extent: parent
+      height: 133
+      id: '1718573002611'
+      parentId: '1718572989305'
+      position:
+        x: 114.54842593924423
+        y: 84
+      positionAbsolute:
+        x: 3384.598602405249
+        y: 370.07800169969664
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 1001
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        desc: ''
+        model:
+          completion_params:
+            temperature: 0
+          mode: chat
+          name: gpt-4o-mini
+          provider: langgenius/openai/openai
+        prompt_template:
+        - id: b45a90f7-7450-4971-863c-1235600c673a
+          role: system
+          text: "You are tasked with building a information graph from a given list\
+            \ of semantic predicates. \n\nThe information graph must focus exclusively\
+            \ on the main topic defined by the <keyword> and be presented in a structured\
+            \ JSON format. Follow the instructions carefully to ensure the graph is\
+            \ accurate, relevant, and adheres to all specified constraints.\n\n##\
+            \ Instructions\nTo build the information graph, follow these steps:\n\
+            1. Analyze Predicates: Review each semantic predicate in the provided\
+            \ list to identify entities, relationships, and attributes.\n2. Relevance\
+            \ Filter: Include only those predicates that are directly related to the\
+            \ <keyword>. Discard any predicates that do not pertain to the main topic.\n\
+            3. Exclude Personal Information: Remove any predicates containing personal\
+            \ details, such as names or surnames of individuals.\n4. Apply Exclusion\
+            \ List: Exclude any predicates that mention entities, brands, or names\
+            \ listed in the exclusion list <brands>\n5. Structure the Graph: For each\
+            \ relevant predicate, extract the entity, relationship, attribute, and\
+            \ description, and format them according to the specified JSON structure.\n\
+            \n## Output Format\nOrganize the information graph in the following JSON\
+            \ format:\n[\n    {\n        \"entity\": \"...\",\n        \"relationship\"\
+            : \"...\",\n        \"attribute\": \"...\",\n        \"description\":\
+            \ \"...\"\n    },\n    {\n        \"entity\": \"...\",\n        \"relationship\"\
+            : \"...\",\n        \"attribute\": \"...\",\n        \"description\":\
+            \ \"...\"\n    }\n]\n\n1. Entity: The primary subject or object related\
+            \ to the <keyword>.\n2. Relationship: The connection or interaction between\
+            \ entities.\n3. Attribute: A characteristic or property of the entity.\n\
+            4. Description: A brief explanation or context for the predicate.\n\n\
+            ## Requirements\n1. Topic Focus: Ensure all elements in the information\
+            \ graph are directly relevant to the <keyword>.\n2. No Personal Data:\
+            \ Avoid including any personal information, such as names or surnames.\n\
+            3. No Excluded Entities: Generalize or omit any mentions of brands or\
+            \ entities in the exclusion list.\n4. Clarity and Precision: Each entry\
+            \ should be concise, accurate, and reflect the intent of the original\
+            \ predicate.\n5. Language: Present the information graph in <language>\n\
+            \n## Output Presentation\nProvide the final information graph as a JSON\
+            \ array in plain text, without any additional explanation or commentary."
+        - id: 256e54d7-b19d-47d8-86b2-80e167f6e27d
+          role: user
+          text: '## You will be given a list of semantic predicates in the following
+            format:
+
+            <semantic_predicates>
+
+            {{#1749475555565.text#}}
+
+            {{#1718572989305.output#}}
+
+            </semantic_predicates>
+
+
+            ## The main topic to focus on is:
+
+            <keyword>{{#1718558764026.keyword#}}</keyword>
+
+
+            ## The language for the knowledge graph is:
+
+            <language>{{#1718558764026.language#}}</language>
+
+
+            ## Exclude the following brands, entities, and names from the knowledge
+            graph:
+
+            <brands>{{#1721305316764.text#}}</brands>'
+        selected: false
+        title: LLM - budowa grafu informacji
+        type: llm
+        variables: []
+        vision:
+          configs:
+            detail: high
+          enabled: false
+      height: 87
+      id: '1718576445663'
+      position:
+        x: 4724.707988499571
+        y: 282
+      positionAbsolute:
+        x: 4724.707988499571
+        y: 282
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        desc: ''
+        model:
+          completion_params:
+            temperature: 0
+          mode: chat
+          name: gpt-4o-mini
+          provider: langgenius/openai/openai
+        prompt_template:
+        - id: 515b1ccb-fea4-4128-be97-d03097b1e14d
+          role: system
+          text: 'You will be given a list of text entries. Your task is to extract
+            brand names and domain names from this list.
+
+
+            Extract all brand names and domain names from the given list. A brand
+            name is typically a company or product name, while a domain name is a
+            web address (e.g., example.com).
+
+            Provide your output in the following format:
+
+            <brands>
+
+            [List of extracted brand names, one per line]
+
+            </brands>
+
+            <domains>
+
+            [List of extracted domain names, one per line]
+
+            </domains>
+
+            If you''re unsure whether an entry is a brand or domain, include it in
+            the category that seems most appropriate. If an entry could be both a
+            brand and a domain, include it in both lists.
+
+            Make sure to include all identified brands and domains, even if there
+            are multiple occurrences of the same name.
+
+            Please provide your output now.'
+        - id: 37318b29-c02d-49a1-a3a8-b9b935bf7e33
+          role: user
+          text: 'Here is the list:
+
+            <list>
+
+            {{#1718566825729.result#}}
+
+            </list>'
+        retry_config:
+          max_retries: 3
+          retry_enabled: true
+          retry_interval: 1000
+        selected: false
+        title: Ekstrakcja brandow
+        type: llm
+        variables: []
+        vision:
+          configs:
+            detail: high
+          enabled: false
+      height: 133
+      id: '1721305316764'
+      position:
+        x: 2608.8690577288926
+        y: 276.9311343707341
+      positionAbsolute:
+        x: 2608.8690577288926
+        y: 276.9311343707341
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        desc: ''
+        error_handle_mode: terminated
+        height: 240
+        is_parallel: true
+        iterator_selector:
+        - '1718566787996'
+        - output
+        output_selector:
+        - '1721387053950'
+        - text
+        output_type: array[string]
+        parallel_nums: 6
+        selected: false
+        startNodeType: llm
+        start_node_id: 1721387035134start2
+        title: Ekstrakcja slow kluczowych
+        type: iteration
+        width: 377
+      height: 240
+      id: '1721387035134'
+      position:
+        x: 3270.050176466005
+        y: -14.126465571917038
+      positionAbsolute:
+        x: 3270.050176466005
+        y: -14.126465571917038
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 377
+      zIndex: 1
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        desc: ''
+        isInIteration: true
+        isIterationStart: true
+        iteration_id: '1721387035134'
+        model:
+          completion_params:
+            response_format: text
+            temperature: 0
+          mode: chat
+          name: gpt-4o-mini
+          provider: langgenius/openai/openai
+        prompt_template:
+        - id: 32d4da97-d9cb-44e9-b242-21f3ac9d6625
+          role: system
+          text: "You are an AI assistant tasked with extracting the most important\
+            \ keywords and entities from given content. Your goal is to identify terms\
+            \ that are **highly connected** to a <main_topic>. Follow these instructions\
+            \ carefully:\n\n#### Instructions for Keyword Extraction:\n\n1. **Extract\
+            \ Keywords and Entities:**\n   - Identify terms that are **central** to\
+            \ the <main_topic>. Include:\n     - **Nouns, proper nouns, and noun phrases**\
+            \ (e.g., \"artificial intelligence,\" \"San Francisco\")\n     - **Verbs\
+            \ and verb phrases** describing actions directly tied to the topic (e.g.,\
+            \ \"training models,\" \"processing data\")\n     - **Adjectives** that\
+            \ provide essential context or qualifications (e.g., \"predictive,\" \"\
+            scalable\")\n     - **Technical terms or jargon** specific to the field\
+            \ (e.g., \"blockchain,\" \"gradient descent\")\n     - **Acronyms and\
+            \ abbreviations** (e.g., \"NLP,\" \"IoT\")\n   - Focus only on terms that\
+            \ are strongly tied to the <main_topic>, not peripheral or unrelated words.\n\
+            \n2. **Criteria for Each Keyword or Entity:**\n   - It must be **directly\
+            \ related** to the <main_topic> and necessary for understanding it.\n\
+            \   - It should hold clear importance within the content’s context.\n\
+            \   - It must enhance comprehension of the <main_topic> or its key concepts.\n\
+            \n3. **Format Your Output:**\n   - Present the keywords and entities as\
+            \ a list, with each item:\n     - On a new line, preceded by a hyphen\
+            \ (e.g., - machine learning).\n     - Listed only once—no duplicates allowed.\n\
+            \n4. **Review and Refine:**\n   - Remove any keywords or entities that:\n\
+            \     - Are not directly linked to the <main_topic> (e.g., off-topic terms).\n\
+            \     - Are **too general or vague** to be meaningful (e.g., \"system,\"\
+            \ \"good\").\n     - Are of **low significance** in the context of the\
+            \ <main_topic>.\n     - Appear in the provided **list of excluded brands,\
+            \ entities, and names**.\n   - Check for terms that might be ambiguous\
+            \ or easily misinterpreted and either clarify or remove them.\n\n5. **Final\
+            \ Check:**\n   - Confirm the list’s quality by asking:\n     - Does each\
+            \ keyword or entity meaningfully contribute to understanding the <main_topic>?\n\
+            \     - Have all duplicates, unrelated, or tangential terms been removed?\n\
+            \     - Is the list concise and focused?\n     - Have all items from the\
+            \ exclusion list been omitted?\n     - Are there any ambiguous terms that\
+            \ could confuse the user?\n\n#### Output Format:\nPresent your final list\
+            \ within <keywords> tags, ensuring all items are in the specified language\
+            \ and directly relevant to the <main_topic>. For example:\n\n<keywords>\n\
+            - machine learning\n- neural networks\n- data analysis\n- Python\n</keywords>\n\
+            \n#### Important Notes:\n- Do not include duplicate keywords or entities\
+            \ in the output.\n- Always refer to the provided **exclusion list** and\
+            \ exclude those items.\n- Ensure the list is streamlined and specific\
+            \ to the <main_topic>."
+        - id: 1bef03cc-3b0d-4778-9b1b-96166f953dab
+          role: user
+          text: 'The main topic keyword you should focus on is:
+
+            <main_topic>
+
+            {{#1718558764026.keyword#}}
+
+            </main_topic>
+
+
+            The language of the content and extracted keywords should be:
+
+            <language>
+
+            {{#1718558764026.language#}}
+
+            </language>
+
+
+            Exclude the following brands, entities, and names from your keyword list:
+
+            <excluded_brands>
+
+            {{#1721305316764.text#}}
+
+            </excluded_brands>
+
+
+            Here is the content you need to analyze:
+
+            <content>
+
+            {{#1721387035134.item#}}
+
+            </content>'
+        retry_config:
+          max_retries: 3
+          retry_enabled: true
+          retry_interval: 1000
+        selected: false
+        structured_output_enabled: false
+        title: LLM 6
+        type: llm
+        variables: []
+        vision:
+          configs:
+            detail: high
+          enabled: false
+      extent: parent
+      height: 133
+      id: '1721387053950'
+      parentId: '1721387035134'
+      position:
+        x: 117
+        y: 85
+      positionAbsolute:
+        x: 3387.050176466005
+        y: 70.87353442808296
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 1001
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        desc: ''
+        model:
+          completion_params:
+            temperature: 0
+          mode: chat
+          name: gpt-4o-mini
+          provider: langgenius/openai/openai
+        prompt_template:
+        - id: ed13c51e-a03a-4383-8b82-084eb6c10026
+          role: system
+          text: "You are tasked with extracting unique keywords and entities from\
+            \ the provided text that are **directly related to the main topic** specified\
+            \ by the keyword: <keyword>. The keywords and entities must be presented\
+            \ in the following language: <language>.\n\n### Instructions:\n\n1. **Identify\
+            \ Keywords and Entities**:\n   - Extract significant nouns, proper nouns,\
+            \ phrases, and technical terms from the text.\n   - Focus on recurring\
+            \ themes or concepts tied to the <keyword>.\n   - Include relevant acronyms\
+            \ or abbreviations, providing their full forms if applicable (e.g., \"\
+            AI (Artificial Intelligence)\").\n\n2. **Ensure Relevance**:\n   - Include\
+            \ only keywords and entities that are **directly or closely connected**\
+            \ to the main keyword: <keyword>.\n   - Exclude terms that are only tangentially\
+            \ related or not central to the main topic.\n\n3. **Remove Duplicates**:\n\
+            \   - Ensure each keyword or entity appears only once in the final list.\n\
+            \n4. **Maintain Language Consistency**:\n   - Translate any keywords or\
+            \ entities from other languages into <language>.\n\n5. **Apply Exclusions**:\n\
+            \   - Exclude the following brands, entities, and names from your list:\
+            \ <brands>.\n\n6. **Format the Output**:\n   - Present the final list\
+            \ in a comma-separated format:  \n\n     *Keyword/Entity 1, Keyword/Entity\
+            \ 2, Keyword/Entity 3, ...*\n\n### Important Notes:\n- Prioritize relevance\
+            \ to the main keyword: <keyword>.\n- Do not include explanations, commentary,\
+            \ or unrelated terms.\n- Deliver a concise, unique list that adheres to\
+            \ the specified language and format."
+        - id: f7804972-3684-4a61-99c9-76b551fa24a5
+          role: user
+          text: "### Main Topic Keyword:\n<keyword>{{#1718558764026.keyword#}}</keyword>\n\
+            \n### Language for Extracted Keywords and Entities:\n<language>{{#1718558764026.language#}}</language>\n\
+            \n### Exclusions (Brands, Entities, Names to Omit):\n<brands>{{#1721305316764.text#}}</brands>\n\
+            \n### Text for Extraction:\n<text> \n{{#1718558764026.aio#}}\n{{#1721387035134.output#}}\n\
+            {{#1768665310876.frazy_senuto#}}\n</text>"
+        selected: false
+        title: Keywords from SERP
+        type: llm
+        variables: []
+        vision:
+          configs:
+            detail: high
+          enabled: false
+      height: 87
+      id: '1721388402453'
+      position:
+        x: 3950.3199748872103
+        y: -14.126465571917038
+      positionAbsolute:
+        x: 3950.3199748872103
+        y: -14.126465571917038
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        desc: ''
+        error_handle_mode: terminated
+        height: 240
+        is_parallel: true
+        iterator_selector:
+        - '1718566787996'
+        - output
+        output_selector:
+        - '1722372527796'
+        - text
+        output_type: array[string]
+        parallel_nums: 6
+        selected: false
+        startNodeType: llm
+        start_node_id: 1722372492751start3
+        title: Ekstrakcja nagłówków
+        type: iteration
+        width: 377
+      height: 240
+      id: '1722372492751'
+      position:
+        x: 3270.050176466005
+        y: 556.9942282618845
+      positionAbsolute:
+        x: 3270.050176466005
+        y: 556.9942282618845
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 377
+      zIndex: 1
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        desc: ''
+        isInIteration: true
+        isIterationStart: true
+        iteration_id: '1722372492751'
+        model:
+          completion_params:
+            temperature: 0
+          mode: chat
+          name: gpt-4o-mini
+          provider: langgenius/openai/openai
+        prompt_template:
+        - id: da802b8c-6389-4e2c-96a9-621e1fb0689e
+          role: system
+          text: 'You are tasked with extracting h2 and h3 headings from the given
+            markdown website content. Here''s the content you''ll be working with:
+
+
+            Your goal is to identify and extract all h2 and h3 headings from this
+            markdown content. Here''s how to recognize these headings:
+
+
+            - h2 headings start with two hash symbols (##) followed by a space and
+            then the heading text
+
+            - h3 headings start with three hash symbols (###) followed by a space
+            and then the heading text
+
+
+            When you find these headings, you should extract them and format your
+            output as follows:
+
+
+            - For h2 headings, use the format: <h2>Heading text</h2>
+
+            - For h3 headings, use the format: <h3>Heading text</h3>
+
+
+            Here''s an example of how your output should look:
+
+
+            <example>
+
+            <h2>Introduction</h2>
+
+            <h3>Background</h3>
+
+            <h3>Objectives</h3>
+
+            <h2>Methodology</h2>
+
+            <h3>Data Collection</h3>
+
+            <h3>Analysis</h3>
+
+            </example>
+
+
+            Process the entire markdown content and extract all h2 and h3 headings
+            you find. Maintain the order in which they appear in the original content.
+
+
+            Provide your final output enclosed in <extracted_headings> tags. Do not
+            include any explanations or additional text outside of these tags.'
+        - id: 5f14b0aa-4690-4c02-9ed6-d522bf9864ea
+          role: user
+          text: '<markdown_content>
+
+            {{#1722372492751.item#}}
+
+            </markdown_content>'
+        retry_config:
+          max_retries: 3
+          retry_enabled: true
+          retry_interval: 1000
+        selected: false
+        title: LLM 6
+        type: llm
+        variables: []
+        vision:
+          configs:
+            detail: high
+          enabled: false
+      extent: parent
+      height: 133
+      id: '1722372527796'
+      parentId: '1722372492751'
+      position:
+        x: 117
+        y: 85
+      positionAbsolute:
+        x: 3387.050176466005
+        y: 641.9942282618845
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 1001
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        desc: ''
+        model:
+          completion_params:
+            response_format: json_object
+            temperature: 0
+          mode: chat
+          name: gpt-4o-mini
+          provider: langgenius/openai/openai
+        prompt_template:
+        - id: c1822a74-384b-4e67-b032-1c75042927d8
+          role: system
+          text: "Your task is to generate unique headings from a given list of headings.\
+            \ These headings should reflect the main topic <main_topic> and be in\
+            \ the specified language <language>. Follow these instructions carefully:\n\
+            \n1. You will be provided with a list of headings in <headings_list>\n\
+            \n2. Review the list and select unique headings that best represent the\
+            \ main topic <main_topic>. Avoid duplicates or very similar headings.\n\
+            \n3. Ensure that the selected headings are relevant to the main topic\
+            \ and can be easily understood in the context of <main_topic>.\n\n4. Organize\
+            \ headings in the following json format:\n[\n{\n        \"heading\": \"\
+            h2\",\n        \"value\": \"...\"\n},\n{\n        \"heading\": \"h2\"\
+            ,\n        \"value\": \"...\"\n},\n{\n        \"heading\": \"h3\",\n \
+            \       \"value\": \"...\"\n}\n]\n\n\nDo not include any explanations\
+            \ or additional text"
+        - id: d7330d02-753d-4b24-9838-ca6c2efbad96
+          role: user
+          text: 'Main topic:
+
+            <main_topic>
+
+            {{#1718558764026.keyword#}}
+
+            </main_topic>
+
+
+            Language:
+
+            <language>
+
+            {{#1718558764026.language#}}
+
+            </language>
+
+
+            <headings_list>
+
+            {{#1722372492751.output#}}
+
+            </headings_list>'
+        selected: false
+        title: Headingi
+        type: llm
+        variables: []
+        vision:
+          configs:
+            detail: high
+          enabled: false
+      height: 87
+      id: '1722373199087'
+      position:
+        x: 4056.527143609337
+        y: 604.0039586798752
+      positionAbsolute:
+        x: 4056.527143609337
+        y: 604.0039586798752
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        desc: ''
+        isInIteration: true
+        selected: false
+        title: ''
+        type: iteration-start
+      draggable: false
+      height: 48
+      id: 1718566787996start0
+      parentId: '1718566787996'
+      position:
+        x: 24
+        y: 68
+      positionAbsolute:
+        x: 1558.4391355005732
+        y: 350
+      selectable: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom-iteration-start
+      width: 44
+      zIndex: 1002
+    - data:
+        desc: ''
+        isInIteration: true
+        selected: false
+        title: ''
+        type: iteration-start
+      draggable: false
+      height: 48
+      id: 1718572989305start1
+      parentId: '1718572989305'
+      position:
+        x: 24
+        y: 68
+      positionAbsolute:
+        x: 3294.050176466005
+        y: 354.07800169969664
+      selectable: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom-iteration-start
+      width: 44
+      zIndex: 1002
+    - data:
+        desc: ''
+        isInIteration: true
+        selected: false
+        title: ''
+        type: iteration-start
+      draggable: false
+      height: 48
+      id: 1721387035134start2
+      parentId: '1721387035134'
+      position:
+        x: 24
+        y: 68
+      positionAbsolute:
+        x: 3294.050176466005
+        y: 53.87353442808296
+      selectable: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom-iteration-start
+      width: 44
+      zIndex: 1002
+    - data:
+        desc: ''
+        isInIteration: true
+        selected: false
+        title: ''
+        type: iteration-start
+      draggable: false
+      height: 48
+      id: 1722372492751start3
+      parentId: '1722372492751'
+      position:
+        x: 24
+        y: 68
+      positionAbsolute:
+        x: 3294.050176466005
+        y: 624.9942282618845
+      selectable: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom-iteration-start
+      width: 44
+      zIndex: 1002
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        desc: ''
+        model:
+          completion_params: {}
+          mode: chat
+          name: gpt-4.1-mini
+          provider: langgenius/openai/openai
+        prompt_template:
+        - id: f7556722-6e04-499d-b198-50b15d1775da
+          role: system
+          text: "# Goal\n \nIdentify and extract key entities and their relationships\
+            \ from the provided text, focusing on specific and unique information\
+            \ related to the central keyword while considering the source of each\
+            \ piece of information and the likely intent of users searching\nfor the\
+            \ central keyword \"<keyword>\".\n \n \n## Input Structure\n \nThe input\
+            \ consists of two parts:\n1. The central keyword, provided in the format:\
+            \ \"Central Keyword: <keyword>\"\n2. A TXT file containing content from\
+            \ multiple web pages\nThe central keyword is the main focus of the entity\
+            \ extraction task. All identified entities and relationships should be\
+            \ relevant to this central keyword and align with the likely intent of\
+            \ users searching for this keyword.\nThe TXT file is structured as follows:\n\
+            -----TEXT-----\n[content1]\n-----TEXT-----\n[content2]\n-----TEXT-----\n\
+            [content3]\n-----TEXT-----\n[content4]\n-----TEXT-----\n[content5]\n-----TEXT-----\n\
+            ...\n\nCopy- The `-----TEXT-----`, `-----TEXT-----`, etc. markers separate\
+            \ content from different web pages.\n- Each section contains:\n - A URL\
+            \ line indicating the source of the content\n - A Content line containing\
+            \ the actual text content of the web page\n- The last section will be\
+            \ followed by an additional `-----TEXT-----` marker to indicate the end\
+            \ of the input.\nWhen processing this input:\n- Treat each section (from\
+            \ one marker to the next) as content from a single web page.\n- Use the\
+            \ URL to identify the source of the content. This is crucial for determining\
+            \ if an entity is specific to a particular source or more generally applicable.\n\
+            - The Content part contains the actual text to analyze for entities and\
+            \ relationships.\n \n## Entity Definition and Guidelines\n \nAn entity\
+            \ is a specific, well-defined element providing meaningful and unique\
+            \ information related to the central keyword. Entities should be more\
+            \ specific than broad categories but not excessively detailed.\n \n###\
+            \ Guidelines for identifying entities:\n \n1. **User Intent**: Consider\
+            \ the likely intent of users searching for the central keyword. Entities\
+            \ should align with what users are most likely looking for when they search\
+            \ for this keyword.\n2. **Specificity**: Entities should be specific but\
+            \ not overly detailed. Include various types of related items and specific\
+            \ aspects related to the central keyword.\n3. **Relevance**: Each entity\
+            \ must directly relate to the central keyword and provide unique information\
+            \ that aligns with user intent.\n4. **Informativeness**: Entities should\
+            \ offer valuable insights about the topic, not just broad categories.\n\
+            5. **Distinctiveness**: Include entities that are distinct from each other,\
+            \ even if they are subtypes of a broader category.\n6. **Language**: Keep\
+            \ entity names in their original language, but translate entity types\
+            \ to <language_name>.\n7. **Named Entities**: Include company names, brands,\
+            \ or products if they are strongly related to the central keyword, not\
+            \ just providing a service.\n8. **People**: Include names of people only\
+            \ if they are inventors of a concept or strongly associated with the central\
+            \ keyword.\n9. **Uniqueness**: Each entity should appear only once, but\
+            \ can have multiple relationships and aspects.\n10. **Multi-aspect**:\
+            \ If an entity describes multiple elements, assign it 2-3 types.\n11.\
+            \ **Detailed subtypes**: Include specific subtypes of main categories\
+            \ related to the central keyword.\n12. **Source consideration**: Pay attention\
+            \ to the URL of each text segment. If an entity appears only on one specific\
+            \ website, it may be unique to that source and should be treated cautiously.\n\
+            13. **Generalization**: While including specific entities, also create\
+            \ generalized entities that group similar concepts when appropriate.\n\
+            14. **Avoiding URL-specific entities**: Do not list specific products\
+            \ or brands from a single URL unless they are highly relevant to the central\
+            \ keyword and appear in multiple sources.\n15. **Merging similar entities**:\
+            \ If two entities have the same name but different types, merge them into\
+            \ a single entity combining all unique types.\n16. **Semantic similarity**:\
+            \ If two entities have different names but identical meanings, merge them\
+            \ into a single entity using the most appropriate name.\n17. The current\
+            \ date is {current_date}.\n18. **Brand-specific entities**: Do not generate\
+            \ entities that are specific to a single brand, product, or website unless\
+            \ ALL of the following conditions are met:\n    a. The brand, product,\
+            \ or website name appears in multiple sources (at least two different\
+            \ URLs) from the provided text.\n    b. The central keyword explicitly\
+            \ contains the brand or website name.\n    c. The brand, product, or website\
+            \ is highly relevant and innovative in the field related to the central\
+            \ keyword.\n19. **Strict multi-source requirement**: For any brand-related\
+            \ entity, it MUST appear in more than one source (URL) from the provided\
+            \ text to be included as an entity. If it appears only once, it should\
+            \ be excluded regardless of its perceived importance.\n20. **Relevance\
+            \ to central keyword**: Even if a brand or website is mentioned across\
+            \ multiple sources, do not include it as an entity if it's not particularly\
+            \ relevant to the central keyword.\n21. **Brand mentions in product descriptions**:\
+            \ Be cautious of brand names mentioned in product descriptions or titles.\
+            \ These should not be considered as separate entities unless they meet\
+            \ all the criteria in point 18.\n \nWhen generating content:\n \n- For\
+            \ elements that occurred before this date, use appropriate language indicating\
+            \ the past.\n- For elements occurring on or after this date, use appropriate\
+            \ language indicating the future.\n- For ongoing or general elements,\
+            \ use appropriate language indicating the present.\n \nAdjust the language\
+            \ and structure appropriately for the type of content being generated\
+            \ while maintaining temporal consistency.\n \n### Handling source-specific\
+            \ entities:\n \n- If an entity appears in multiple text segments from\
+            \ different URLs, it's more likely to be a general, reliable entity.\n\
+            - If an entity appears only in one text segment (i.e., from a single URL),\
+            \ consider it carefully:\n - If it's a well-known concept related to the\
+            \ central keyword and aligns with user intent, it can be included.\n -\
+            \ If it's a specific product, service, or feature unique to that website,\
+            \ it should be excluded unless it's highly relevant and innovative in\
+            \ the field related to the central keyword and aligns with user intent.\n\
+            - For entities found in a single source, add a note in the entity type\
+            \ like \"Potential source-specific concept\" to indicate its limited appearance.\n\
+            \ \n### Examples of entities to avoid:\n \n- Overly broad categories:\
+            \ \"Transport\", \"Entertainment\", \"Food\"\n- Non-specific descriptors:\
+            \ \"Good\", \"New\", \"Popular\"\n- Excessively detailed variations: \"\
+            Green Parvi Stabilized Eucalyptus\", \"Red Cinerea Stabilized Eucalyptus\"\
+            \n- Irrelevant products: \"SFD B Complex 25 Methyl\" (unless the keyword\
+            \ is \"Vitamin B complex SFD\")\n- Irrelevant people: \"John Smith - SEO\
+            \ specialist\" (unless John Smith is the creator of a breakthrough SEO\
+            \ technique)\n- Multiple entities with the same pattern: \"Product for\
+            \ occasion X\", \"Product for occasion Y\", etc.\n- URL-specific product\
+            \ lists: \"Brand A eyeglass cleaning cloth\", \"Brand B eyeglass cleaning\
+            \ cloth\", etc.\n- Entities not aligned with user intent: For \"Mazury\"\
+            \ (Masuria), avoid entities like \"Mazurskie miejsca administracyjne\"\
+            \ (Masurian administrative places) as they don't align with the likely\
+            \ tourist intent of the search.\n- Brand-specific products appearing in\
+            \ only one source: \"Sukienki damskie Mosquito\" (even if it seems relevant,\
+            \ it should be excluded if it only appears once)\n- Specific product lines\
+            \ or collections mentioned only once: \"Kolekcja wiosna/lato 2024 marki\
+            \ X\" (unless the brand X is the central keyword and appears in multiple\
+            \ sources)\n- Website-specific features or services: \"Program lojalnościowy\
+            \ sklepu Y\" (unless Y is the central keyword and this feature is mentioned\
+            \ across multiple sources)\n \n## Steps\n \n1. Analyze the central keyword\
+            \ and determine the likely intent of users searching for this keyword.\
+            \ Consider what information or aspects of the topic users are most likely\
+            \ interested in.\n2. Read through all text segments, keeping track of\
+            \ which entities appear in which sources (URLs).\n3. Identify all relevant\
+            \ entities within the text segments, considering the likely user intent.\
+            \ For each identified entity, extract:\n- entity_name: Name of the entity\
+            \ in its original language, avoid duplications\n- entity_type: Propose\
+            \ 2-3 broad, generally applicable categories for the entity (in <language_name>)\n\
+            - entity_definition: short definition of the entity extracted from the\
+            \ provided text\n- entity_strength: Numeric score (0-100) indicating the\
+            \ strength of the relationship between the central keyword and this entity,\
+            \ considering user intent\n4. Create a temporary list of all identified\
+            \ entities.\n5. Process the temporary list to remove duplicates and merge\
+            \ similar entities:\n  a. Sort the list alphabetically by entity_name.\n\
+            \  b. For each entity, compare it with the next entity in the list.\n\
+            \  c. If two entities have the same name:\n     - If they have the same\
+            \ types, keep only one instance with the highest entity_strength.\n  \
+            \   - If they have different types, merge them into a single entity, combining\
+            \ all unique types and keeping the highest entity_strength.\n  d. If an\
+            \ entity is very similar to another (e.g., plural vs singular form, slight\
+            \ variation in wording), consider merging them into a more general entity.\n\
+            \  e. If two entities have different names but identical meanings (e.g.,\
+            \ \"Meta Ads\" and \"Kampanie Meta Ads\"), merge them into a single entity\
+            \ using the most appropriate or comprehensive name.\n6. After processing,\
+            \ create a comprehensive list of at least 20-30 unique entities, ensuring\
+            \ a good mix of general and specific entities related to the central keyword.\
+            \ Format each entity as follows:\n   (\"ent\" | <entity_name> | <entity_type_1>,\
+            \ <entity_type_2>, <entity_type_3 (optional)> | <entity_definition> |\
+            \ <entity_strength>)\n7. Review the list of provided entities, considering\
+            \ their types and strengths in relation to the central keyword and each\
+            \ other and create a list of relationships.\n- source_entity: Name of\
+            \ the source entity\n- target_entity: Name of the target entity\n- relationship_description:\
+            \ Precise details indicating the links between the entities, based solely\
+            \ on the provided text\n- relationship_strength: Numeric score indicating\
+            \ the strength of the relationship:\n-- 90-100: Highly relevant entities\
+            \ or relationships that are directly connected to the central keyword\
+            \ and provide significant value or unique insight.\n-- 80-89: Strong entities\
+            \ or relationships with a clear connection to the central keyword, offering\
+            \ useful and relevant information.\n-- 70-79: Good entities or relationships\
+            \ that are relevant and provide valuable information but are not as central\
+            \ or unique as higher-scored entities.\n-- 60-69: Moderate entities or\
+            \ relationships that have a reasonable connection to the central keyword,\
+            \ providing some useful insights or context.\n-- 50-59: Acceptable entities\
+            \ or relationships that have a weaker connection but still provide some\
+            \ relevant information related to the central keyword.\n \n8. Calculate\
+            \ the score for each relationship based on the cosine similarity of the\
+            \ entity to the main keyword. Here are the instructions for calculating\
+            \ the score:\n   a. Explanation of cosine similarity:\n      Cosine similarity\
+            \ is a measure of similarity between two vectors in a multi-dimensional\
+            \ space. In the context of natural language processing, these vectors\
+            \ represent words or phrases in a semantic space. The cosine similarity\
+            \ value ranges from -1 (completely opposite) to 1 (identical), where 0\
+            \ indicates no similarity.\n   b. Simulating embedding calculation:\n\
+            \      - Use your internal model to simulate creating embeddings for the\
+            \ main keyword and each entity.\n      - For entities consisting of multiple\
+            \ words, consider the meaning of the entire phrase, not just individual\
+            \ words.\n   c. Calculating similarity:\n      - Simulate calculating\
+            \ the cosine similarity between the embedding of the main keyword and\
+            \ the embedding of each entity.\n      - Transform the result to a scale\
+            \ from 0 to 100, where 0 means no similarity and 100 means full similarity.\n\
+            \   d. Handling multi-word phrases:\n      - For entities consisting of\
+            \ multiple words, consider the meaning of the entire phrase in the context\
+            \ of the main keyword.\n      - Take into account not only the literal\
+            \ similarity of words but also their semantic connections and context.\n\
+            \   e. Assigning the score:\n      - Assign the calculated value as the\
+            \ relationship score.\n      - Round the result to the nearest whole number.\n\
+            9. Review the list of identified entities and apply the following checks:\n\
+            \   a. For each entity, count in how many different sources (URLs) it\
+            \ appears.\n   b. If an entity is brand-specific or related to a specific\
+            \ product/website, and it appears in only one source, remove it from the\
+            \ list regardless of its perceived importance.\n   c. If a brand-related\
+            \ entity appears in multiple sources, verify that it meets all criteria\
+            \ specified in guideline 18 before keeping it.\n   d. For any remaining\
+            \ brand-related entities, ensure they are highly relevant to the central\
+            \ keyword and user intent.\n10. Process the temporary list of relationships\
+            \ to remove duplicates:\n  a. Sort the list alphabetically by source_entity,\
+            \ then target_entity.\n  b. For each relationship, compare it with the\
+            \ next relationship in the list.\n  c. If two relationships have the same\
+            \ source_entity and target_entity:\n     - If they have the same relationship_description,\
+            \ keep only one instance with the highest relationship_strength.\n   \
+            \  - If they have different relationship_descriptions, combine them into\
+            \ a single relationship with a merged description and the highest relationship_strength.\n\
+            11. After processing, create the final list of unique relationships. Format\
+            \ each relationship as follows:\n   (\"rel\" | <source_entity> | <target_entity>\
+            \ | <relationship_description> | <relationship_strength>)\n12. Generalize\
+            \ entities that follow the same pattern or are very similar:\n   a. Group\
+            \ entities that have a similar structure, differing only in one or a few\
+            \ words.\n   b. For each group of similar entities, create a single, more\
+            \ general entity that encompasses all variations.\n   c. Use phrases like\
+            \ \"różne okazje\", \"różne zastosowania\", \"różne typy\", etc., to create\
+            \ a more inclusive entity.\n   Examples:\n   - Instead of \"Karafka z\
+            \ grawerem na różne kolacje\", \"Karafka z grawerem na różne obiady\"\
+            , \"Karafka z grawerem na różne śniadania\", etc., create a single entity:\
+            \ \"Karafka z grawerem na różne okazje kulinarne\".\n   - Instead of \"\
+            skup aut w [różne miasta]\", create \"Skup aut w różnych lokalizacjach\"\
+            .\n13. Review the generalized entities to ensure they still provide meaningful\
+            \ information related to the central keyword and align with user intent.\
+            \ If a generalized entity becomes too broad or loses its relevance, consider\
+            \ keeping the most relevant specific entities instead.\n14. Translate\
+            \ relationship descriptions and entity types to <language_name>. Keep\
+            \ entity names in their original language.\n15. Include only entities\
+            \ and relationships with a relationship_strength of 60 or above with the\
+            \ central keyword, ensuring they align with user intent.\n16. Avoid creating\
+            \ entities that are specific to a single URL, especially product lists\
+            \ or brand-specific items, unless they are highly relevant to the central\
+            \ keyword, appear in multiple sources, and align with user intent.\n17.\
+            \ Perform a final check for any remaining duplicates or overly similar\
+            \ entities:\n   a. Create a set of entity names and a set of (source_entity,\
+            \ target_entity) pairs.\n   b. While adding entities and relationships\
+            \ to the final output, check if they're already in the respective set\
+            \ or if there's a very similar entity already present.\n   c. If an entity\
+            \ or relationship is already in the set or is very similar to an existing\
+            \ one, do not add it to the final output. Instead, consider if further\
+            \ generalization is possible.\n   d. For entities with different names\
+            \ but potentially identical meanings, review their definitions and contexts.\
+            \ If they truly represent the same concept, merge them using the most\
+            \ appropriate or comprehensive name.\n18. Output the results as a single\
+            \ list of entities followed by a single list of relationships. Do not\
+            \ repeat the lists or include any additional text or markers.\n19. After\
+            \ outputting all entities and relationships, add the {{completed}} marker\
+            \ on a new line.\nRemember to critically evaluate entities that appear\
+            \ in only one source, and either exclude them or mark them as potentially\
+            \ source-specific if included. Always ensure that all extracted entities\
+            \ and relationships are relevant to the provided central keyword and align\
+            \ with the likely user intent.\n \n## Additional Guidelines for Relationships\
+            \ (kontynuacja)\n- Ensure that every entity identified has at least three\
+            \ relationships, with at least one relationship not involving the central\
+            \ keyword \"<keyword>\". These relationships should provide meaningful\
+            \ insights that are not immediately apparent from the entities alone.\
+            \ Encourage the exploration of a wide range of relationships, such as\
+            \ functional connections, complementary features, shared attributes, differences\
+            \ in care requirements, or usage scenarios, to build a robust network\
+            \ of interconnected entities that offer a deeper understanding of the\
+            \ topic and enrich the informational content provided.\n- The strength\
+            \ of relationships between different entities should be evaluated based\
+            \ on their relevance to the central keyword and user intent, not just\
+            \ their connection to each other.\n- Be cautious of creating too many\
+            \ relationships between different entities that may dilute the focus on\
+            \ the central keyword. Prioritize relationships that directly contribute\
+            \ to understanding the main topic.\n- Create only unique and meaningful\
+            \ relationships. Avoid relationships that merely state general similarities\
+            \ or common practices applicable to multiple entities. For example, do\
+            \ not create relationships based solely on similar care requirements or\
+            \ general maintenance practices unless these are specifically relevant\
+            \ to the central keyword.\n- Relationships should be designed to form\
+            \ a knowledge graph. This means each relationship should provide a specific,\
+            \ informative connection between entities that adds to the overall understanding\
+            \ of the topic. Focus on relationships that highlight unique interactions,\
+            \ dependencies, contrasts, or synergies between entities.\n- When creating\
+            \ relationships, consider the following:\n  a) Cause and effect: How does\
+            \ one entity influence or impact another?\n  b) Part-whole relationships:\
+            \ Is one entity a component or subset of another?\n  c) Temporal or sequential\
+            \ relationships: Does one entity precede or follow another in a process\
+            \ or timeline?\n  d) Functional relationships: How do entities work together\
+            \ or complement each other?\n  e) Comparative relationships: How do entities\
+            \ differ in important aspects related to the central keyword?\n- Avoid\
+            \ creating redundant relationships. If a relationship can be inferred\
+            \ from existing relationships, it should not be explicitly stated.\n-\
+            \ Always ensure that relationships start with the central entity \"<keyword>\"\
+            \ when possible, to maintain focus on the main topic.\n- Include names\
+            \ of specific products in relationships when they are directly relevant\
+            \ to the central keyword and provide valuable information.\n \n## Examples\
+            \ of Good and Bad Entities and Relationships\n \n### Good Examples\n \n\
+            #### Entities:\n(\"ent\" | \"Central Keyword\" | \"Main Topic\", \"Focus\
+            \ Area\" | \"The primary concept or topic that all other entities and\
+            \ relationships revolve around\" | 100)\n(\"ent\" | \"Subtype A of Central\
+            \ Keyword\" | \"Subtype\", \"Variation\" | \"A specific type or variation\
+            \ of the central keyword with distinct characteristics\" | 90)\n(\"ent\"\
+            \ | \"Related Concept B\" | \"Related Topic\", \"Influencing Factor\"\
+            \ | \"A concept closely related to the central keyword that affects or\
+            \ is affected by it\" | 85)\n(\"ent\" | \"Method C for Central Keyword\"\
+            \ | \"Technique\", \"Process\" | \"A specific method or technique used\
+            \ in relation to the central keyword\" | 80)\n(\"ent\" | \"Tool D for\
+            \ Central Keyword\" | \"Equipment\", \"Accessory\" | \"A tool or piece\
+            \ of equipment commonly used in relation to the central keyword\" | 75)\n\
+            \ \n#### Relationships:\n(\"rel\" | \"Central Keyword\" | \"Subtype A\
+            \ of Central Keyword\" | \"Subtype A is a specific variation of Central\
+            \ Keyword with unique characteristics X and Y\" | 90)\n(\"rel\" | \"Central\
+            \ Keyword\" | \"Related Concept B\" | \"Related Concept B significantly\
+            \ influences Central Keyword by affecting factor Z\" | 85)\n(\"rel\" |\
+            \ \"Method C for Central Keyword\" | \"Tool D for Central Keyword\" |\
+            \ \"Tool D is commonly used in Method C to achieve optimal results for\
+            \ Central Keyword\" | 80)\n(\"rel\" | \"Subtype A of Central Keyword\"\
+            \ | \"Related Concept B\" | \"Subtype A is particularly affected by Related\
+            \ Concept B due to its specific characteristics\" | 75)\n \n### Bad Examples\n\
+            \ \n#### Entities to Avoid:\n(\"ent\" | \"Vague Category\" | \"General\"\
+            , \"Broad\" | \"A very broad and non-specific category related to the\
+            \ topic\" | 50)\n(\"ent\" | \"Unrelated Product X\" | \"Product\", \"\
+            Brand\" | \"A specific product not directly related to the central keyword\"\
+            \ | 30)\n(\"ent\" | \"Overly Specific Detail Y\" | \"Detail\", \"Specification\"\
+            \ | \"An extremely specific detail that's not generally relevant to most\
+            \ users\" | 40)\n(\"ent\" | \"Common Knowledge Z\" | \"General Information\"\
+            , \"Basic Fact\" | \"A piece of information that's too basic and widely\
+            \ known to be useful\" | 35)\n \n#### Relationships to Avoid:\n(\"rel\"\
+            \ | \"Central Keyword\" | \"Unrelated Product X\" | \"Unrelated Product\
+            \ X is sometimes used by people interested in Central Keyword\" | 30)\n\
+            (\"rel\" | \"Subtype A of Central Keyword\" | \"Overly Specific Detail\
+            \ Y\" | \"Overly Specific Detail Y is a characteristic of some instances\
+            \ of Subtype A\" | 40)\n(\"rel\" | \"Related Concept B\" | \"Common Knowledge\
+            \ Z\" | \"Common Knowledge Z is generally true for Related Concept B and\
+            \ many other topics\" | 35)\n \n### Explanation of Examples\n \nThe good\
+            \ examples demonstrate:\n1. Clear relevance to the central keyword\n2.\
+            \ Specific but not overly detailed entities\n3. Meaningful relationships\
+            \ that add value to understanding the topic\n4. Appropriate use of entity\
+            \ types and relationship descriptions\n5. Realistic strength scores based\
+            \ on relevance and importance\n \nThe bad examples illustrate:\n1. Overly\
+            \ broad or vague entities\n2. Irrelevant or loosely connected concepts\n\
+            3. Extremely specific details that don't add general value\n4. Common\
+            \ knowledge that doesn't provide unique insights\n5. Weak or uninformative\
+            \ relationships\n6. Inappropriate strength scores that don't reflect true\
+            \ relevance or importance\n \nWhen creating entities and relationships,\
+            \ aim to emulate the structure and relevance of the good examples while\
+            \ avoiding the pitfalls shown in the bad examples.\n \n## Output Format\n\
+            The output should consist of three parts:\n1. A list of entities, each\
+            \ on a new line, in the format:\n   (\"ent\" | <entity_name> | <entity_type_1>,\
+            \ <entity_type_2>, <entity_type_3 (optional)> | <entity_description> |\
+            \ <entity_strength>)\n   The first entity should explicitly contain the\
+            \ central keyword \"<keyword>\" in the entity name or description.\n2.\
+            \ Followed by a list of relationships, each on a new line, in the format:\n\
+            \   (\"rel\" | <source_entity> | <target_entity> | <relationship_description>\
+            \ | <relationship_strength>)\n   Relationships should connect entities\
+            \ not only directly to the central keyword \"<keyword>\" but also establish\
+            \ relevant connections between all entities identified. Each entity should\
+            \ have at least one relationship with another entity that does not directly\
+            \ involve the central keyword. This means creating both direct relationships\
+            \ to the central keyword and multiple indirect relationships that explore\
+            \ various connections, such as shared characteristics, functions, complementary\
+            \ uses, or contrasting aspects between entities. Aim to create at least\
+            \ 25-30 relationships by ensuring every entity is connected to multiple\
+            \ others in meaningful ways, enhancing the depth and complexity of the\
+            \ relational network.\n3. The {{completed}} marker on a new line after\
+            \ all entities and relationships have been listed.\nDo not include any\
+            \ other text, markers, or formatting in the output."
+        - id: 11e836ea-b065-4c76-b56b-daa5de52af68
+          role: user
+          text: '<keyword>
+
+            {{#1718558764026.keyword#}}
+
+            </keyword>
+
+
+            <language_name>
+
+            {{#1718558764026.language#}}
+
+            </language_name>
+
+
+            ### TXT file ###
+
+            {{#1718558764026.aio#}}
+
+            {{#1718566787996.output#}}'
+        retry_config:
+          max_retries: 3
+          retry_enabled: true
+          retry_interval: 1000
+        selected: false
+        title: Knowledge graph
+        type: llm
+        variables: []
+        vision:
+          enabled: false
+      height: 133
+      id: '1749410327390'
+      position:
+        x: 3312.4146807503075
+        y: 858.0850760357259
+      positionAbsolute:
+        x: 3312.4146807503075
+        y: 858.0850760357259
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        desc: ''
+        model:
+          completion_params:
+            temperature: 0
+          mode: chat
+          name: gpt-4o-mini
+          provider: langgenius/openai/openai
+        prompt_template:
+        - id: ce1ff1af-f502-4cbf-b805-eb5aff514b7f
+          role: system
+          text: "You are an AI assistant tasked with extracting semantic predicates\
+            \ from provided content. Your objective is to identify subject-predicate-object\
+            \ relationships explicitly related to the <keyword>, while strictly adhering\
+            \ to the following constraints and exclusions.\n\n## Instructions\nFollow\
+            \ these steps to extract and refine semantic predicates:\n1. Identify\
+            \ Relationships: Extract subject-predicate-object triples from the content,\
+            \ where the subject or object directly involves the <keyword>.\n2.Relevance\
+            \ Filter: Include only triples where the <keyword> is the subject, object,\
+            \ or a core component of the relationship, ensuring direct relevance to\
+            \ the main topic.\n3. Exclude Personal Information: Remove any triples\
+            \ containing personal details, such as names or surnames of individuals.\n\
+            4. Maintain Topic Focus: Discard any triples not directly tied to the\
+            \ <keyword>, avoiding tangential or unrelated information.\n5. Apply Exclusion\
+            \ List: Exclude triples mentioning entities, brands, or names listed in\
+            \ the brands exclusion list <brands>\n\n## Output Format\nFor each relevant\
+            \ semantic predicate, format your output as:\n(\"subject\", \"predicate\"\
+            , \"object\", \"description\")  \n\n- Subject: A noun or noun phrase related\
+            \ to the <keyword>.\n- Predicate: A verb or verb phrase describing the\
+            \ relationship.\n- Object: A noun or noun phrase (optional if predicate\
+            \ is intransitive), relevant to the <keyword>.\n- Description: Context\
+            \ from which the triple is derived.\n\n## Requirements\n1. <keyword> Focus:\
+            \ Only include predicates where the is central to the relationship.\n\
+            2. Language: Extract in <language>\n3. No Personal Data: Avoid any mention\
+            \ of specific individuals.\n4. No Excluded Entities: Generalize subjects\
+            \ (e.g., \"various entities\" instead of \"Google\") to exclude brands\
+            \ in the exclusion list.\n5. Clarity and Precision: Ensure triples are\
+            \ concise, accurate, and reflect the content’s intent.\n\n## Output Presentation\n\
+            Present the final output as a list of semantic predicates, each on a new\
+            \ line.\n\n## Example\nIf <keyword> is \"artificial intelligence\" and\
+            \ the content includes:\n\n\"Artificial intelligence is advancing rapidly,\
+            \ and Google is developing AI tools.\"\n\nOutput:\n(\"artificial intelligence\"\
+            , \"has\", \"rapid advancement\", \"Artificial intelligence is advancing\
+            \ rapidly\")"
+        - id: 6ff94001-8036-4714-939a-01b213219d74
+          role: user
+          text: 'Focus on extracting semantic predicates related to the following
+            keyword:
+
+            <keyword>
+
+            {{#1718558764026.keyword#}}
+
+            </keyword>
+
+            Extract the predicates in this language:
+
+            <language>
+
+            {{#1718558764026.language#}}
+
+            </language>
+
+            Exclude any entities, brands, or names from this list:
+
+            <brands>
+
+            {{#1721305316764.text#}}
+
+            </brands>
+
+
+            Here is the content you will analyze:
+
+            <content>
+
+            {{#1718558764026.aio#}}
+
+            {{#17509357430220.result#}}
+
+            </content>'
+        selected: false
+        title: AI extraction
+        type: llm
+        variables: []
+        vision:
+          enabled: false
+      height: 87
+      id: '1749475555565'
+      position:
+        x: 4104.220366907766
+        y: 171.50770986217236
+      positionAbsolute:
+        x: 4104.220366907766
+        y: 171.50770986217236
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        cases:
+        - case_id: 'true'
+          conditions:
+          - comparison_operator: not empty
+            id: 577e0ef1-341d-4501-8afa-97fbb921785a
+            value: ''
+            varType: string
+            variable_selector:
+            - '1718558764026'
+            - aio
+          - comparison_operator: not contains
+            id: e1c6d62c-55d9-4812-9c88-9f8c75a8169b
+            value: BRAK
+            varType: array[string]
+            variable_selector:
+            - '17509357430220'
+            - result
+          id: 'true'
+          logical_operator: or
+        desc: ''
+        selected: false
+        title: JEŚLI/W PRZECIWNYM WYPADKU
+        type: if-else
+      height: 149
+      id: '1749475626202'
+      position:
+        x: 3707.050176466005
+        y: 286.07800169969664
+      positionAbsolute:
+        x: 3707.050176466005
+        y: 286.07800169969664
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        authorization:
+          config: null
+          type: no-auth
+        body:
+          data: []
+          type: none
+        desc: ''
+        headers: Authorization:Bearer serpdata_a57c07c7214a9495cbc0e43ac159cc2a-KupEOi7d38I
+        method: get
+        params: ''
+        retry_config:
+          max_retries: 3
+          retry_enabled: true
+          retry_interval: 100
+        selected: false
+        ssl_verify: true
+        timeout:
+          max_connect_timeout: 0
+          max_read_timeout: 0
+          max_write_timeout: 0
+        title: SERPDATA
+        type: http-request
+        url: https://api.serpdata.io/v1/search?keyword={{#1718558764026.keyword#}}&hl=pl&gl=pl
+        variables: []
+      height: 187
+      id: '1750934314359'
+      position:
+        x: 83.02521025642446
+        y: 282
+      positionAbsolute:
+        x: 83.02521025642446
+        y: 282
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        code: "function main(input) {\n    let outerData;\n    try {\n        // Parsujemy\
+          \ wejście\n        outerData = JSON.parse(input.data);\n    } catch (e)\
+          \ {\n        console.error(\"Błąd parsowania JSON:\", e);\n        return\
+          \ { result: \"BRAK\" };\n    }\n\n    // 1. Normalizacja: Ustalamy, gdzie\
+          \ są właściwe dane.\n    // DIFY przekazuje body, więc dane są zazwyczaj\
+          \ w outerData lub outerData.data\n    let jsonData = outerData;\n\n    //\
+          \ Sprawdzamy czy istnieje wrapper 'data' (niektóre API go mają)\n    if\
+          \ (outerData && outerData.data) {\n        // Jeśli wewnątrz 'data' widzimy\
+          \ strukturę wyników (results/organic_results), wchodzimy głębiej\n     \
+          \   if (outerData.data.results || outerData.data.organic_results) {\n  \
+          \           jsonData = outerData.data;\n        }\n    }\n    \n    // Jeśli\
+          \ po tych operacjach obiekt jest pusty/nieprawidłowy, zwracamy BRAK\n  \
+          \  if (!jsonData) {\n        return { result: \"BRAK\" };\n    }\n\n   \
+          \ // Zmienna na snippety\n    let allSnippets = [];\n    let aiOverview\
+          \ = null;\n\n    // 2. Szukanie sekcji AI Overview\n    // Najczęstsza ścieżka\
+          \ w SerpData: results -> snippets_data -> ai_overview\n    if (jsonData.results\
+          \ && jsonData.results.snippets_data && jsonData.results.snippets_data.ai_overview)\
+          \ {\n        aiOverview = jsonData.results.snippets_data.ai_overview;\n\
+          \    } \n    // Alternatywna ścieżka (zabezpieczenie)\n    else if (jsonData.snippets_data\
+          \ && jsonData.snippets_data.ai_overview) {\n        aiOverview = jsonData.snippets_data.ai_overview;\n\
+          \    }\n\n    // 3. Ekstrakcja treści\n    if (aiOverview && aiOverview.sources\
+          \ && Array.isArray(aiOverview.sources)) {\n        aiOverview.sources.forEach(source\
+          \ => {\n            if (source.snippet) {\n                allSnippets.push(source.snippet);\n\
+          \            }\n        });\n\n        // Jeśli znaleziono snippety\n  \
+          \      if (allSnippets.length > 0) {\n            return { result: allSnippets.join('\\\
+          n') };\n        }\n    }\n\n    // Jeśli \"ai_overview\" nie istnieje lub\
+          \ lista snippetów jest pusta\n    return { result: \"BRAK\" };\n}"
+        code_language: javascript
+        desc: ''
+        outputs:
+          result:
+            children: null
+            type: string
+        selected: false
+        title: Zebranie AIO
+        type: code
+        variables:
+        - value_selector:
+          - '1750934314359'
+          - body
+          variable: data
+      height: 51
+      id: '17509357430220'
+      position:
+        x: 1113.7307776937848
+        y: 282
+      positionAbsolute:
+        x: 1113.7307776937848
+        y: 282
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        default_value:
+        - key: text
+          type: string
+          value: ' '
+        - key: json
+          type: array[object]
+          value: '[]'
+        desc: ''
+        error_strategy: default-value
+        isInIteration: true
+        isInLoop: false
+        is_team_authorization: true
+        iteration_id: '1718566787996'
+        output_schema: null
+        paramSchemas:
+        - auto_generate: null
+          default: null
+          form: llm
+          human_description:
+            en_US: Web link
+            ja_JP: Web link
+            pt_BR: URL da web
+            zh_Hans: 网页链接
+          label:
+            en_US: URL
+            ja_JP: URL
+            pt_BR: URL
+            zh_Hans: 网址
+          llm_description: url para scraping
+          max: null
+          min: null
+          name: url
+          options: []
+          placeholder: null
+          precision: null
+          required: true
+          scope: null
+          template: null
+          type: string
+        - auto_generate: null
+          default: null
+          form: llm
+          human_description:
+            en_US: 'request parameters, format: {"key1": "value1", "key2": "value2"}
+
+              '
+            ja_JP: 'request parameters, format: {"key1": "value1", "key2": "value2"}
+
+              '
+            pt_BR: 'parâmetros de solicitação, formato: {"key1": "value1", "key2":
+              "value2"}
+
+              '
+            zh_Hans: '请求参数，格式：{"key1": "value1", "key2": "value2"}
+
+              '
+          label:
+            en_US: Request params
+            ja_JP: Request params
+            pt_BR: Parâmetros de solicitação
+            zh_Hans: 请求参数
+          llm_description: request parameters
+          max: null
+          min: null
+          name: request_params
+          options: []
+          placeholder: null
+          precision: null
+          required: false
+          scope: null
+          template: null
+          type: string
+        - auto_generate: null
+          default: null
+          form: form
+          human_description:
+            en_US: css selector for scraping specific elements
+            ja_JP: css selector for scraping specific elements
+            pt_BR: css selector para scraping de elementos específicos
+            zh_Hans: css 选择器用于抓取特定元素
+          label:
+            en_US: Target selector
+            ja_JP: Target selector
+            pt_BR: Seletor de destino
+            zh_Hans: 目标选择器
+          llm_description: css selector of the target element to scrape
+          max: null
+          min: null
+          name: target_selector
+          options: []
+          placeholder: null
+          precision: null
+          required: false
+          scope: null
+          template: null
+          type: string
+        - auto_generate: null
+          default: null
+          form: form
+          human_description:
+            en_US: css selector for waiting for specific elements
+            ja_JP: css selector for waiting for specific elements
+            pt_BR: css selector para aguardar elementos específicos
+            zh_Hans: css 选择器用于等待特定元素
+          label:
+            en_US: Wait for selector
+            ja_JP: Wait for selector
+            pt_BR: Aguardar por seletor
+            zh_Hans: 等待选择器
+          llm_description: css selector of the target element to wait for
+          max: null
+          min: null
+          name: wait_for_selector
+          options: []
+          placeholder: null
+          precision: null
+          required: false
+          scope: null
+          template: null
+          type: string
+        - auto_generate: null
+          default: null
+          form: form
+          human_description:
+            en_US: Remove all images from the response.
+            ja_JP: Remove all images from the response.
+            pt_BR: Remove all images from the response.
+            zh_Hans: 从响应中删除所有图片。
+          label:
+            en_US: Remove images
+            ja_JP: Remove images
+            pt_BR: Remove images
+            zh_Hans: 删除图片
+          llm_description: Remove all images from the response
+          max: null
+          min: null
+          name: remove_images
+          options: []
+          placeholder: null
+          precision: null
+          required: false
+          scope: null
+          template: null
+          type: boolean
+        - auto_generate: null
+          default: 0
+          form: form
+          human_description:
+            en_US: 'Captions all images at the specified URL, adding ''Image [idx]:
+              [caption]'' as an alt tag for those without one. This allows downstream
+              LLMs to interact with the images in activities such as reasoning and
+              summarizing.'
+            ja_JP: 'Captions all images at the specified URL, adding ''Image [idx]:
+              [caption]'' as an alt tag for those without one. This allows downstream
+              LLMs to interact with the images in activities such as reasoning and
+              summarizing.'
+            pt_BR: 'Adiciona legendas a todas as imagens na URL especificada, adicionando
+              ''Imagem [idx]: [legenda]'' como uma tag alt para aquelas que não têm
+              uma. Isso permite que os modelos LLM inferiores interajam com as imagens
+              em atividades como raciocínio e resumo.'
+            zh_Hans: '为指定 URL 上的所有图像添加标题，为没有标题的图像添加“Image [idx]: [caption]”作为 alt
+              标签，以支持下游模型的图像交互。'
+          label:
+            en_US: Image caption
+            ja_JP: Image caption
+            pt_BR: Legenda da imagem
+            zh_Hans: 图片说明
+          llm_description: Captions all images at the specified URL
+          max: null
+          min: null
+          name: image_caption
+          options: []
+          placeholder: null
+          precision: null
+          required: false
+          scope: null
+          template: null
+          type: boolean
+        - auto_generate: null
+          default: 0
+          form: form
+          human_description:
+            en_US: A "Buttons & Links" section will be created at the end. This helps
+              the downstream LLMs or web agents navigating the page or take further
+              actions.
+            ja_JP: A "Buttons & Links" section will be created at the end. This helps
+              the downstream LLMs or web agents navigating the page or take further
+              actions.
+            pt_BR: Um "Botões & Links" section will be created at the end. This helps
+              the downstream LLMs or web agents navigating the page or take further
+              actions.
+            zh_Hans: 末尾将添加“按钮和链接”部分，方便下游模型或网络代理做页面导航或执行进一步操作。
+          label:
+            en_US: Gather all links at the end
+            ja_JP: Gather all links at the end
+            pt_BR: Coletar todos os links ao final
+            zh_Hans: 将所有链接集中到最后
+          llm_description: Gather all links at the end
+          max: null
+          min: null
+          name: gather_all_links_at_the_end
+          options: []
+          placeholder: null
+          precision: null
+          required: false
+          scope: null
+          template: null
+          type: boolean
+        - auto_generate: null
+          default: 0
+          form: form
+          human_description:
+            en_US: An "Images" section will be created at the end. This gives the
+              downstream LLMs an overview of all visuals on the page, which may improve
+              reasoning.
+            ja_JP: An "Images" section will be created at the end. This gives the
+              downstream LLMs an overview of all visuals on the page, which may improve
+              reasoning.
+            pt_BR: Um "Imagens" section will be created at the end. This gives the
+              downstream LLMs an overview of all visuals on the page, which may improve
+              reasoning.
+            zh_Hans: 末尾会新增“图片”部分，方便下游模型全面了解页面的视觉内容，提升推理效果。
+          label:
+            en_US: Gather all images at the end
+            ja_JP: Gather all images at the end
+            pt_BR: Coletar todas as imagens ao final
+            zh_Hans: 将所有图片集中到最后
+          llm_description: Gather all images at the end
+          max: null
+          min: null
+          name: gather_all_images_at_the_end
+          options: []
+          placeholder: null
+          precision: null
+          required: false
+          scope: null
+          template: null
+          type: boolean
+        - auto_generate: null
+          default: null
+          form: form
+          human_description:
+            en_US: Use proxy to access URLs
+            ja_JP: Use proxy to access URLs
+            pt_BR: Use proxy to access URLs
+            zh_Hans: 利用代理访问 URL
+          label:
+            en_US: Proxy server
+            ja_JP: Proxy server
+            pt_BR: Servidor de proxy
+            zh_Hans: 代理服务器
+          llm_description: Use proxy to access URLs
+          max: null
+          min: null
+          name: proxy_server
+          options: []
+          placeholder: null
+          precision: null
+          required: false
+          scope: null
+          template: null
+          type: string
+        - auto_generate: null
+          default: 0
+          form: form
+          human_description:
+            en_US: Bypass the Cache
+            ja_JP: Bypass the Cache
+            pt_BR: Ignorar o cache
+            zh_Hans: 是否绕过缓存
+          label:
+            en_US: Bypass the Cache
+            ja_JP: Bypass the Cache
+            pt_BR: Ignorar o cache
+            zh_Hans: 绕过缓存
+          llm_description: bypass the cache
+          max: null
+          min: null
+          name: no_cache
+          options: []
+          placeholder: null
+          precision: null
+          required: false
+          scope: null
+          template: null
+          type: boolean
+        - auto_generate: null
+          default: 0
+          form: form
+          human_description:
+            en_US: When enabled, request results won't be cached on jina servers.
+            ja_JP: When enabled, request results won't be cached on jina servers.
+            pt_BR: When enabled, request results won't be cached on jina servers.
+            zh_Hans: 启用后，请求结果将不会被缓存在 jina 服务器上。
+          label:
+            en_US: Do Not Cache/Track
+            ja_JP: Do Not Cache/Track
+            pt_BR: Do Not Cache/Track
+            zh_Hans: 请勿缓存/追踪
+          llm_description: Do Not Cache/Track
+          max: null
+          min: null
+          name: no_cache_track
+          options: []
+          placeholder: null
+          precision: null
+          required: false
+          scope: null
+          template: null
+          type: boolean
+        - auto_generate: null
+          default: 0
+          form: form
+          human_description:
+            en_US: Enable summary for the output
+            ja_JP: Enable summary for the output
+            pt_BR: Habilitar resumo para a saída
+            zh_Hans: 为输出启用摘要
+          label:
+            en_US: Enable summary
+            ja_JP: Enable summary
+            pt_BR: Habilitar resumo
+            zh_Hans: 是否启用摘要
+          llm_description: enable summary
+          max: null
+          min: null
+          name: summary
+          options: []
+          placeholder: null
+          precision: null
+          required: false
+          scope: null
+          template: null
+          type: boolean
+        - auto_generate: null
+          default: 3
+          form: form
+          human_description:
+            en_US: Number of times to retry the request if it fails
+            ja_JP: Number of times to retry the request if it fails
+            pt_BR: Número de vezes para repetir a solicitação se falhar
+            zh_Hans: 请求失败时重试的次数
+          label:
+            en_US: Retry
+            ja_JP: Retry
+            pt_BR: Repetir
+            zh_Hans: 重试
+          llm_description: Number of times to retry the request if it fails
+          max: null
+          min: null
+          name: max_retries
+          options: []
+          placeholder: null
+          precision: null
+          required: false
+          scope: null
+          template: null
+          type: number
+        params:
+          gather_all_images_at_the_end: ''
+          gather_all_links_at_the_end: ''
+          image_caption: ''
+          max_retries: ''
+          no_cache: ''
+          no_cache_track: ''
+          proxy_server: ''
+          remove_images: ''
+          request_params: ''
+          summary: ''
+          target_selector: ''
+          url: ''
+          wait_for_selector: ''
+        provider_id: langgenius/jina_tool/jina
+        provider_name: langgenius/jina_tool/jina
+        provider_type: builtin
+        retry_config:
+          max_retries: 3
+          retry_enabled: true
+          retry_interval: 1000
+        selected: false
+        title: Fetch Single Page
+        tool_configurations:
+          gather_all_images_at_the_end:
+            type: constant
+            value: 0
+          gather_all_links_at_the_end:
+            type: constant
+            value: 0
+          image_caption:
+            type: constant
+            value: 0
+          max_retries:
+            type: constant
+            value: 3
+          no_cache:
+            type: constant
+            value: 0
+          no_cache_track:
+            type: constant
+            value: 0
+          proxy_server:
+            type: constant
+            value: null
+          remove_images:
+            type: constant
+            value: null
+          summary:
+            type: constant
+            value: 0
+          target_selector:
+            type: constant
+            value: null
+          wait_for_selector:
+            type: constant
+            value: null
+        tool_description: Fetch the target URL (can be a PDF) and convert it into
+          a LLM-friendly markdown.
+        tool_label: Fetch Single Page
+        tool_name: jina_reader
+        tool_node_version: '2'
+        tool_parameters:
+          url:
+            type: mixed
+            value: '{{#1718566787996.item#}}'
+        type: tool
+      height: 429
+      id: '1750936046624'
+      parentId: '1718566787996'
+      position:
+        x: 123.53469364426155
+        y: 65
+      positionAbsolute:
+        x: 1657.9738291448348
+        y: 347
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 1002
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        desc: ''
+        model:
+          completion_params:
+            temperature: 0
+          mode: chat
+          name: gpt-4o-mini
+          provider: langgenius/openai/openai
+        prompt_template:
+        - id: b45a90f7-7450-4971-863c-1235600c673a
+          role: system
+          text: "You are tasked with building a information graph from a given list\
+            \ of semantic predicates. \n\nThe information graph must focus exclusively\
+            \ on the main topic defined by the <keyword> and be presented in a structured\
+            \ JSON format. Follow the instructions carefully to ensure the graph is\
+            \ accurate, relevant, and adheres to all specified constraints.\n\n##\
+            \ Instructions\nTo build the information graph, follow these steps:\n\
+            1. Analyze Predicates: Review each semantic predicate in the provided\
+            \ list to identify entities, relationships, and attributes.\n2. Relevance\
+            \ Filter: Include only those predicates that are directly related to the\
+            \ <keyword>. Discard any predicates that do not pertain to the main topic.\n\
+            3. Exclude Personal Information: Remove any predicates containing personal\
+            \ details, such as names or surnames of individuals.\n4. Apply Exclusion\
+            \ List: Exclude any predicates that mention entities, brands, or names\
+            \ listed in the exclusion list <brands>\n5. Structure the Graph: For each\
+            \ relevant predicate, extract the entity, relationship, attribute, and\
+            \ description, and format them according to the specified JSON structure.\n\
+            \n## Output Format\nOrganize the information graph in the following JSON\
+            \ format:\n[\n    {\n        \"entity\": \"...\",\n        \"relationship\"\
+            : \"...\",\n        \"attribute\": \"...\",\n        \"description\":\
+            \ \"...\"\n    },\n    {\n        \"entity\": \"...\",\n        \"relationship\"\
+            : \"...\",\n        \"attribute\": \"...\",\n        \"description\":\
+            \ \"...\"\n    }\n]\n\n1. Entity: The primary subject or object related\
+            \ to the <keyword>.\n2. Relationship: The connection or interaction between\
+            \ entities.\n3. Attribute: A characteristic or property of the entity.\n\
+            4. Description: A brief explanation or context for the predicate.\n\n\
+            ## Requirements\n1. Topic Focus: Ensure all elements in the information\
+            \ graph are directly relevant to the <keyword>.\n2. No Personal Data:\
+            \ Avoid including any personal information, such as names or surnames.\n\
+            3. No Excluded Entities: Generalize or omit any mentions of brands or\
+            \ entities in the exclusion list.\n4. Clarity and Precision: Each entry\
+            \ should be concise, accurate, and reflect the intent of the original\
+            \ predicate.\n5. Language: Present the information graph in <language>\n\
+            \n## Output Presentation\nProvide the final information graph as a JSON\
+            \ array in plain text, without any additional explanation or commentary."
+        - id: 256e54d7-b19d-47d8-86b2-80e167f6e27d
+          role: user
+          text: '## You will be given a list of semantic predicates in the following
+            format:
+
+            <semantic_predicates>
+
+            {{#1718572989305.output#}}
+
+            </semantic_predicates>
+
+
+            ## The main topic to focus on is:
+
+            <keyword>{{#1718558764026.keyword#}}</keyword>
+
+
+            ## The language for the knowledge graph is:
+
+            <language>{{#1718558764026.language#}}</language>
+
+
+            ## Exclude the following brands, entities, and names from the knowledge
+            graph:
+
+            <brands>{{#1721305316764.text#}}</brands>'
+        selected: false
+        title: LLM - budowa grafu informacji (bez AIO)
+        type: llm
+        variables: []
+        vision:
+          configs:
+            detail: high
+          enabled: false
+      height: 87
+      id: '17660848057870'
+      position:
+        x: 4724.707988499571
+        y: 388.6145318317016
+      positionAbsolute:
+        x: 4724.707988499571
+        y: 388.6145318317016
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        code: "function main({res_aio, res_without_aio}) {\n    // Sprawdza, która\
+          \ zmienna zawiera tekst i go zwraca.\n    // Jeśli poszło ścieżką AIO, to\
+          \ res_without_aio będzie puste (i na odwrót).\n    return {\n        result:\
+          \ res_aio || res_without_aio || \"\"\n    }\n}"
+        code_language: javascript
+        outputs:
+          result:
+            children: null
+            type: string
+        selected: false
+        title: Kod 3
+        type: code
+        variables:
+        - value_selector:
+          - '1718576445663'
+          - text
+          value_type: string
+          variable: res_aio
+        - value_selector:
+          - '17660848057870'
+          - text
+          value_type: string
+          variable: res_without_aio
+      height: 51
+      id: '1766085502482'
+      position:
+        x: 5102.096016940365
+        y: 282
+      positionAbsolute:
+        x: 5102.096016940365
+        y: 282
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        authorization:
+          config: null
+          type: no-auth
+        body:
+          data:
+          - id: key-value-128
+            key: ''
+            type: text
+            value: "{\n  \"email\": \"bazaz@performance-media.pl\",\n  \"password\"\
+              : \"owieh30@$@%ajsbdSERG\"\n}\n\n"
+          type: json
+        headers: Content-Type::application/json
+        method: post
+        params: ''
+        retry_config:
+          max_retries: 3
+          retry_enabled: true
+          retry_interval: 100
+        selected: false
+        ssl_verify: true
+        timeout:
+          max_connect_timeout: 0
+          max_read_timeout: 0
+          max_write_timeout: 0
+        title: Senuto Auth
+        type: http-request
+        url: https://api.senuto.com/api/users/token
+        variables: []
+      height: 153
+      id: '1768653366631'
+      position:
+        x: 83.02521025642446
+        y: 518.8698340287934
+      positionAbsolute:
+        x: 83.02521025642446
+        y: 518.8698340287934
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        code: "function main({url_list}) {\n    // Sprawdź czy lista istnieje i ma\
+          \ elementy\n    if (!url_list || !Array.isArray(url_list)) {\n        return\
+          \ { top3: [] };\n    }\n    // Zwróć tylko 3 pierwsze elementy\n    return\
+          \ {\n        top3: url_list.slice(0, 3)\n    };\n}"
+        code_language: javascript
+        outputs:
+          top3:
+            children: null
+            type: array[string]
+        selected: false
+        title: Get Top 3 URLs
+        type: code
+        variables:
+        - value_selector:
+          - '1718566825729'
+          - result
+          value_type: array[string]
+          variable: url_list
+      height: 51
+      id: '1768653585242'
+      position:
+        x: 861.133391764652
+        y: 443.08400570327365
+      positionAbsolute:
+        x: 861.133391764652
+        y: 443.08400570327365
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        code: "function main({response_body}) {\n    try {\n        // Dify czasem\
+          \ przekazuje body jako string, czasem jako obiekt.\n        // Dla pewności\
+          \ parsujemy, jeśli to string.\n        const data = typeof response_body\
+          \ === 'string' ? JSON.parse(response_body) : response_body;\n        \n\
+          \        // Zwracamy sam token (ścieżka z Twojego przykładu: data -> token)\n\
+          \        // Uwaga: W przykładzie requestu wyżej token był w data.data.token\n\
+          \        // Jeśli struktura to { success: true, data: { token: \"...\" }\
+          \ } to:\n        return {\n            token: data.data.token\n        }\n\
+          \    } catch (e) {\n        return { token: \"\" }\n    }\n}"
+        code_language: javascript
+        outputs:
+          token:
+            children: null
+            type: string
+        selected: false
+        title: Parse Token
+        type: code
+        variables:
+        - value_selector:
+          - '1768653366631'
+          - body
+          value_type: string
+          variable: response_body
+      height: 51
+      id: '1768656013543'
+      position:
+        x: 409.7870359758655
+        y: 674.2578347997901
+      positionAbsolute:
+        x: 409.7870359758655
+        y: 674.2578347997901
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        code: "function main(arg) {\n    const today = new Date();\n    const yesterday\
+          \ = new Date(today);\n    yesterday.setDate(yesterday.getDate() - 1);\n\n\
+          \    // Formatowanie do YYYY-MM-DD\n    const formatDate = (date) => {\n\
+          \        return date.toISOString().split('T')[0];\n    };\n\n    return\
+          \ {\n        date_max: formatDate(today),      // Dzisiaj\n        date_min:\
+          \ formatDate(yesterday)   // Wczoraj\n    };\n}"
+        code_language: javascript
+        outputs:
+          date_max:
+            children: null
+            type: string
+          date_min:
+            children: null
+            type: string
+        selected: false
+        title: Date Calculator
+        type: code
+        variables: []
+      height: 51
+      id: '1768661139253'
+      position:
+        x: 776.2966306590918
+        y: 799.0904270791347
+      positionAbsolute:
+        x: 776.2966306590918
+        y: 799.0904270791347
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        error_handle_mode: terminated
+        flatten_output: true
+        height: 257
+        is_parallel: false
+        iterator_input_type: array[string]
+        iterator_selector:
+        - '1768653585242'
+        - top3
+        output_selector:
+        - '1768663233433'
+        - body
+        output_type: array[string]
+        parallel_nums: 10
+        selected: false
+        start_node_id: 1768663199894start
+        title: Iteracja Senuto
+        type: iteration
+        width: 386
+      height: 257
+      id: '1768663199894'
+      position:
+        x: 1373.7019299603144
+        y: 1036.583536478985
+      positionAbsolute:
+        x: 1373.7019299603144
+        y: 1036.583536478985
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 386
+      zIndex: 1
+    - data:
+        desc: ''
+        isInIteration: true
+        selected: false
+        title: ''
+        type: iteration-start
+      draggable: false
+      height: 48
+      id: 1768663199894start
+      parentId: '1768663199894'
+      position:
+        x: 24
+        y: 68
+      positionAbsolute:
+        x: 1397.7019299603144
+        y: 1104.583536478985
+      selectable: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom-iteration-start
+      width: 44
+      zIndex: 1002
+    - data:
+        authorization:
+          config: null
+          type: no-auth
+        body:
+          data:
+          - id: key-value-204
+            key: ''
+            type: text
+            value: "{\n  \"domain\": \"{{#1768663199894.item#}}\",\n  \"fetch_mode\"\
+              : \"url\",\n  \"country_id\": \"200\",\n  \"limit\": \"10\",\n \"order\"\
+              : {\n    \"dir\": \"desc\",\n    \"prop\": \"statistics.visibility.current\"\
+              \n}\n}"
+          type: json
+        headers: Authorization:Bearer {{#1768656013543.token#}}
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1768663199894'
+        method: post
+        params: ''
+        retry_config:
+          max_retries: 3
+          retry_enabled: true
+          retry_interval: 100
+        selected: false
+        ssl_verify: true
+        timeout:
+          max_connect_timeout: 0
+          max_read_timeout: 0
+          max_write_timeout: 0
+        title: Senuto Keywords Fetch
+        type: http-request
+        url: https://api.senuto.com/api/visibility_analysis/reports/positions/getData
+        variables: []
+      height: 169
+      id: '1768663233433'
+      parentId: '1768663199894'
+      position:
+        x: 16
+        y: 65
+      positionAbsolute:
+        x: 1389.7019299603144
+        y: 1101.583536478985
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 1002
+    - data:
+        code: "function main({ senuto_responses }) {\n    let resultList = [];\n \
+          \   let seenKeywords = new Set(); // Zbiór do pilnowania, żeby nie dodać\
+          \ tego samego słowa dwa razy\n\n    // 1. Wyciąganie danych\n    if (Array.isArray(senuto_responses))\
+          \ {\n        senuto_responses.forEach(responseBody => {\n            try\
+          \ {\n                const data = typeof responseBody === 'string' ? JSON.parse(responseBody)\
+          \ : responseBody;\n                \n                if (data.success &&\
+          \ data.data && Array.isArray(data.data)) {\n                    data.data.forEach(item\
+          \ => {\n                        // Sprawdzamy, czy słowo już było.\n   \
+          \                     // Jeśli nie - dodajemy do listy zachowując oryginalną\
+          \ kolejność.\n                        if (!seenKeywords.has(item.keyword))\
+          \ {\n                            seenKeywords.add(item.keyword);\n     \
+          \                       \n                            resultList.push({\n\
+          \                                keyword: item.keyword,\n              \
+          \                  volume: item.statistics.searches.current\n          \
+          \                  });\n                        }\n                    });\n\
+          \                }\n            } catch (e) {}\n        });\n    }\n\n \
+          \   // 2. KROK POMINIĘTY: Sortowanie (b.volume - a.volume) zostało usunięte.\n\
+          \    // Lista 'resultList' jest teraz w takiej kolejności, jak przyszła\
+          \ z Senuto.\n\n    // Ograniczenie do np. pierwszych 100 wyników z listy\
+          \ wejściowej\n    const topList = resultList.slice(0, 100);\n\n    // ---\
+          \ BUDOWANIE WYNIKÓW ---\n\n    // ZMIENNA 1: Same frazy po przecinku\n \
+          \   const keywordsCommaSeparated = topList.map(item => item.keyword).join(\"\
+          , \");\n\n    // ZMIENNA 2: Tabela z wolumenami (Markdown)\n    let detailedTable\
+          \ = `| Słowo kluczowe | Śr. wyszukiwań |\\n|---|---|\\n`;\n    topList.forEach(k\
+          \ => {\n        detailedTable += `| ${k.keyword} | ${k.volume} |\\n`;\n\
+          \    });\n\n    return {\n        frazy_senuto: keywordsCommaSeparated,\n\
+          \        raport_senuto: detailedTable\n    };\n}"
+        code_language: javascript
+        outputs:
+          frazy_senuto:
+            children: null
+            type: string
+          raport_senuto:
+            children: null
+            type: string
+        selected: false
+        title: Senuto Aggregation
+        type: code
+        variables:
+        - value_selector:
+          - '1768663199894'
+          - output
+          value_type: array[string]
+          variable: senuto_responses
+      height: 51
+      id: '1768665310876'
+      position:
+        x: 3847.6531966212815
+        y: 1247.703131439196
+      positionAbsolute:
+        x: 3847.6531966212815
+        y: 1247.703131439196
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    viewport:
+      x: -595.1670853256262
+      y: 21.744854974778832
+      zoom: 0.6597539553864475
+  rag_pipeline_variables: []
