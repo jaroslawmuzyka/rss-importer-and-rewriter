@@ -50,7 +50,7 @@ except (KeyError, FileNotFoundError):
     st.error("Missing [SUPABASE] URL or KEY in secrets manager.")
     st.stop()
 
-@st.cache_resource
+# @st.cache_resource # Removed caching to allow secret updates without reboot
 def init_supabase() -> Client:
     return create_client(SUPABASE_URL, SUPABASE_KEY)
 
