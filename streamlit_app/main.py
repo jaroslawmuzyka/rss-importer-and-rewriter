@@ -138,7 +138,45 @@ def add_item(source_id, url):
         "url_hash": url_hash,
         "status": "PENDING",
         "title_original": "Manual Add"
-    }).execute()
+# --- Dify Integration ---
+def trigger_dify_workflow(item_id, supabase_url, supabase_key):
+    """Triggers the Dify workflow for a specific item."""
+    try:
+        api_key = st.secrets["dify"]["API_IMPORT_AND_REWRITE_RSS"]
+        base_url = st.secrets["dify"]["BASE_URL"]
+    except KeyError:
+        st.error("Missing [dify] configuration in secrets.")
+        return False
+
+    url = f"{base_url}/workflows/run"
+    headers = {
+        "Authorization": f"Bearer {api_key}",
+        "Content-Type": "application/json"
+    }
+    
+    # Workflow inputs matching the YAML definition
+    payload = {
+        "inputs": {
+            "item_id": item_id,
+            "supabase_url": supabase_url,
+            "supabase_key": supabase_key
+        },
+        "response_mode": "blocking",
+        "user": "streamlit-admin"
+    }
+    
+    try:
+        import requests
+        resp = requests.post(url, json=payload, headers=headers)
+        
+        if resp.status_code == 200:
+            return True
+        else:
+            st.error(f"Dify Error {resp.status_code}: {resp.text}")
+            return False
+    except Exception as e:
+        st.error(f"Request failed: {e}")
+        return False
 
 # --- Diagnostic Tool ---
 def show_diagnostic():
@@ -315,7 +353,22 @@ def show_queue():
                                 
                     with c3:
                         st.markdown(f"[Open Link]({row['original_url']})")
-                    
+                        
+                        # Trigger Button
+                        if row['status'] == 'PENDING':
+                            if st.button("🚀 Run Workflow", type="primary"):
+                                with st.spinner("Triggering Dify..."):
+                                    # Get explicit keys to pass to Dify (so it doesn't need its own env vars)
+                                    try:
+                                        sb_url = st.secrets["SUPABASE"]["URL"]
+                                        sb_key = st.secrets["SUPABASE"]["KEY"]
+                                        if trigger_dify_workflow(sel_id, sb_url, sb_key):
+                                            st.success("Workflow started!")
+                                            supabase.table("items").update({"status": "PROCESSING"}).eq("id", sel_id).execute()
+                                            st.rerun()
+                                    except Exception as e:
+                                        st.error(f"Trigger failed: {e}")
+
                     with st.expander("Full Details JSON"):
                         # Convert row to dict, handle non-serializable?
                         st.json(row.to_dict())

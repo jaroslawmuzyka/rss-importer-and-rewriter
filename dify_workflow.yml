@@ -1,10 +1,22 @@
 app:
-  description: Automated workflow for fetching RSS items, rewriting content, and publishing to WordPress.
+  description: Zautomatyzowany workflow do pobierania wpisów RSS, przepisywania treści i publikacji na WordPress.
   icon: 🤖
   icon_background: '#FFEAD5'
   mode: workflow
-  name: Local News Automation V3
+  name: Local News Automation V5 (Jina Tool)
   use_icon_as_answer_icon: false
+
+dependencies:
+- current_identifier: null
+  type: marketplace
+  value:
+    marketplace_plugin_unique_identifier: langgenius/openai:0.0.26@c1e643ac6a7732f6333a783320b4d3026fa5e31d8e7026375b98d44418d33f26
+    version: null
+- current_identifier: null
+  type: marketplace
+  value:
+    marketplace_plugin_unique_identifier: langgenius/jina_tool:0.0.7@08d5935b56b9ddaa633204874c0fd796c14971489b6379fad1a430b5ec99b569
+    version: null
 
 kind: app
 version: 0.5.0
@@ -14,13 +26,8 @@ workflow:
   environment_variables: []
   features:
     file_upload:
-      image:
-        enabled: false
-        number_limits: 3
-        transfer_methods:
-          - local_file
-          - remote_url
-    opening_statement: ""
+      enabled: false
+    opening_statement: ''
     retriever_resource:
       enabled: false
     sensitive_word_avoidance:
@@ -28,327 +35,575 @@ workflow:
     speech_to_text:
       enabled: false
     suggested_questions: []
+    suggested_questions_after_answer:
+      enabled: false
     text_to_speech:
       enabled: false
-      language: ""
-      voice: ""
-
+      language: ''
+      voice: ''
   graph:
     edges:
-      - id: edge_1
-        source: start
-        sourceHandle: source
-        target: get_item_data
-        targetHandle: target
-        type: custom
-      - id: edge_2
-        source: get_item_data
-        sourceHandle: source
-        target: fetch_jina
-        targetHandle: target
-        type: custom
-      - id: edge_3
-        source: fetch_jina
-        sourceHandle: source
-        target: dedup_check
-        targetHandle: target
-        type: custom
-      - id: edge_4
-        source: dedup_check
-        sourceHandle: source
-        target: is_duplicate
-        targetHandle: target
-        type: custom
-      - id: edge_5_true
-        source: is_duplicate
-        sourceHandle: 'true'
-        target: update_skipped
-        targetHandle: target
-        type: custom
-      - id: edge_5_false
-        source: is_duplicate
-        sourceHandle: 'false'
-        target: ai_rewrite
-        targetHandle: target
-        type: custom
-      - id: edge_6
-        source: ai_rewrite
-        sourceHandle: source
-        target: sanity_check
-        targetHandle: target
-        type: custom
-      - id: edge_7
-        source: sanity_check
-        sourceHandle: source
-        target: sanity_router
-        targetHandle: target
-        type: custom
-      - id: edge_8_true
-        source: sanity_router
-        sourceHandle: 'true'
-        target: publish_wp
-        targetHandle: target
-        type: custom
-      - id: edge_8_false
-        source: sanity_router
-        sourceHandle: 'false'
-        target: update_failure
-        targetHandle: target
-        type: custom
-      - id: edge_9
-        source: publish_wp
-        sourceHandle: source
-        target: update_success
-        targetHandle: target
-        type: custom
-
+    - id: edge-1
+      source: '1720000000001'
+      sourceHandle: source
+      target: '1720000000002'
+      targetHandle: target
+      type: custom
+    - id: edge-2
+      source: '1720000000002'
+      sourceHandle: source
+      target: '1720000000003'
+      targetHandle: target
+      type: custom
+    - id: edge-3
+      source: '1720000000003'
+      sourceHandle: source
+      target: '1720000000004'
+      targetHandle: target
+      type: custom
+    - id: edge-4
+      source: '1720000000004'
+      sourceHandle: source
+      target: '1720000000005'
+      targetHandle: target
+      type: custom
+    - id: edge-5-true
+      source: '1720000000005'
+      sourceHandle: 'true'
+      target: '1720000000006'
+      targetHandle: target
+      type: custom
+    - id: edge-5-false
+      source: '1720000000005'
+      sourceHandle: 'false'
+      target: '1720000000007'
+      targetHandle: target
+      type: custom
+    - id: edge-6
+      source: '1720000000007'
+      sourceHandle: source
+      target: '1720000000008'
+      targetHandle: target
+      type: custom
+    - id: edge-7
+      source: '1720000000008'
+      sourceHandle: source
+      target: '1720000000009'
+      targetHandle: target
+      type: custom
+    - id: edge-8-true
+      source: '1720000000009'
+      sourceHandle: 'true'
+      target: '1720000000010'
+      targetHandle: target
+      type: custom
+    - id: edge-8-false
+      source: '1720000000009'
+      sourceHandle: 'false'
+      target: '1720000000012'
+      targetHandle: target
+      type: custom
+    - id: edge-9
+      source: '1720000000010'
+      sourceHandle: source
+      target: '1720000000011'
+      targetHandle: target
+      type: custom
+    - id: edge-end-1
+      source: '1720000000006'
+      sourceHandle: source
+      target: '1720000000099'
+      targetHandle: target
+      type: custom
+    - id: edge-end-2
+      source: '1720000000011'
+      sourceHandle: source
+      target: '1720000000099'
+      targetHandle: target
+      type: custom
+    - id: edge-end-3
+      source: '1720000000012'
+      sourceHandle: source
+      target: '1720000000099'
+      targetHandle: target
+      type: custom
     nodes:
-      - id: start
-        position: { x: 80, y: 282 }
-        type: custom
-        data:
-          title: Start
-          type: start
-          desc: "Entry point"
-          variables:
-            - label: Item ID
-              variable: item_id
-              type: text-input
-              required: true
-              max_length: 48
-            - label: Supabase URL
-              variable: supabase_url
-              type: text-input
-              required: true
-              default: "https://oqrzifjadakzmxeawytm.supabase.co"
-            - label: Supabase Key
-              variable: supabase_key
-              type: text-input
-              required: true
-              default: "sb_publishable_qA_PI7C-9poXXCoAjjSkBQ_MgIw7GBV"
-
-      - id: get_item_data
-        position: { x: 380, y: 282 }
-        type: custom
-        data:
-          title: Get Item Data
-          type: http-request
-          method: get
-          url: "{{#start.supabase_url#}}/rest/v1/items"
-          params: "select=*,sources(*)&id=eq.{{#start.item_id#}}"
-          headers: 
-            Authorization: "Bearer {{#start.supabase_key#}}"
-            apikey: "{{#start.supabase_key#}}"
-          timeout: { max_connect_timeout: 0, max_read_timeout: 0, max_write_timeout: 0 }
-          authorization: { type: no-auth }
-
-      - id: fetch_jina
-        position: { x: 680, y: 282 }
-        type: custom
-        data:
-          title: Fetch Jina Content
-          type: http-request
-          method: get
-          url: "https://r.jina.ai/{{#get_item_data.body[0].original_url#}}"
-          timeout: { max_connect_timeout: 0, max_read_timeout: 0, max_write_timeout: 0 }
-          authorization: { type: no-auth }
-
-      - id: dedup_check
-        position: { x: 980, y: 282 }
-        type: custom
-        data:
-          title: Dedup Check
-          type: code
-          code_language: python3
-          variables:
-            - value_selector: ['fetch_jina', 'body']
-              variable: text
-            - value_selector: ['start', 'item_id']
-              variable: current_id
-            - value_selector: ['start', 'supabase_url']
-              variable: supabase_url
-            - value_selector: ['start', 'supabase_key']
-              variable: supabase_key
-          code: |
-            import hashlib
-            import requests
-            import json
-            
-            def main(text, current_id, supabase_url, supabase_key):
-                if not text:
-                    return {"is_duplicate": False, "cleaned_text": ""}
-                
-                content_hash = hashlib.sha256(text.encode('utf-8')).hexdigest()
-                headers = {"apikey": supabase_key, "Authorization": "Bearer " + supabase_key}
-                
-                check_url = f"{supabase_url}/rest/v1/items?select=id&content_hash=eq.{content_hash}&id=neq.{current_id}"
-                try:
-                    resp = requests.get(check_url, headers=headers)
-                    duplicates = resp.json()
-                    is_dup = len(duplicates) > 0
-                except:
-                    is_dup = False
-
-                try:
-                    patch_url = f"{supabase_url}/rest/v1/items?id=eq.{current_id}"
-                    requests.patch(patch_url, headers=headers, json={"content_hash": content_hash})
-                except:
-                    pass
-                    
-                return {
-                    "is_duplicate": is_dup,
-                    "cleaned_text": text
-                }
-          outputs:
+    - data:
+        desc: Entry point
+        selected: false
+        title: Start
+        type: start
+        variables:
+        - label: Item ID
+          max_length: 48
+          options: []
+          required: true
+          type: text-input
+          variable: item_id
+        - label: Supabase URL
+          max_length: 256
+          options: []
+          required: true
+          type: text-input
+          variable: supabase_url
+          default: "https://oqrzifjadakzmxeawytm.supabase.co"
+        - label: Supabase Key
+          max_length: 256
+          options: []
+          required: true
+          type: text-input
+          variable: supabase_key
+          default: "sb_publishable_qA_PI7C-9poXXCoAjjSkBQ_MgIw7GBV"
+      height: 116
+      id: '1720000000001'
+      position:
+        x: 80
+        y: 282
+      positionAbsolute:
+        x: 80
+        y: 282
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        authorization:
+          config: null
+          type: no-auth
+        body:
+          data: []
+          type: none
+        desc: ''
+        headers: "Authorization:Bearer {{#1720000000001.supabase_key#}}\napikey:{{#1720000000001.supabase_key#}}"
+        method: get
+        params: ''
+        selected: false
+        timeout:
+          max_connect_timeout: 0
+          max_read_timeout: 0
+          max_write_timeout: 0
+        title: Pobranie Danych Item
+        type: http-request
+        url: "{{#1720000000001.supabase_url#}}/rest/v1/items?select=*,sources(*)&id=eq.{{#1720000000001.item_id#}}"
+        variables: []
+      height: 104
+      id: '1720000000002'
+      position:
+        x: 380
+        y: 282
+      positionAbsolute:
+        x: 380
+        y: 282
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        provider_id: langgenius/jina_tool/jina
+        provider_name: langgenius/jina_tool/jina
+        provider_type: builtin
+        retry_config:
+          max_retries: 3
+          retry_enabled: true
+          retry_interval: 1000
+        selected: false
+        title: Pobranie Treści (Jina)
+        tool_configurations:
+          gather_all_images_at_the_end:
+            type: constant
+            value: 0
+          gather_all_links_at_the_end:
+            type: constant
+            value: 0
+          image_caption:
+            type: constant
+            value: 0
+          max_retries:
+            type: constant
+            value: 3
+          no_cache:
+            type: constant
+            value: 0
+          no_cache_track:
+            type: constant
+            value: 0
+          proxy_server:
+            type: constant
+            value: null
+          remove_images:
+            type: constant
+            value: null
+          summary:
+            type: constant
+            value: 0
+          target_selector:
+            type: constant
+            value: null
+          wait_for_selector:
+            type: constant
+            value: null
+        tool_description: Fetch the target URL (can be a PDF) and convert it into
+          a LLM-friendly markdown.
+        tool_label: Fetch Single Page
+        tool_name: jina_reader
+        tool_node_version: '2'
+        tool_parameters:
+          url:
+            type: mixed
+            value: '{{#1720000000002.body[0].original_url#}}'
+        type: tool
+      height: 104
+      id: '1720000000003'
+      position:
+        x: 680
+        y: 282
+      positionAbsolute:
+        x: 680
+        y: 282
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        code: "import hashlib\nimport requests\nimport json\n\ndef main(text, current_id, supabase_url, supabase_key):\n    if not text:\n        return {\"is_duplicate\": False, \"cleaned_text\": \"\"}\n    \n    # Encode text properly for hash\n    try:\n        content_hash = hashlib.sha256(str(text).encode('utf-8')).hexdigest()\n    except:\n        content_hash = \"error_hash\"\n        \n    headers = {\"apikey\": supabase_key, \"Authorization\": \"Bearer \" + supabase_key}\n    \n    check_url = f\"{supabase_url}/rest/v1/items?select=id&content_hash=eq.{content_hash}&id=neq.{current_id}\"\n    is_dup = False\n    try:\n        resp = requests.get(check_url, headers=headers)\n        duplicates = resp.json()\n        if isinstance(duplicates, list) and len(duplicates) > 0:\n             is_dup = True\n    except Exception as e:\n        print(f\"Check error: {e}\")\n        is_dup = False\n\n    try:\n        patch_url = f\"{supabase_url}/rest/v1/items?id=eq.{current_id}\"\n        requests.patch(patch_url, headers=headers, json={\"content_hash\": content_hash})\n    except Exception as e:\n        print(f\"Patch error: {e}\")\n        \n    return {\n        \"is_duplicate\": is_dup,\n        \"cleaned_text\": text\n    }"
+        code_language: python3
+        desc: ''
+        outputs:
+          is_duplicate:
+            type: boolean
+          cleaned_text:
+            type: string
+        selected: false
+        title: Sprawdzenie Duplikatów
+        type: code
+        variables:
+        - value_selector:
+          - '1720000000003'
+          - text
+          variable: text
+        - value_selector:
+          - '1720000000001'
+          - item_id
+          variable: current_id
+        - value_selector:
+          - '1720000000001'
+          - supabase_url
+          variable: supabase_url
+        - value_selector:
+          - '1720000000001'
+          - supabase_key
+          variable: supabase_key
+      height: 54
+      id: '1720000000004'
+      position:
+        x: 980
+        y: 282
+      positionAbsolute:
+        x: 980
+        y: 282
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        cases:
+        - case_id: 'true'
+          conditions:
+          - comparison_operator: is_true
+            id: cond_1
+            value: ''
+            varType: boolean
+            variable_selector:
+            - '1720000000004'
             - is_duplicate
-            - cleaned_text
-
-      - id: is_duplicate
-        position: { x: 1280, y: 282 }
-        type: custom
-        data:
-          title: Is Duplicate?
-          type: if-else
+          id: 'true'
+          logical_operator: and
+        desc: ''
+        selected: false
+        title: Czy Duplikat?
+        type: if-else
+      height: 126
+      id: '1720000000005'
+      position:
+        x: 1280
+        y: 282
+      positionAbsolute:
+        x: 1280
+        y: 282
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        authorization:
+          config: null
+          type: no-auth
+        body:
+          data:
+          - key: ''
+            type: text
+            value: '{"status": "SKIPPED_DUPLICATE"}'
+          type: json
+        desc: ''
+        headers: "Authorization:Bearer {{#1720000000001.supabase_key#}}\napikey:{{#1720000000001.supabase_key#}}\nContent-Type:application/json"
+        method: patch
+        params: ''
+        selected: false
+        timeout:
+          max_connect_timeout: 0
+          max_read_timeout: 0
+          max_write_timeout: 0
+        title: Oznacz jako Pominięty
+        type: http-request
+        url: "{{#1720000000001.supabase_url#}}/rest/v1/items?id=eq.{{#1720000000001.item_id#}}"
+        variables: []
+      height: 104
+      id: '1720000000006'
+      position:
+        x: 1580
+        y: 100
+      positionAbsolute:
+        x: 1580
+        y: 100
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        desc: ''
+        model:
+          completion_params:
+            temperature: 0.7
+          mode: chat
+          name: gpt-4o-mini
+          provider: openai
+        prompt_template:
+        - id: system_msg
+          role: system
+          text: Jesteś dziennikarzem lokalnym.
+        - id: user_msg
+          role: user
+          text: "Tekst wejściowy:\n{{#1720000000004.cleaned_text#}}\n\nZadanie: Przepisz ten news dla lokalnego portalu. Zwróć WYŁĄCZNIE obiekt JSON z kluczami: 'title', 'content' (format HTML, tylko tagi h2 i p), 'excerpt'."
+        selected: false
+        title: AI Rewrite (Dziennikarz)
+        type: llm
+        variables: []
+        vision:
+          enabled: false
+      height: 98
+      id: '1720000000007'
+      position:
+        x: 1580
+        y: 400
+      positionAbsolute:
+        x: 1580
+        y: 400
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        code: "import json\nimport re\n\ndef main(llm_response):\n    try:\n        # Clean up markdown code blocks if present\n        clean_resp = llm_response.replace('```json', '').replace('```', '').strip()\n        data = json.loads(clean_resp)\n        content = data.get('content', '')\n        \n        if len(content) < 200:\n            return {\"status\": \"fail\", \"error\": \"Content too short\", \"title\": \"\", \"content\": \"\"}\n            \n        return {\"status\": \"pass\", \"title\": data.get('title', ''), \"content\": content, \"error\": \"\"}\n    except Exception as e:\n        return {\"status\": \"fail\", \"error\": str(e), \"title\": \"\", \"content\": \"\"}"
+        code_language: python3
+        desc: ''
+        outputs:
+          status:
+            type: string
+          title:
+            type: string
+          content:
+            type: string
+          error:
+            type: string
+        selected: false
+        title: Sanity Check
+        type: code
+        variables:
+        - value_selector:
+          - '1720000000007'
+          - text
+          variable: llm_response
+      height: 54
+      id: '1720000000008'
+      position:
+        x: 1880
+        y: 400
+      positionAbsolute:
+        x: 1880
+        y: 400
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        cases:
+        - case_id: 'true'
           conditions:
-            - comparison_operator: is_true
-              variable_selector: 
-                - dedup_check
-                - result
-                - is_duplicate
-
-      - id: update_skipped
-        position: { x: 1580, y: 100 }
-        type: custom
-        data:
-          title: Set Skipped
-          type: http-request
-          method: patch
-          url: "{{#start.supabase_url#}}/rest/v1/items?id=eq.{{#start.item_id#}}"
-          body: 
-            type: json
-            data: '{"status": "SKIPPED_DUPLICATE"}'
-          headers:
-            Authorization: "Bearer {{#start.supabase_key#}}"
-            apikey: "{{#start.supabase_key#}}"
-            Content-Type: "application/json"
-          timeout: { max_connect_timeout: 0, max_read_timeout: 0, max_write_timeout: 0 }
-          authorization: { type: no-auth }
-
-      - id: ai_rewrite
-        position: { x: 1580, y: 400 }
-        type: custom
-        data:
-          title: AI Rewrite
-          type: llm
-          model: 
-            provider: openai
-            name: gpt-4o-mini
-            mode: chat
-            completion_params: { temperature: 0.7 }
-          prompt_template:
-            - role: system
-              text: "You are a local news journalist."
-            - role: user
-              text: "Input Text:\n{{#dedup_check.result.cleaned_text#}}\n\nTask: Rewrite this news for a local portal. Return ONLY a JSON object with keys: 'title', 'content' (HTML format, h2 and p tags only), 'excerpt'."
-          context: { enabled: false, variable_selector: [] }
-          vision: { enabled: false }
-
-      - id: sanity_check
-        position: { x: 1880, y: 400 }
-        type: custom
-        data:
-          title: Sanity Check
-          type: code
-          code_language: python3
-          variables:
-             - value_selector: ['ai_rewrite', 'text']
-               variable: llm_response
-          code: |
-            import json
-            def main(llm_response):
-                try:
-                    clean_resp = llm_response.replace('```json', '').replace('```', '').strip()
-                    data = json.loads(clean_resp)
-                    content = data.get('content', '')
-                    if len(content) < 200:
-                        return {"status": "fail", "error": "Content too short"}
-                    return {"status": "pass", "title": data['title'], "content": content}
-                except Exception as e:
-                    return {"status": "fail", "error": str(e)}
-          outputs:
+          - comparison_operator: equal
+            id: cond_sanity
+            value: pass
+            varType: string
+            variable_selector:
+            - '1720000000008'
             - status
-            - title
-            - content
-            - error
-
-      - id: sanity_router
-        position: { x: 2180, y: 400 }
-        type: custom
-        data:
-          title: Sanity Passed?
-          type: if-else
-          conditions:
-            - comparison_operator: equal
-              value: pass
-              variable_selector:
-                - sanity_check
-                - result
-                - status
-
-      - id: publish_wp
-        position: { x: 2480, y: 200 }
-        type: custom
-        data:
-          title: Publish to WP
-          type: http-request
-          method: post
-          url: "{{#get_item_data.body[0].sources.wp_api_endpoint#}}/posts"
-          body:
-            type: json
-            data: |
-              {
-                "title": "{{#sanity_check.result.title#}}",
-                "content": "{{#sanity_check.result.content#}}",
-                "status": "publish"
-              }
-          headers:
-            Authorization: "Basic {{#get_item_data.body[0].sources.wp_auth_header#}}"
-            Content-Type: "application/json"
-          timeout: { max_connect_timeout: 0, max_read_timeout: 0, max_write_timeout: 0 }
-          authorization: { type: no-auth }
-
-      - id: update_success
-        position: { x: 2880, y: 200 }
-        type: custom
-        data:
-          title: Update Success
-          type: http-request
-          method: patch
-          url: "{{#start.supabase_url#}}/rest/v1/items?id=eq.{{#start.item_id#}}"
-          body:
-            type: json
-            data: '{"status": "PUBLISHED", "wp_post_id": "{{#publish_wp.body.id#}}"}'
-          headers:
-            Authorization: "Bearer {{#start.supabase_key#}}"
-            apikey: "{{#start.supabase_key#}}"
-            Content-Type: "application/json"
-          timeout: { max_connect_timeout: 0, max_read_timeout: 0, max_write_timeout: 0 }
-          authorization: { type: no-auth }
-      
-      - id: update_failure
-        position: { x: 2480, y: 500 }
-        type: custom
-        data:
-          title: Update Failure
-          type: http-request
-          method: patch
-          url: "{{#start.supabase_url#}}/rest/v1/items?id=eq.{{#start.item_id#}}"
-          body:
-            type: json
-            data: '{"status": "FAILED_SANITY", "error_message": "{{#sanity_check.result.error#}}"}'
-          headers:
-            Authorization: "Bearer {{#start.supabase_key#}}"
-            apikey: "{{#start.supabase_key#}}"
-            Content-Type: "application/json"
-          timeout: { max_connect_timeout: 0, max_read_timeout: 0, max_write_timeout: 0 }
-          authorization: { type: no-auth }
+          id: 'true'
+          logical_operator: and
+        desc: ''
+        selected: false
+        title: Sanity Passed?
+        type: if-else
+      height: 126
+      id: '1720000000009'
+      position:
+        x: 2180
+        y: 400
+      positionAbsolute:
+        x: 2180
+        y: 400
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        authorization:
+          config: null
+          type: no-auth
+        body:
+          data:
+          - key: ''
+            type: text
+            value: "{\n  \"title\": \"{{#1720000000008.title#}}\",\n  \"content\": \"{{#1720000000008.content#}}\",\n  \"status\": \"publish\"\n}"
+          type: json
+        desc: ''
+        headers: "Authorization:Basic {{#1720000000002.body[0].sources.wp_auth_header#}}\nContent-Type:application/json"
+        method: post
+        params: ''
+        selected: false
+        timeout:
+          max_connect_timeout: 0
+          max_read_timeout: 0
+          max_write_timeout: 0
+        title: Publish to WP
+        type: http-request
+        url: "{{#1720000000002.body[0].sources.wp_api_endpoint#}}/posts"
+        variables: []
+      height: 104
+      id: '1720000000010'
+      position:
+        x: 2480
+        y: 200
+      positionAbsolute:
+        x: 2480
+        y: 200
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        authorization:
+          config: null
+          type: no-auth
+        body:
+          data:
+          - key: ''
+            type: text
+            value: "{\"status\": \"PUBLISHED\", \"wp_post_id\": \"{{#1720000000010.body.id#}}\"}"
+          type: json
+        desc: ''
+        headers: "Authorization:Bearer {{#1720000000001.supabase_key#}}\napikey:{{#1720000000001.supabase_key#}}\nContent-Type:application/json"
+        method: patch
+        params: ''
+        selected: false
+        timeout:
+          max_connect_timeout: 0
+          max_read_timeout: 0
+          max_write_timeout: 0
+        title: Update Success
+        type: http-request
+        url: "{{#1720000000001.supabase_url#}}/rest/v1/items?id=eq.{{#1720000000001.item_id#}}"
+        variables: []
+      height: 104
+      id: '1720000000011'
+      position:
+        x: 2880
+        y: 200
+      positionAbsolute:
+        x: 2880
+        y: 200
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        authorization:
+          config: null
+          type: no-auth
+        body:
+          data:
+          - key: ''
+            type: text
+            value: "{\"status\": \"FAILED_SANITY\", \"error_message\": \"{{#1720000000008.error#}}\"}"
+          type: json
+        desc: ''
+        headers: "Authorization:Bearer {{#1720000000001.supabase_key#}}\napikey:{{#1720000000001.supabase_key#}}\nContent-Type:application/json"
+        method: patch
+        params: ''
+        selected: false
+        timeout:
+          max_connect_timeout: 0
+          max_read_timeout: 0
+          max_write_timeout: 0
+        title: Update Failure
+        type: http-request
+        url: "{{#1720000000001.supabase_url#}}/rest/v1/items?id=eq.{{#1720000000001.item_id#}}"
+        variables: []
+      height: 104
+      id: '1720000000012'
+      position:
+        x: 2480
+        y: 500
+      positionAbsolute:
+        x: 2480
+        y: 500
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        desc: ''
+        outputs: []
+        selected: false
+        title: Koniec
+        type: end
+      height: 54
+      id: '1720000000099'
+      position:
+        x: 3200
+        y: 350
+      positionAbsolute:
+        x: 3200
+        y: 350
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    viewport:
+      x: 0
+      y: 0
+      zoom: 1
