@@ -146,14 +146,14 @@ workflow:
           required: true
           type: text-input
           variable: supabase_url
-          default: "https://oqrzifjadakzmxeawytm.supabase.co"
+          default: "https://btlgsucqnbtgiscoldtv.supabase.co"
         - label: Supabase Key
           max_length: 256
           options: []
           required: true
           type: text-input
           variable: supabase_key
-          default: "sb_publishable_qA_PI7C-9poXXCoAjjSkBQ_MgIw7GBV"
+          default: "sb_publishable_0CVh8abfnU8lyGt0QYp8Pw_PdB6SdOi"
       height: 116
       id: '1720000000001'
       position:

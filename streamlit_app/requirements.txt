@@ -1,3 +1,5 @@
 streamlit
 pandas
 supabase
+feedparser
+requests

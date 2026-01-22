@@ -3,6 +3,8 @@ import pandas as pd
 from supabase import create_client, Client
 import os
 import hashlib
+import feedparser
+import time
 
 # --- Configuration & Setup ---
 st.set_page_config(
@@ -98,7 +100,10 @@ def safe_query(table_name, select="*", order=None, limit=None, filters=None):
         return pd.DataFrame()
 
 # CRUD: Sources
-def add_source(name, city_slug, rss, wp_endpoint, wp_user, wp_pass):
+def add_source(name, rss, wp_endpoint, wp_user, wp_pass):
+    # Auto-generate slug from name to satisfy DB constraint
+    city_slug = name.lower().replace(" ", "-").replace("ą", "a").replace("ę", "e").replace("ś", "s").replace("ć", "c").replace("ż", "z").replace("ź", "z").replace("ł", "l").replace("ó", "o").replace("ń", "n")
+    
     supabase.table("sources").insert({
         "name": name,
         "city_slug": city_slug,
@@ -367,11 +372,36 @@ def show_sources():
         
         if not df.empty:
             for idx, row in df.iterrows():
-                with st.expander(f"{row['name']} ({row['city_slug']}) {'🟢' if row['is_active'] else '🔴'}"):
+                with st.expander(f"{row['name']} {'🟢' if row['is_active'] else '🔴'}"):
                     c1, c2 = st.columns(2)
                     with c1:
                         st.text_input("Endpoint", value=row['wp_api_endpoint'], disabled=True, key=f"ep_{row['id']}")
                         st.text_input("RSS", value=row['rss_url'], disabled=True, key=f"rss_{row['id']}")
+                        
+                        if st.button("📡 Fetch Articles from RSS", key=f"fetch_{row['id']}"):
+                            with st.spinner("Parsing RSS Feed..."):
+                                try:
+                                    feed = feedparser.parse(row['rss_url'])
+                                    if feed.entries:
+                                        count_new = 0
+                                        for entry in feed.entries[:10]: # Limit to 10 latest
+                                             link = entry.link
+                                             # Check dup
+                                             h = hashlib.sha256(link.encode('utf-8')).hexdigest()
+                                             res = supabase.table("items").select("id", count="exact").eq("url_hash", h).execute()
+                                             if res.count == 0:
+                                                 add_item(row['id'], link)
+                                                 count_new += 1
+                                        if count_new > 0:
+                                            st.success(f"Added {count_new} new items to Queue!")
+                                            time.sleep(1) # Visual pause
+                                            st.rerun()
+                                        else:
+                                            st.info("No new items found.")
+                                    else:
+                                        st.warning("RSS Feed parsed but empty or invalid format.")
+                                except Exception as e:
+                                    st.error(f"RSS Error: {e}")
                     
                     with c2:
                         st.write("Actions")
@@ -397,21 +427,20 @@ def show_sources():
             
     with tab_add:
         with st.form("new_source_form"):
-            st.header("Register New Domain")
+            st.header("Register New Source")
             c1, c2 = st.columns(2)
             with c1:
                 n_name = st.text_input("Friendly Name (e.g. Wroclaw News)")
-                n_slug = st.text_input("Slug (unique, e.g. wroclaw)")
                 n_rss = st.text_input("RSS Feed URL")
             with c2:
-                n_endpoint = st.text_input("WP API URL (https://.../wp-json/wp/v2)")
+                n_endpoint = st.text_input("WP API URL (e.g. https://domain.com/wp-json/wp/v2)")
                 n_user = st.text_input("WP User")
-                n_pass = st.text_input("WP App Password", type="password")
+                n_pass = st.text_input("WP Application Password / API Key", type="password")
             
             if st.form_submit_button("Create Source"):
-                if n_name and n_slug and n_endpoint:
+                if n_name and n_rss and n_endpoint:
                     try:
-                        add_source(n_name, n_slug, n_rss, n_endpoint, n_user, n_pass)
+                        add_source(n_name, n_rss, n_endpoint, n_user, n_pass)
                         st.success(f"Created {n_name}!")
                         st.rerun()
                     except Exception as e:
