@@ -421,6 +421,8 @@ def main():
         show_queue()
     elif menu == "Source Manager":
         show_sources()
+    elif menu == "Connection Diagnostic":
+        show_diagnostic()
 
 if __name__ == "__main__":
     main()
