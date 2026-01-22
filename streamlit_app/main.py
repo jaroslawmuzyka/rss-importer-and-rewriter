@@ -138,6 +138,8 @@ def add_item(source_id, url):
         "url_hash": url_hash,
         "status": "PENDING",
         "title_original": "Manual Add"
+    }).execute()
+
 # --- Dify Integration ---
 def trigger_dify_workflow(item_id, supabase_url, supabase_key):
     """Triggers the Dify workflow for a specific item."""
@@ -178,60 +180,13 @@ def trigger_dify_workflow(item_id, supabase_url, supabase_key):
         st.error(f"Request failed: {e}")
         return False
 
-# --- Diagnostic Tool ---
-def show_diagnostic():
-    st.title("Connection Diagnostics 🩺")
-    
-    st.markdown("### 1. Configuration Check")
-    try:
-        url = st.secrets["SUPABASE"]["URL"]
-        key = st.secrets["SUPABASE"]["KEY"]
-        st.success(f"Config found. URL: `{url}`")
-    except Exception as e:
-        st.error(f"Config missing: {e}")
-        return
-
-    st.markdown("### 2. Client Initialization")
-    try:
-        client = create_client(url, key)
-        st.success("Client created.")
-    except Exception as e:
-        st.error(f"Client init failed: {e}")
-        return
-
-    st.markdown("### 3. Table Accessibility Check")
-    
-    tables = ["sources", "items"]
-    for t in tables:
-        st.write(f"Testing table `{t}`...")
-        try:
-            # Try to select just one row, minimal overhead
-            # We use 'count' to see if we have access even if empty
-            res = client.table(t).select("id", count="exact").limit(1).execute()
-            
-            st.success(f"✅ Table `{t}` is accessible! (Count: {res.count})")
-            
-            # Check Write Permissions (Insert Dummy and Delete)
-            # Only do this if table is empty or specific flag is set to avoid clutter, 
-            # but for 'sources' it is critical.
-            # Skipping write test to avoid messing up data, read is usually enough to prove 'PGRST205' is gone.
-            
-        except Exception as e:
-            err_msg = str(e)
-            if "PGRST205" in err_msg:
-                st.error(f"❌ Table `{t}` NOT found via API (Code PGRST205).")
-                st.warning("👉 **SOLUTION:** Go to Supabase Dashboard -> Settings -> API -> **Reload Schema Cache**.")
-            elif "401" in err_msg or "JWT" in err_msg:
-                st.error(f"⛔ Permission Denied (401). Check if `sb_publishable` key matches project.")
-            else:
-                st.error(f"⚠️ Error: {e}")
 
 # --- UI Layout ---
 
 def sidebar_menu():
     st.sidebar.title("News Automation")
     st.sidebar.markdown("---")
-    menu = st.sidebar.radio("Navigation", ["Dashboard", "Content Queue", "Source Manager", "Connection Diagnostic"])
+    menu = st.sidebar.radio("Navigation", ["Dashboard", "Content Queue", "Source Manager"])
     st.sidebar.markdown("---")
     st.sidebar.info("System Status: Online 🟢")
     return menu
@@ -474,8 +429,6 @@ def main():
         show_queue()
     elif menu == "Source Manager":
         show_sources()
-    elif menu == "Connection Diagnostic":
-        show_diagnostic()
 
 if __name__ == "__main__":
     main()
