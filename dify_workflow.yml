@@ -120,12 +120,12 @@ workflow:
               variable: supabase_url
               type: text-input
               required: true
-              default: "https://ugpmpinhkdndajjflnfz.supabase.co"
+              default: "https://oqrzifjadakzmxeawytm.supabase.co"
             - label: Supabase Key
               variable: supabase_key
               type: text-input
               required: true
-              default: "sb_publishable_sOvTFpHdhiVwgW1SL14TDA_tRcQ7pTx"
+              default: "sb_publishable_qA_PI7C-9poXXCoAjjSkBQ_MgIw7GBV"
 
       - id: get_item_data
         position: { x: 380, y: 282 }
