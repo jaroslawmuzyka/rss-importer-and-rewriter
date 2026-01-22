@@ -191,7 +191,7 @@ def trigger_dify_workflow(item_id, supabase_url, supabase_key):
 def sidebar_menu():
     st.sidebar.title("News Automation")
     st.sidebar.markdown("---")
-    menu = st.sidebar.radio("Navigation", ["Dashboard", "Content Queue", "Source Manager"])
+    menu = st.sidebar.radio("Navigation", ["Dashboard", "Content Queue", "Source & Destination Manager"])
     st.sidebar.markdown("---")
     st.sidebar.info("System Status: Online 🟢")
     return menu
@@ -361,7 +361,7 @@ def show_queue():
 
 # --- Page: Source Manager ---
 def show_sources():
-    st.title("Source Manager 🌐")
+    st.title("Source & Destination Manager 🌐")
     
     st.info("Manage your WordPress instances / City Domains here.")
     
@@ -433,12 +433,16 @@ def show_sources():
                 n_name = st.text_input("Friendly Name (e.g. Wroclaw News)")
                 n_rss = st.text_input("RSS Feed URL")
             with c2:
-                n_endpoint = st.text_input("WP API URL (e.g. https://domain.com/wp-json/wp/v2)")
+                n_domain = st.text_input("WP Domain (e.g. domain.com)")
                 n_user = st.text_input("WP User")
                 n_pass = st.text_input("WP Application Password / API Key", type="password")
             
             if st.form_submit_button("Create Source"):
-                if n_name and n_rss and n_endpoint:
+                if n_name and n_rss and n_domain:
+                    # Auto-construct full endpoint
+                    clean_domain = n_domain.replace("https://", "").replace("http://", "").strip("/")
+                    n_endpoint = f"https://{clean_domain}/wp-json/wp/v2"
+                    
                     try:
                         add_source(n_name, n_rss, n_endpoint, n_user, n_pass)
                         st.success(f"Created {n_name}!")
@@ -456,7 +460,7 @@ def main():
         show_dashboard()
     elif menu == "Content Queue":
         show_queue()
-    elif menu == "Source Manager":
+    elif menu == "Source & Destination Manager":
         show_sources()
 
 if __name__ == "__main__":

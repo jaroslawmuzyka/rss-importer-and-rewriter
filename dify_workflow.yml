@@ -313,9 +313,9 @@ workflow:
         cases:
         - case_id: 'true'
           conditions:
-          - comparison_operator: is_true
+          - comparison_operator: '='
             id: cond_1
-            value: ''
+            value: 'true'
             varType: boolean
             variable_selector:
             - '1720000000004'
@@ -586,7 +586,15 @@ workflow:
       width: 242
     - data:
         desc: ''
-        outputs: []
+        outputs:
+        - value_selector:
+          - '1720000000011'
+          - body
+          variable: success_data
+        - value_selector:
+          - '1720000000012'
+          - body
+          variable: failure_data
         selected: false
         title: Koniec
         type: end
