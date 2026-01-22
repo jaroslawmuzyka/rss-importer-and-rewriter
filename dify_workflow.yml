@@ -1,11 +1,33 @@
 app:
-  name: Local News Automation
   description: Automated workflow for fetching RSS items, rewriting content, and publishing to WordPress.
-  mode: workflow
   icon: 🤖
   icon_background: "#FFEAD5"
+  mode: workflow
+  name: Local News Automation
 
 workflow:
+  version: 0.1.2
+  features:
+    file_upload:
+      image:
+        enabled: false
+        number_limits: 3
+        transfer_methods:
+          - local_file
+          - remote_url
+    opening_statement: ""
+    retriever_resource:
+      enabled: false
+    sensitive_word_avoidance:
+      enabled: false
+    speech_to_text:
+      enabled: false
+    suggested_questions: []
+    text_to_speech:
+      enabled: false
+      language: ""
+      voice: ""
+  
   graph:
     nodes:
       - id: start
@@ -17,18 +39,26 @@ workflow:
               variable: item_id
               type: text
               required: true
+              max_length: 48
+              options: []
             - label: Supabase URL
               variable: supabase_url
               type: text
+              required: true
               default: "https://ugpmpinhkdndajjflnfz.supabase.co"
             - label: Supabase Key
               variable: supabase_key
               type: text
+              required: true
               default: "sb_publishable_sOvTFpHdhiVwgW1SL14TDA_tRcQ7pTx"
+          desc: "Entry point triggered by API or scheduler."
+          selected: false
         position:
           x: 80
           y: 282
         type: start
+        width: 244
+        height: 90
 
       - id: get_item_data
         data:
@@ -40,10 +70,16 @@ workflow:
           headers: 
             Authorization: "Bearer {{#start.supabase_key#}}"
             apikey: "{{#start.supabase_key#}}"
+          body:
+            type: none
+          desc: "Fetch details from Supabase"
+          selected: false
         position:
           x: 380
           y: 282
         type: http-request
+        width: 244
+        height: 90
 
       - id: fetch_jina
         data:
@@ -51,10 +87,16 @@ workflow:
           type: http-request
           method: get
           url: "https://r.jina.ai/{{#get_item_data.body[0].original_url#}}"
+          body:
+            type: none
+          desc: "Get markdown from Jina"
+          selected: false
         position:
           x: 680
           y: 282
         type: http-request
+        width: 244
+        height: 90
 
       - id: dedup_check
         data:
@@ -96,30 +138,31 @@ workflow:
           outputs:
             - is_duplicate
             - cleaned_text
+          desc: "Check duplicate hash"
         position:
           x: 980
           y: 282
         type: code
-        inputs:
-          text: "{{#fetch_jina.body#}}"
-          current_id: "{{#start.item_id#}}"
-          supabase_url: "{{#start.supabase_url#}}"
-          supabase_key: "{{#start.supabase_key#}}"
+        width: 244
+        height: 90
 
       - id: is_duplicate
         data:
           title: Is Duplicate?
           type: if-else
           conditions:
-            - variable_selector: 
+            - comparison_operator: is_true
+              variable_selector: 
                 - dedup_check
                 - result
                 - is_duplicate
-              operator: is_true
+          desc: "Branching logic"
         position:
           x: 1280
           y: 282
         type: if-else
+        width: 244
+        height: 90
 
       - id: update_skipped
         data:
@@ -138,6 +181,8 @@ workflow:
           x: 1580
           y: 100
         type: http-request
+        width: 244
+        height: 90
 
       - id: ai_rewrite
         data:
@@ -147,15 +192,24 @@ workflow:
             provider: openai
             name: gpt-4o-mini
             mode: chat
+            completion_params:
+              temperature: 0.7
           prompt_template:
             - role: system
               text: "You are a local news journalist. Rewrite the provided text."
             - role: user
               text: "Input Text:\n{{#dedup_check.result.cleaned_text#}}\n\nTask: Rewrite this news for a local portal. Return ONLY a JSON object with keys: 'title', 'content' (HTML format, h2 and p tags only), 'excerpt'."
+          context:
+            enabled: false
+            variable_selector: []
+          vision:
+            enabled: false
         position:
           x: 1580
           y: 400
         type: llm
+        width: 244
+        height: 90
 
       - id: sanity_check
         data:
@@ -186,24 +240,26 @@ workflow:
           x: 1880
           y: 400
         type: code
-        inputs:
-          llm_response: "{{#ai_rewrite.text#}}"
+        width: 244
+        height: 90
 
       - id: sanity_router
         data:
           title: Sanity Passed?
           type: if-else
           conditions:
-            - variable_selector:
+            - comparison_operator: equal
+              value: pass
+              variable_selector:
                 - sanity_check
                 - result
                 - status
-              operator: equal
-              value: pass
         position:
           x: 2180
           y: 400
         type: if-else
+        width: 244
+        height: 90
 
       - id: publish_wp
         data:
@@ -222,17 +278,12 @@ workflow:
           headers:
             Authorization: "Basic {{#get_item_data.body[0].sources.wp_auth_header#}}"
             Content-Type: "application/json"
-          # Note: Basic Auth header usually constructed manually or via 'authorization' type. 
-          # Assuming source stores base64 or Dify handles it. 
-          # Let's try standard authentication type 'basic' if supported, else custom header.
-          # Reverting to custom header logic with assumption the DB has the full token or user/pass.
-          # Ideally, we construct the header in a code node. 
-          # For simplicity here taking wp_app_password directly might fail without base64.
-          # Let's add a helper Code Node for Auth! 
         position:
           x: 2480
           y: 300
         type: http-request
+        width: 244
+        height: 90
 
       - id: update_success
         data:
@@ -251,6 +302,8 @@ workflow:
           x: 2880
           y: 300
         type: http-request
+        width: 244
+        height: 90
       
       - id: update_failure
         data:
@@ -269,6 +322,8 @@ workflow:
           x: 2480
           y: 600
         type: http-request
+        width: 244
+        height: 90
 
     edges:
       - id: e1
