@@ -13,18 +13,52 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Secrets Handling (Load from st.secrets or env)
-# Expects .streamlit/secrets.toml with [supabase] url="..." key="..."
-try:
-    SUPABASE_URL = st.secrets["supabase"]["url"]
-    SUPABASE_KEY = st.secrets["supabase"]["key"]
-except (FileNotFoundError, KeyError):
-    # Fallback to empty context or environment variables for basic structure check
-    SUPABASE_URL = os.getenv("SUPABASE_URL", "")
-    SUPABASE_KEY = os.getenv("SUPABASE_KEY", "")
+# --- Configuration & Setup ---
+st.set_page_config(
+    page_title="News Automation Admin",
+    page_icon="🤖",
+    layout="wide",
+    initial_sidebar_state="expanded"
+)
 
-if not SUPABASE_URL or not SUPABASE_KEY:
-    st.error("Missing Supabase configuration! Please add `[supabase]` url and key to `.streamlit/secrets.toml`.")
+# Authentication & Secrets
+def check_password():
+    """Returns `True` if the user had the correct password."""
+
+    def password_entered():
+        """Checks whether a password entered by the user is correct."""
+        if st.session_state["password"] == st.secrets["general"]["APP_PASSWORD"]:
+            st.session_state["password_correct"] = True
+            del st.session_state["password"]  # don't store password
+        else:
+            st.session_state["password_correct"] = False
+
+    if "password_correct" not in st.session_state:
+        # First run, show input for password.
+        st.text_input(
+            "Password", type="password", on_change=password_entered, key="password"
+        )
+        return False
+    elif not st.session_state["password_correct"]:
+        # Password check failed, show input again.
+        st.text_input(
+            "Password", type="password", on_change=password_entered, key="password"
+        )
+        st.error("😕 Password incorrect")
+        return False
+    else:
+        # Password correct.
+        return True
+
+if not check_password():
+    st.stop()
+
+# Load Secrets
+try:
+    SUPABASE_URL = st.secrets["SUPABASE"]["URL"]
+    SUPABASE_KEY = st.secrets["SUPABASE"]["KEY"]
+except (KeyError, FileNotFoundError):
+    st.error("Missing secrets configuration! Please ensure .streamlit/secrets.toml is configured correctly with [SUPABASE] and [general] sections.")
     st.stop()
 
 @st.cache_resource

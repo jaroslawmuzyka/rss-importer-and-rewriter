@@ -1,0 +1,339 @@
+{
+    "app": {
+        "name": "Local News Automation",
+        "description": "Workflow for fetching, rewriting, and publishing local news.",
+        "mode": "workflow",
+        "icon": "🤖",
+        "icon_background": "#FFEAD5"
+    },
+    "workflow": {
+        "graph": {
+            "edges": [
+                {
+                    "id": "e1",
+                    "source": "start",
+                    "target": "get_item_data"
+                },
+                {
+                    "id": "e2",
+                    "source": "get_item_data",
+                    "target": "fetch_jina"
+                },
+                {
+                    "id": "e3",
+                    "source": "fetch_jina",
+                    "target": "dedup_check"
+                },
+                {
+                    "id": "e4",
+                    "source": "dedup_check",
+                    "target": "is_duplicate"
+                },
+                {
+                    "id": "e5_true",
+                    "source": "is_duplicate",
+                    "target": "update_duplicate",
+                    "sourceHandle": "true"
+                },
+                {
+                    "id": "e5_false",
+                    "source": "is_duplicate",
+                    "target": "ai_rewrite",
+                    "sourceHandle": "false"
+                },
+                {
+                    "id": "e6",
+                    "source": "ai_rewrite",
+                    "target": "sanity_check"
+                },
+                {
+                    "id": "e7",
+                    "source": "sanity_check",
+                    "target": "sanity_router"
+                },
+                {
+                    "id": "e8_true",
+                    "source": "sanity_router",
+                    "target": "publish_wp",
+                    "sourceHandle": "true"
+                },
+                {
+                    "id": "e8_false",
+                    "source": "sanity_router",
+                    "target": "update_failed",
+                    "sourceHandle": "false"
+                },
+                {
+                    "id": "e9",
+                    "source": "publish_wp",
+                    "target": "update_success"
+                }
+            ],
+            "nodes": [
+                {
+                    "id": "start",
+                    "data": {
+                        "title": "Start",
+                        "type": "start",
+                        "variables": [
+                            {
+                                "label": "Item ID",
+                                "variable": "item_id",
+                                "type": "text",
+                                "required": true
+                            }
+                        ]
+                    },
+                    "position": {
+                        "x": 80,
+                        "y": 282
+                    },
+                    "type": "start"
+                },
+                {
+                    "id": "get_item_data",
+                    "data": {
+                        "title": "Get Item Data",
+                        "type": "http-request",
+                        "method": "get",
+                        "url": "https://ugpmpinhkdndajjflnfz.supabase.co/rest/v1/items",
+                        "params": "select=*,sources(*)&id=eq.{{#start.item_id#}}",
+                        "headers": "Authorization: Bearer {{#secrets.SUPABASE_KEY#}}\napikey: {{#secrets.SUPABASE_KEY#}}"
+                    },
+                    "position": {
+                        "x": 380,
+                        "y": 282
+                    },
+                    "type": "http-request"
+                },
+                {
+                    "id": "fetch_jina",
+                    "data": {
+                        "title": "Fetch Jina",
+                        "type": "http-request",
+                        "method": "get",
+                        "url": "https://r.jina.ai/{{#get_item_data.body[0].original_url#}}"
+                    },
+                    "position": {
+                        "x": 680,
+                        "y": 282
+                    },
+                    "type": "http-request"
+                },
+                {
+                    "id": "dedup_check",
+                    "data": {
+                        "title": "Dedup Check",
+                        "type": "code",
+                        "code_language": "python3",
+                        "code": "import hashlib\nimport requests\n\ndef main(arg1, arg2, arg3):\n    text = arg1\n    current_id = arg2\n    base_url = \"https://ugpmpinhkdndajjflnfz.supabase.co\"\n    key = arg3\n    \n    content_hash = hashlib.sha256(text.encode('utf-8')).hexdigest()\n    headers = {\"apikey\": key, \"Authorization\": f\"Bearer {key}\"}\n    \n    # Check existing\n    check_url = f\"{base_url}/rest/v1/items?select=id&content_hash=eq.{content_hash}&id=neq.{current_id}\"\n    resp = requests.get(check_url, headers=headers)\n    duplicates = resp.json()\n    \n    # Update current\n    patch_url = f\"{base_url}/rest/v1/items?id=eq.{current_id}\"\n    requests.patch(patch_url, headers=headers, json={\"content_hash\": content_hash})\n    \n    return {\n        \"is_duplicate\": len(duplicates) > 0,\n        \"cleaned_text\": text\n    }",
+                        "variables": [
+                            {
+                                "variable_name": "arg1",
+                                "value_selector": [
+                                    "fetch_jina",
+                                    "body"
+                                ]
+                            },
+                            {
+                                "variable_name": "arg2",
+                                "value_selector": [
+                                    "start",
+                                    "item_id"
+                                ]
+                            },
+                            {
+                                "variable_name": "arg3",
+                                "value_selector": [
+                                    "sys",
+                                    "secrets",
+                                    "SUPABASE_KEY"
+                                ]
+                            }
+                        ]
+                    },
+                    "position": {
+                        "x": 980,
+                        "y": 282
+                    },
+                    "type": "code"
+                },
+                {
+                    "id": "is_duplicate",
+                    "data": {
+                        "title": "Is Duplicate?",
+                        "type": "if-else",
+                        "conditions": [
+                            {
+                                "variable_selector": [
+                                    "dedup_check",
+                                    "result",
+                                    "is_duplicate"
+                                ],
+                                "operator": "is_true"
+                            }
+                        ]
+                    },
+                    "position": {
+                        "x": 1280,
+                        "y": 282
+                    },
+                    "type": "if-else"
+                },
+                {
+                    "id": "update_duplicate",
+                    "data": {
+                        "title": "Set Skipped",
+                        "type": "http-request",
+                        "method": "patch",
+                        "url": "https://ugpmpinhkdndajjflnfz.supabase.co/rest/v1/items?id=eq.{{#start.item_id#}}",
+                        "body": {
+                            "type": "json",
+                            "data": "{\"status\": \"SKIPPED_DUPLICATE\"}"
+                        },
+                        "headers": "Authorization: Bearer {{#secrets.SUPABASE_KEY#}}\napikey: {{#secrets.SUPABASE_KEY#}}"
+                    },
+                    "position": {
+                        "x": 1580,
+                        "y": 100
+                    },
+                    "type": "http-request"
+                },
+                {
+                    "id": "ai_rewrite",
+                    "data": {
+                        "title": "AI Rewrite",
+                        "type": "llm",
+                        "model": {
+                            "provider": "openai",
+                            "name": "gpt-4o-mini"
+                        },
+                        "prompt_template": [
+                            {
+                                "role": "system",
+                                "text": "You are a local news journalist."
+                            },
+                            {
+                                "role": "user",
+                                "text": "Rewrite:\n{{#dedup_check.result.cleaned_text#}}\nOutput JSON: {title, content, excerpt}"
+                            }
+                        ]
+                    },
+                    "position": {
+                        "x": 1580,
+                        "y": 400
+                    },
+                    "type": "llm"
+                },
+                {
+                    "id": "sanity_check",
+                    "data": {
+                        "title": "Sanity Check",
+                        "type": "code",
+                        "code_language": "python3",
+                        "code": "import json\ndef main(llm_out):\n    try:\n        data = json.loads(llm_out)\n        if len(data.get('content','')) < 100:\n            return {'status': 'fail', 'reason': 'Too short'}\n        return {'status': 'pass', 'data': data}\n    except Exception as e:\n        return {'status': 'fail', 'reason': str(e)}",
+                        "variables": [
+                            {
+                                "variable_name": "llm_out",
+                                "value_selector": [
+                                    "ai_rewrite",
+                                    "text"
+                                ]
+                            }
+                        ]
+                    },
+                    "position": {
+                        "x": 1880,
+                        "y": 400
+                    },
+                    "type": "code"
+                },
+                {
+                    "id": "sanity_router",
+                    "data": {
+                        "title": "Sanity Passed?",
+                        "type": "if-else",
+                        "conditions": [
+                            {
+                                "variable_selector": [
+                                    "sanity_check",
+                                    "result",
+                                    "status"
+                                ],
+                                "operator": "equal",
+                                "value": "pass"
+                            }
+                        ]
+                    },
+                    "position": {
+                        "x": 2180,
+                        "y": 400
+                    },
+                    "type": "if-else"
+                },
+                {
+                    "id": "publish_wp",
+                    "data": {
+                        "title": "Publish WP",
+                        "type": "http-request",
+                        "method": "post",
+                        "url": "{{#get_item_data.body[0].sources.wp_api_endpoint#}}/posts",
+                        "body": {
+                            "type": "json",
+                            "data": "{\"title\": \"{{#sanity_check.result.data.title#}}\", \"content\": \"{{#sanity_check.result.data.content#}}\", \"status\": \"publish\"}"
+                        },
+                        "authentication": {
+                            "type": "basic",
+                            "username": "{{#get_item_data.body[0].sources.wp_username#}}",
+                            "password": "{{#get_item_data.body[0].sources.wp_app_password#}}"
+                        }
+                    },
+                    "position": {
+                        "x": 2480,
+                        "y": 300
+                    },
+                    "type": "http-request"
+                },
+                {
+                    "id": "update_failed",
+                    "data": {
+                        "title": "Update Failure",
+                        "type": "http-request",
+                        "method": "patch",
+                        "url": "https://ugpmpinhkdndajjflnfz.supabase.co/rest/v1/items?id=eq.{{#start.item_id#}}",
+                        "body": {
+                            "type": "json",
+                            "data": "{\"status\": \"FAILED_SANITY\"}"
+                        },
+                        "headers": "Authorization: Bearer {{#secrets.SUPABASE_KEY#}}\napikey: {{#secrets.SUPABASE_KEY#}}"
+                    },
+                    "position": {
+                        "x": 2480,
+                        "y": 500
+                    },
+                    "type": "http-request"
+                },
+                {
+                    "id": "update_success",
+                    "data": {
+                        "title": "Update Success",
+                        "type": "http-request",
+                        "method": "patch",
+                        "url": "https://ugpmpinhkdndajjflnfz.supabase.co/rest/v1/items?id=eq.{{#start.item_id#}}",
+                        "body": {
+                            "type": "json",
+                            "data": "{\"status\": \"PUBLISHED\", \"wp_post_id\": \"{{#publish_wp.body.id#}}\"}"
+                        },
+                        "headers": "Authorization: Bearer {{#secrets.SUPABASE_KEY#}}\napikey: {{#secrets.SUPABASE_KEY#}}"
+                    },
+                    "position": {
+                        "x": 2780,
+                        "y": 300
+                    },
+                    "type": "http-request"
+                }
+            ]
+        },
+        "version": "0.1.0"
+    }
+}
