@@ -1,12 +1,17 @@
 app:
   description: Automated workflow for fetching RSS items, rewriting content, and publishing to WordPress.
   icon: 🤖
-  icon_background: "#FFEAD5"
+  icon_background: '#FFEAD5'
   mode: workflow
-  name: Local News Automation
+  name: Local News Automation V3
+  use_icon_as_answer_icon: false
+
+kind: app
+version: 0.5.0
 
 workflow:
-  version: 0.1.2
+  conversation_variables: []
+  environment_variables: []
   features:
     file_upload:
       image:
@@ -27,40 +32,104 @@ workflow:
       enabled: false
       language: ""
       voice: ""
-  
+
   graph:
+    edges:
+      - id: edge_1
+        source: start
+        sourceHandle: source
+        target: get_item_data
+        targetHandle: target
+        type: custom
+      - id: edge_2
+        source: get_item_data
+        sourceHandle: source
+        target: fetch_jina
+        targetHandle: target
+        type: custom
+      - id: edge_3
+        source: fetch_jina
+        sourceHandle: source
+        target: dedup_check
+        targetHandle: target
+        type: custom
+      - id: edge_4
+        source: dedup_check
+        sourceHandle: source
+        target: is_duplicate
+        targetHandle: target
+        type: custom
+      - id: edge_5_true
+        source: is_duplicate
+        sourceHandle: 'true'
+        target: update_skipped
+        targetHandle: target
+        type: custom
+      - id: edge_5_false
+        source: is_duplicate
+        sourceHandle: 'false'
+        target: ai_rewrite
+        targetHandle: target
+        type: custom
+      - id: edge_6
+        source: ai_rewrite
+        sourceHandle: source
+        target: sanity_check
+        targetHandle: target
+        type: custom
+      - id: edge_7
+        source: sanity_check
+        sourceHandle: source
+        target: sanity_router
+        targetHandle: target
+        type: custom
+      - id: edge_8_true
+        source: sanity_router
+        sourceHandle: 'true'
+        target: publish_wp
+        targetHandle: target
+        type: custom
+      - id: edge_8_false
+        source: sanity_router
+        sourceHandle: 'false'
+        target: update_failure
+        targetHandle: target
+        type: custom
+      - id: edge_9
+        source: publish_wp
+        sourceHandle: source
+        target: update_success
+        targetHandle: target
+        type: custom
+
     nodes:
       - id: start
+        position: { x: 80, y: 282 }
+        type: custom
         data:
           title: Start
           type: start
+          desc: "Entry point"
           variables:
             - label: Item ID
               variable: item_id
-              type: text
+              type: text-input
               required: true
               max_length: 48
-              options: []
             - label: Supabase URL
               variable: supabase_url
-              type: text
+              type: text-input
               required: true
               default: "https://ugpmpinhkdndajjflnfz.supabase.co"
             - label: Supabase Key
               variable: supabase_key
-              type: text
+              type: text-input
               required: true
               default: "sb_publishable_sOvTFpHdhiVwgW1SL14TDA_tRcQ7pTx"
-          desc: "Entry point triggered by API or scheduler."
-          selected: false
-        position:
-          x: 80
-          y: 282
-        type: start
-        width: 244
-        height: 90
 
       - id: get_item_data
+        position: { x: 380, y: 282 }
+        type: custom
         data:
           title: Get Item Data
           type: http-request
@@ -70,39 +139,36 @@ workflow:
           headers: 
             Authorization: "Bearer {{#start.supabase_key#}}"
             apikey: "{{#start.supabase_key#}}"
-          body:
-            type: none
-          desc: "Fetch details from Supabase"
-          selected: false
-        position:
-          x: 380
-          y: 282
-        type: http-request
-        width: 244
-        height: 90
+          timeout: { max_connect_timeout: 0, max_read_timeout: 0, max_write_timeout: 0 }
+          authorization: { type: no-auth }
 
       - id: fetch_jina
+        position: { x: 680, y: 282 }
+        type: custom
         data:
           title: Fetch Jina Content
           type: http-request
           method: get
           url: "https://r.jina.ai/{{#get_item_data.body[0].original_url#}}"
-          body:
-            type: none
-          desc: "Get markdown from Jina"
-          selected: false
-        position:
-          x: 680
-          y: 282
-        type: http-request
-        width: 244
-        height: 90
+          timeout: { max_connect_timeout: 0, max_read_timeout: 0, max_write_timeout: 0 }
+          authorization: { type: no-auth }
 
       - id: dedup_check
+        position: { x: 980, y: 282 }
+        type: custom
         data:
           title: Dedup Check
           type: code
           code_language: python3
+          variables:
+            - value_selector: ['fetch_jina', 'body']
+              variable: text
+            - value_selector: ['start', 'item_id']
+              variable: current_id
+            - value_selector: ['start', 'supabase_url']
+              variable: supabase_url
+            - value_selector: ['start', 'supabase_key']
+              variable: supabase_key
           code: |
             import hashlib
             import requests
@@ -115,7 +181,6 @@ workflow:
                 content_hash = hashlib.sha256(text.encode('utf-8')).hexdigest()
                 headers = {"apikey": supabase_key, "Authorization": "Bearer " + supabase_key}
                 
-                # Check for existing hash
                 check_url = f"{supabase_url}/rest/v1/items?select=id&content_hash=eq.{content_hash}&id=neq.{current_id}"
                 try:
                     resp = requests.get(check_url, headers=headers)
@@ -124,7 +189,6 @@ workflow:
                 except:
                     is_dup = False
 
-                # Update current item hash
                 try:
                     patch_url = f"{supabase_url}/rest/v1/items?id=eq.{current_id}"
                     requests.patch(patch_url, headers=headers, json={"content_hash": content_hash})
@@ -138,15 +202,10 @@ workflow:
           outputs:
             - is_duplicate
             - cleaned_text
-          desc: "Check duplicate hash"
-        position:
-          x: 980
-          y: 282
-        type: code
-        width: 244
-        height: 90
 
       - id: is_duplicate
+        position: { x: 1280, y: 282 }
+        type: custom
         data:
           title: Is Duplicate?
           type: if-else
@@ -156,15 +215,10 @@ workflow:
                 - dedup_check
                 - result
                 - is_duplicate
-          desc: "Branching logic"
-        position:
-          x: 1280
-          y: 282
-        type: if-else
-        width: 244
-        height: 90
 
       - id: update_skipped
+        position: { x: 1580, y: 100 }
+        type: custom
         data:
           title: Set Skipped
           type: http-request
@@ -177,14 +231,12 @@ workflow:
             Authorization: "Bearer {{#start.supabase_key#}}"
             apikey: "{{#start.supabase_key#}}"
             Content-Type: "application/json"
-        position:
-          x: 1580
-          y: 100
-        type: http-request
-        width: 244
-        height: 90
+          timeout: { max_connect_timeout: 0, max_read_timeout: 0, max_write_timeout: 0 }
+          authorization: { type: no-auth }
 
       - id: ai_rewrite
+        position: { x: 1580, y: 400 }
+        type: custom
         data:
           title: AI Rewrite
           type: llm
@@ -192,42 +244,34 @@ workflow:
             provider: openai
             name: gpt-4o-mini
             mode: chat
-            completion_params:
-              temperature: 0.7
+            completion_params: { temperature: 0.7 }
           prompt_template:
             - role: system
-              text: "You are a local news journalist. Rewrite the provided text."
+              text: "You are a local news journalist."
             - role: user
               text: "Input Text:\n{{#dedup_check.result.cleaned_text#}}\n\nTask: Rewrite this news for a local portal. Return ONLY a JSON object with keys: 'title', 'content' (HTML format, h2 and p tags only), 'excerpt'."
-          context:
-            enabled: false
-            variable_selector: []
-          vision:
-            enabled: false
-        position:
-          x: 1580
-          y: 400
-        type: llm
-        width: 244
-        height: 90
+          context: { enabled: false, variable_selector: [] }
+          vision: { enabled: false }
 
       - id: sanity_check
+        position: { x: 1880, y: 400 }
+        type: custom
         data:
           title: Sanity Check
           type: code
           code_language: python3
+          variables:
+             - value_selector: ['ai_rewrite', 'text']
+               variable: llm_response
           code: |
             import json
             def main(llm_response):
                 try:
-                    # Clean potential markdown code blocks
                     clean_resp = llm_response.replace('```json', '').replace('```', '').strip()
                     data = json.loads(clean_resp)
-                    
                     content = data.get('content', '')
                     if len(content) < 200:
                         return {"status": "fail", "error": "Content too short"}
-                    
                     return {"status": "pass", "title": data['title'], "content": content}
                 except Exception as e:
                     return {"status": "fail", "error": str(e)}
@@ -236,14 +280,10 @@ workflow:
             - title
             - content
             - error
-        position:
-          x: 1880
-          y: 400
-        type: code
-        width: 244
-        height: 90
 
       - id: sanity_router
+        position: { x: 2180, y: 400 }
+        type: custom
         data:
           title: Sanity Passed?
           type: if-else
@@ -254,14 +294,10 @@ workflow:
                 - sanity_check
                 - result
                 - status
-        position:
-          x: 2180
-          y: 400
-        type: if-else
-        width: 244
-        height: 90
 
       - id: publish_wp
+        position: { x: 2480, y: 200 }
+        type: custom
         data:
           title: Publish to WP
           type: http-request
@@ -278,14 +314,12 @@ workflow:
           headers:
             Authorization: "Basic {{#get_item_data.body[0].sources.wp_auth_header#}}"
             Content-Type: "application/json"
-        position:
-          x: 2480
-          y: 300
-        type: http-request
-        width: 244
-        height: 90
+          timeout: { max_connect_timeout: 0, max_read_timeout: 0, max_write_timeout: 0 }
+          authorization: { type: no-auth }
 
       - id: update_success
+        position: { x: 2880, y: 200 }
+        type: custom
         data:
           title: Update Success
           type: http-request
@@ -298,14 +332,12 @@ workflow:
             Authorization: "Bearer {{#start.supabase_key#}}"
             apikey: "{{#start.supabase_key#}}"
             Content-Type: "application/json"
-        position:
-          x: 2880
-          y: 300
-        type: http-request
-        width: 244
-        height: 90
+          timeout: { max_connect_timeout: 0, max_read_timeout: 0, max_write_timeout: 0 }
+          authorization: { type: no-auth }
       
       - id: update_failure
+        position: { x: 2480, y: 500 }
+        type: custom
         data:
           title: Update Failure
           type: http-request
@@ -318,48 +350,5 @@ workflow:
             Authorization: "Bearer {{#start.supabase_key#}}"
             apikey: "{{#start.supabase_key#}}"
             Content-Type: "application/json"
-        position:
-          x: 2480
-          y: 600
-        type: http-request
-        width: 244
-        height: 90
-
-    edges:
-      - id: e1
-        source: start
-        target: get_item_data
-      - id: e2
-        source: get_item_data
-        target: fetch_jina
-      - id: e3
-        source: fetch_jina
-        target: dedup_check
-      - id: e4
-        source: dedup_check
-        target: is_duplicate
-      - id: e5t
-        source: is_duplicate
-        sourceHandle: true
-        target: update_skipped
-      - id: e5f
-        source: is_duplicate
-        sourceHandle: false
-        target: ai_rewrite
-      - id: e6
-        source: ai_rewrite
-        target: sanity_check
-      - id: e7
-        source: sanity_check
-        target: sanity_router
-      - id: e8t
-        source: sanity_router
-        sourceHandle: true
-        target: publish_wp
-      - id: e8f
-        source: sanity_router
-        sourceHandle: false
-        target: update_failure
-      - id: e9
-        source: publish_wp
-        target: update_success
+          timeout: { max_connect_timeout: 0, max_read_timeout: 0, max_write_timeout: 0 }
+          authorization: { type: no-auth }

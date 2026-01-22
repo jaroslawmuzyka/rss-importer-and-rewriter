@@ -2,16 +2,7 @@ import streamlit as st
 import pandas as pd
 from supabase import create_client, Client
 import os
-from datetime import datetime
 import hashlib
-
-# --- Configuration & Setup ---
-st.set_page_config(
-    page_title="News Automation Admin",
-    page_icon="🤖",
-    layout="wide",
-    initial_sidebar_state="expanded"
-)
 
 # --- Configuration & Setup ---
 st.set_page_config(
@@ -24,84 +15,89 @@ st.set_page_config(
 # Authentication & Secrets
 def check_password():
     """Returns `True` if the user had the correct password."""
+    # Secrets handling inside function to avoid init errors
+    try:
+        password = st.secrets["general"]["APP_PASSWORD"]
+    except KeyError:
+        st.error("Missing [general] APP_PASSWORD in secrets manager.")
+        return False
 
     def password_entered():
-        """Checks whether a password entered by the user is correct."""
-        if st.session_state["password"] == st.secrets["general"]["APP_PASSWORD"]:
+        if st.session_state["password"] == password:
             st.session_state["password_correct"] = True
-            del st.session_state["password"]  # don't store password
+            del st.session_state["password"]
         else:
             st.session_state["password_correct"] = False
 
     if "password_correct" not in st.session_state:
-        # First run, show input for password.
-        st.text_input(
-            "Password", type="password", on_change=password_entered, key="password"
-        )
+        st.text_input("Password", type="password", on_change=password_entered, key="password")
         return False
     elif not st.session_state["password_correct"]:
-        # Password check failed, show input again.
-        st.text_input(
-            "Password", type="password", on_change=password_entered, key="password"
-        )
+        st.text_input("Password", type="password", on_change=password_entered, key="password")
         st.error("😕 Password incorrect")
         return False
     else:
-        # Password correct.
         return True
 
 if not check_password():
     st.stop()
 
-# Load Secrets
+# Initialize Supabase
 try:
     SUPABASE_URL = st.secrets["SUPABASE"]["URL"]
     SUPABASE_KEY = st.secrets["SUPABASE"]["KEY"]
 except (KeyError, FileNotFoundError):
-    st.error("Missing secrets configuration! Please ensure .streamlit/secrets.toml is configured correctly with [SUPABASE] and [general] sections.")
+    st.error("Missing [SUPABASE] URL or KEY in secrets manager.")
     st.stop()
 
 @st.cache_resource
 def init_supabase() -> Client:
     return create_client(SUPABASE_URL, SUPABASE_KEY)
 
-supabase = init_supabase()
+try:
+    supabase = init_supabase()
+except Exception as e:
+    st.error(f"Failed to initialize Supabase client: {e}")
+    st.stop()
+
 
 # --- Helper Functions ---
-def get_sources():
-    response = supabase.table("sources").select("*").order("name").execute()
-    return pd.DataFrame(response.data) if response.data else pd.DataFrame()
 
-def get_items(limit=100, status_filter=None, source_filter=None):
-    query = supabase.table("items").select("*, sources(name)").order("created_at", desc=True).limit(limit)
-    
-    if status_filter:
-        query = query.in_("status", status_filter)
-    
-    if source_filter:
-         # Need to handle join filtering carefully, or filter in pandas for small datasets.
-         # For simplicity in this robust UI: Fetching ID filtering if possible or filter post-query
-         # Supabase-py filtering on joined tables can be tricky with simple syntax.
-         # We will get source_ids from names or pass source_id directly.
-         pass # Placeholder for advanced server-side filtering
-         
-    response = query.execute()
-    df = pd.DataFrame(response.data)
-    
-    # Flatten source name if joined
-    if not df.empty and 'sources' in df.columns:
-        df['source_name'] = df['sources'].apply(lambda x: x['name'] if isinstance(x, dict) else None)
-        df = df.drop(columns=['sources'])
+def safe_query(table_name, select="*", order=None, limit=None, filters=None):
+    """Safely execute a select query with error handling."""
+    try:
+        query = supabase.table(table_name).select(select)
+        if order:
+            col, direction = order
+            query = query.order(col, desc=(direction == "desc"))
+        if limit:
+            query = query.limit(limit)
         
-    return df
+        # Apply filters if any
+        if filters:
+             for k, v in filters.items():
+                 query = query.eq(k, v)
+                 
+        start = 0
+        end = limit if limit else 1000
+        # Basic pagination/limit logic for simple dash
+        # response = query.range(start, end).execute() # Range is safer for huge tables
+        
+        # For now, standard execute
+        response = query.execute()
+        return pd.DataFrame(response.data) if response.data else pd.DataFrame()
+        
+    except Exception as e:
+        # Check specifically for the missing table error
+        err_str = str(e)
+        if "Could not find the table" in err_str:
+            st.error(f"❌ Table `{table_name}` not found in Supabase! ignoring...")
+            st.warning("Please ensure you have run the `supabase_schema.sql` in Supabase SQL Editor.")
+        else:
+            st.error(f"Database Error ({table_name}): {e}")
+        return pd.DataFrame()
 
-def retry_item(item_id):
-    supabase.table("items").update({
-        "status": "PENDING",
-        "error_message": None,
-        "retry_count": 0 
-    }).eq("id", item_id).execute()
-
+# CRUD: Sources
 def add_source(name, city_slug, rss, wp_endpoint, wp_user, wp_pass):
     supabase.table("sources").insert({
         "name": name,
@@ -112,29 +108,74 @@ def add_source(name, city_slug, rss, wp_endpoint, wp_user, wp_pass):
         "wp_app_password": wp_pass
     }).execute()
 
-# --- UI Components ---
+def delete_source(source_id):
+    supabase.table("sources").delete().eq("id", source_id).execute()
+
+def update_source_active(source_id, is_active):
+    supabase.table("sources").update({"is_active": is_active}).eq("id", source_id).execute()
+
+def update_source_fields(source_id, data_dict):
+    supabase.table("sources").update(data_dict).eq("id", source_id).execute()
+
+
+# CRUD: Items
+def retry_item(item_id):
+    supabase.table("items").update({
+        "status": "PENDING",
+        "error_message": None,
+        "retry_count": 0 
+    }).eq("id", item_id).execute()
+
+def delete_item(item_id):
+    supabase.table("items").delete().eq("id", item_id).execute()
+
+def add_item(source_id, url):
+    # Calculate dummy hashes for initial insert (real ones happen in Dify)
+    url_hash = hashlib.sha256(url.encode('utf-8')).hexdigest()
+    supabase.table("items").insert({
+        "source_id": source_id,
+        "original_url": url,
+        "url_hash": url_hash,
+        "status": "PENDING",
+        "title_original": "Manual Add"
+    }).execute()
+
+# --- UI Layout ---
 
 def sidebar_menu():
     st.sidebar.title("News Automation")
-    menu = st.sidebar.radio("Navigation", ["Dashboard", "Queue & Operations", "Source Management"])
+    st.sidebar.markdown("---")
+    menu = st.sidebar.radio("Navigation", ["Dashboard", "Content Queue", "Source Manager"])
+    st.sidebar.markdown("---")
+    st.sidebar.info("System Status: Online 🟢")
     return menu
 
 # --- Page: Dashboard ---
 def show_dashboard():
-    st.title("System Dashboard")
+    st.title("System Dashboard 📊")
     
-    # KPI Stats (Fetched via count queries for efficiency)
+    # Check connection by simple count
+    items_count = 0
+    try:
+        count_res = supabase.table("items").select("id", count="exact").execute()
+        items_count = count_res.count
+    except Exception:
+        pass # specific error handled in safe_query calls later
+    
     col1, col2, col3, col4 = st.columns(4)
     
-    # Simple direct queries for stats
-    try:
-        total_pub = supabase.table("items").select("id", count="exact").eq("status", "PUBLISHED").execute().count
-        total_fail = supabase.table("items").select("id", count="exact").ilike("status", "%FAILED%").execute().count
-        queue_size = supabase.table("items").select("id", count="exact").eq("status", "PENDING").execute().count
-        active_src = supabase.table("sources").select("id", count="exact").eq("is_active", True).execute().count
-    except Exception as e:
-        st.error(f"Error fetching stats: {e}")
-        return
+    # We use python len() on dataframes from safe_query for safety if count fails
+    df_items = safe_query("items", select="status")
+    df_sources = safe_query("sources", select="is_active")
+
+    if not df_items.empty:
+        total_pub = len(df_items[df_items['status'] == 'PUBLISHED'])
+        total_fail = len(df_items[df_items['status'].str.contains('FAILED', na=False)])
+        queue_size = len(df_items[df_items['status'] == 'PENDING'])
+    else:
+        total_pub = 0; total_fail = 0; queue_size = 0
+        
+    active_src = len(df_sources[df_sources['is_active'] == True]) if not df_sources.empty else 0
 
     col1.metric("Published Articles", total_pub)
     col2.metric("Failed Items", total_fail, delta_color="inverse")
@@ -143,126 +184,194 @@ def show_dashboard():
     
     st.divider()
     
-    # Charts
-    st.subheader("Recent Activity")
-    # Fetch last 200 items for visualization
-    data = supabase.table("items").select("status, created_at").order("created_at", desc=True).limit(200).execute().data
-    if data:
-        df = pd.DataFrame(data)
-        df['created_at'] = pd.to_datetime(df['created_at'])
-        
-        # Status Distribution
-        st.bar_chart(df['status'].value_counts())
-    else:
-        st.info("No data available for charts.")
-
-# --- Page: Queue & Operations ---
-def show_queue():
-    st.title("Content Queue & Operations")
-    
-    col1, col2 = st.columns([3, 1])
-    with col1:
-        status_opts = ['PENDING', 'PROCESSING', 'PUBLISHED', 'FAILED_CRAWL', 'FAILED_AI', 'FAILED_WP', 'FAILED_SANITY', 'SKIPPED_DUPLICATE', 'ERROR']
-        selected_statuses = st.multiselect("Filter by Status", status_opts, default=['PENDING', 'FAILED_WP', 'FAILED_AI'])
-    with col2:
-        st.write("") # Spacer
-        if st.button("Refresh Data", use_container_width=True):
-            st.rerun()
-
-    items_df = get_items(limit=50, status_filter=selected_statuses)
-    
-    if items_df.empty:
-        st.info("No items found usually matching filters.")
-    else:
-        # Display as Data Editor or Table
+    # Recents
+    st.subheader("Latest Activity")
+    recent_items = safe_query("items", limit=10, order=("created_at", "desc"))
+    if not recent_items.empty:
         st.dataframe(
-            items_df[['id', 'source_name', 'title_original', 'status', 'created_at', 'error_message', 'retry_count']],
+            recent_items[['status', 'created_at', 'original_url']], 
             use_container_width=True,
             hide_index=True
         )
-        
-        st.divider()
-        st.subheader("Item Inspector")
-        
-        # Manual Selection (Simple ID Input for now, could be clickable in advanced Streamlit grids)
-        selected_id = st.selectbox("Select Item ID to Inspect/Retry", items_df['id'].tolist(), format_func=lambda x: f"{x} - {items_df[items_df['id']==x]['title_original'].values[0] if not items_df[items_df['id']==x].empty else ''}")
-        
-        if selected_id:
-            row = items_df[items_df['id'] == selected_id].iloc[0]
+    else:
+        st.info("No activity found (or database is empty).")
+
+# --- Page: Content Queue ---
+def show_queue():
+    st.title("Content Queue 📝")
+    
+    tab_list, tab_add = st.tabs(["Browse Operations", "Add Manually"])
+    
+    with tab_list:
+        col1, col2 = st.columns([3, 1])
+        with col1:
+            status_opts = ['PENDING', 'PROCESSING', 'PUBLISHED', 'FAILED', 'ERROR']
+            # Simplify filters
+            selected_status_broad = st.selectbox("Status Filter", ["ALL"] + status_opts, index=0)
             
+        with col2:
+            st.write("") 
+            if st.button("🔄 Refresh", use_container_width=True):
+                st.rerun()
+
+        # Fetch
+        df = safe_query("items", select="*, sources(name)", limit=100, order=("created_at", "desc"))
+        
+        if not df.empty:
+            # Flatten source name
+            df['source_name'] = df['sources'].apply(lambda x: x['name'] if isinstance(x, dict) else (x if x else 'Deleted Source'))
+            
+            # Local Filter
+            if selected_status_broad != "ALL":
+                # Handle extended fail statuses
+                if selected_status_broad == "FAILED":
+                    df = df[df['status'].str.contains('FAILED', na=False)]
+                else:
+                    df = df[df['status'] == selected_status_broad]
+            
+            # Display
+            if not df.empty:
+                st.dataframe(
+                    df[['id', 'source_name', 'status', 'created_at', 'url_hash']],
+                    use_container_width=True,
+                    hide_index=True
+                )
+                
+                st.divider()
+                st.subheader("Action Console")
+                
+                sel_id = st.selectbox("Select Item Context:", df['id'].tolist(), format_func=lambda x: f"{x[:8]}... - {df[df['id']==x]['status'].values[0]}")
+                
+                if sel_id:
+                    row = df[df['id'] == sel_id].iloc[0]
+                    c1, c2, c3 = st.columns(3)
+                    
+                    with c1:
+                        st.info(f"**Status:** {row['status']}")
+                        if st.button("♻️ Retry Item", type="primary"):
+                            try:
+                                retry_item(sel_id)
+                                st.success("Requeued!")
+                                st.rerun()
+                            except Exception as e:
+                                st.error(f"Failed: {e}")
+                    
+                    with c2:
+                        if st.button("🗑️ Delete Item", type="secondary"):
+                            try:
+                                delete_item(sel_id)
+                                st.success("Deleted!")
+                                st.rerun()
+                            except Exception as e:
+                                st.error(f"Failed: {e}")
+                                
+                    with c3:
+                        st.markdown(f"[Open Link]({row['original_url']})")
+                    
+                    with st.expander("Full Details JSON"):
+                        # Convert row to dict, handle non-serializable?
+                        st.json(row.to_dict())
+
+            else:
+                st.info("No items match this filter.")
+        else:
+            st.info("Queue is empty.")
+
+    with tab_add:
+        st.subheader("Manual Injection")
+        sources = safe_query("sources", select="id, name")
+        if not sources.empty:
+            with st.form("manual_add"):
+                s_id = st.selectbox("Target Source", sources['id'], format_func=lambda x: sources[sources['id']==x]['name'].values[0])
+                url_in = st.text_input("Article URL")
+                
+                if st.form_submit_button("Inject to Queue"):
+                    if url_in:
+                        try:
+                            add_item(s_id, url_in)
+                            st.success("Added to queue!")
+                        except Exception as e:
+                            st.error(f"Add failed: {e}")
+                    else:
+                        st.warning("URL required.")
+        else:
+            st.warning("No sources available. Define sources first.")
+
+
+# --- Page: Source Manager ---
+def show_sources():
+    st.title("Source Manager 🌐")
+    
+    st.info("Manage your WordPress instances / City Domains here.")
+    
+    tab_view, tab_add = st.tabs(["Active Sources", "Add New Source"])
+    
+    with tab_view:
+        df = safe_query("sources", order=("name", "asc"))
+        
+        if not df.empty:
+            for idx, row in df.iterrows():
+                with st.expander(f"{row['name']} ({row['city_slug']}) {'🟢' if row['is_active'] else '🔴'}"):
+                    c1, c2 = st.columns(2)
+                    with c1:
+                        st.text_input("Endpoint", value=row['wp_api_endpoint'], disabled=True, key=f"ep_{row['id']}")
+                        st.text_input("RSS", value=row['rss_url'], disabled=True, key=f"rss_{row['id']}")
+                    
+                    with c2:
+                        st.write("Actions")
+                        # Activation Toggle
+                        current_state = row['is_active']
+                        if st.button(f"{'Deactivate' if current_state else 'Activate'}", key=f"btn_act_{row['id']}"):
+                            update_source_active(row['id'], not current_state)
+                            st.rerun()
+                            
+                        # Delete
+                        if st.button("Delete Source", key=f"del_{row['id']}", type="primary"):
+                             try:
+                                 delete_source(row['id'])
+                                 st.success("Deleted.")
+                                 st.rerun()
+                             except Exception as e:
+                                 st.error(f"Error: {e}")
+            
+            st.caption(f"Total Sources: {len(df)}")
+            
+        else:
+            st.warning("No sources configured yet. Go to 'Add New Source'.")
+            
+    with tab_add:
+        with st.form("new_source_form"):
+            st.header("Register New Domain")
             c1, c2 = st.columns(2)
             with c1:
-                st.markdown(f"**Source:** {row.get('source_name', 'N/A')}")
-                st.markdown(f"**Original URL:** [Link]({row['original_url']})")
-                st.markdown(f"**Status:** `{row['status']}`")
-                
-                if row['status'] in ['FAILED_CRAWL', 'FAILED_AI', 'FAILED_WP', 'FAILED_SANITY', 'ERROR']:
-                    if st.button("♻️ Retry Item", type="primary"):
-                        retry_item(selected_id)
-                        st.success("Item requeued!")
-                        st.rerun()
-            
+                n_name = st.text_input("Friendly Name (e.g. Wroclaw News)")
+                n_slug = st.text_input("Slug (unique, e.g. wroclaw)")
+                n_rss = st.text_input("RSS Feed URL")
             with c2:
-                st.caption("Error Message:")
-                st.code(row.get('error_message') or "No errors logged.")
-                
-            with st.expander("Technical details"):
-                st.json(row.to_dict())
-
-# --- Page: Source Management ---
-def show_sources():
-    st.title("Source Management")
-    
-    df = get_sources()
-    
-    tab1, tab2 = st.tabs(["Active Sources", "Add New Source"])
-    
-    with tab1:
-        if not df.empty:
-            edited_df = st.data_editor(
-                df[['id', 'name', 'city_slug', 'rss_url', 'is_active', 'last_checked_at']],
-                disabled=['id', 'last_checked_at'],
-                key="source_editor",
-                use_container_width=True
-            )
-            # Note: Full two-way binding with DB update requires session state diff handling
-            # simpler approach for prototype: Just view list + Add New. 
-            # Editing existing config often safer via dedicated form or applying diffs.
-            st.info("To edit connection details, currently direct DB access is recommended for safety. Use checkboxes to toggle active state (not implemented in this view demo).")
-        else:
-            st.warning("No sources configured.")
+                n_endpoint = st.text_input("WP API URL (https://.../wp-json/wp/v2)")
+                n_user = st.text_input("WP User")
+                n_pass = st.text_input("WP App Password", type="password")
             
-    with tab2:
-        with st.form("new_source"):
-            st.subheader("Configure New City")
-            n_name = st.text_input("Source Name (e.g. Warszawa News)")
-            n_slug = st.text_input("City Slug (e.g. warszawa)")
-            n_rss = st.text_input("RSS Feed URL")
-            n_endpoint = st.text_input("WordPress API Endpoint")
-            n_user = st.text_input("WP Username")
-            n_pass = st.text_input("WP App Password", type="password")
-            
-            submitted = st.form_submit_button("Add Source")
-            if submitted:
-                if n_name and n_rss and n_endpoint:
+            if st.form_submit_button("Create Source"):
+                if n_name and n_slug and n_endpoint:
                     try:
                         add_source(n_name, n_slug, n_rss, n_endpoint, n_user, n_pass)
-                        st.success(f"Added {n_name} successfully!")
+                        st.success(f"Created {n_name}!")
                         st.rerun()
                     except Exception as e:
-                        st.error(f"Error adding source: {e}")
+                         st.error(f"Error creating source: {e}")
                 else:
-                    st.error("Please fill required fields.")
+                    st.error("Missing required fields.")
 
-# --- Main App Logic ---
+# --- Main ---
 def main():
     menu = sidebar_menu()
     
     if menu == "Dashboard":
         show_dashboard()
-    elif menu == "Queue & Operations":
+    elif menu == "Content Queue":
         show_queue()
-    elif menu == "Source Management":
+    elif menu == "Source Manager":
         show_sources()
 
 if __name__ == "__main__":
