@@ -3,7 +3,7 @@ app:
   icon: 🤖
   icon_background: '#FFEAD5'
   mode: workflow
-  name: Local News Automation V5 (Jina Tool)
+  name: Local News Automation V9 (Pro Prompt & Logic)
   use_icon_as_answer_icon: false
 
 dependencies:
@@ -49,8 +49,14 @@ workflow:
       target: '1720000000002'
       targetHandle: target
       type: custom
-    - id: edge-2
+    - id: edge-parser
       source: '1720000000002'
+      sourceHandle: source
+      target: '1720000000095'
+      targetHandle: target
+      type: custom
+    - id: edge-2
+      source: '1720000000095'
       sourceHandle: source
       target: '1720000000003'
       targetHandle: target
@@ -103,10 +109,22 @@ workflow:
       target: '1720000000012'
       targetHandle: target
       type: custom
-    - id: edge-9
+    - id: edge-wp-check
       source: '1720000000010'
       sourceHandle: source
+      target: '1720000000100'
+      targetHandle: target
+      type: custom
+    - id: edge-wp-success
+      source: '1720000000100'
+      sourceHandle: 'true'
       target: '1720000000011'
+      targetHandle: target
+      type: custom
+    - id: edge-wp-fail
+      source: '1720000000100'
+      sourceHandle: 'false'
+      target: '1720000000101'
       targetHandle: target
       type: custom
     - id: edge-end-1
@@ -123,6 +141,12 @@ workflow:
       type: custom
     - id: edge-end-3
       source: '1720000000012'
+      sourceHandle: source
+      target: '1720000000099'
+      targetHandle: target
+      type: custom
+    - id: edge-end-4
+      source: '1720000000101'
       sourceHandle: source
       target: '1720000000099'
       targetHandle: target
@@ -201,6 +225,82 @@ workflow:
       type: custom
       width: 242
     - data:
+        code: |
+          def main(http_response):
+              import json
+              
+              try:
+                  if not http_response:
+                      return {"original_url": "", "wp_domain": "", "wp_user": "", "wp_app_password": "", "error": "Empty response"}
+
+                  body_str = http_response
+                  data = json.loads(body_str)
+                  
+                  item = None
+                  if isinstance(data, list) and len(data) > 0:
+                      item = data[0]
+                  elif isinstance(data, dict):
+                      item = data
+                      
+                  if not item:
+                      return {"original_url": "", "wp_domain": "", "wp_user": "", "wp_app_password": "", "error": "No data found"}
+                      
+                  url = item.get("original_url", "")
+                  source = item.get("sources", {})
+                  
+                  if not source:
+                       return {"original_url": url, "wp_domain": "", "wp_user": "", "wp_app_password": "", "error": "Source data missing"}
+                  
+                  wp_endpoint = source.get("wp_api_endpoint", "")
+                  wp_domain = wp_endpoint.replace("/wp-json/wp/v2", "").rstrip("/")
+                  
+                  user = source.get("wp_username", "")
+                  pwd = source.get("wp_app_password", "").replace(" ", "")
+                  
+                  return {
+                      "original_url": url, 
+                      "wp_domain": wp_domain, 
+                      "wp_user": user, 
+                      "wp_app_password": pwd,
+                      "error": ""
+                  }
+              except Exception as e:
+                  return {"original_url": "", "wp_domain": "", "wp_user": "", "wp_app_password": "", "error": str(e)}
+        code_language: python3
+        desc: 'Parsuje JSON z Supabase i wyciąga dane do publikacji'
+        outputs:
+          original_url:
+            type: string
+          wp_domain:
+            type: string
+          wp_user:
+            type: string
+          wp_app_password:
+            type: string
+          error:
+            type: string
+        selected: false
+        title: Data Parser
+        type: code
+        variables:
+        - value_selector:
+          - '1720000000002'
+          - body
+          variable: http_response
+      height: 54
+      id: '1720000000095'
+      position:
+        x: 530
+        y: 282
+      positionAbsolute:
+        x: 530
+        y: 282
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
         provider_id: langgenius/jina_tool/jina
         provider_name: langgenius/jina_tool/jina
         provider_type: builtin
@@ -252,15 +352,15 @@ workflow:
         tool_parameters:
           url:
             type: mixed
-            value: '{{#1720000000002.body[0].original_url#}}'
+            value: '{{#1720000000095.original_url#}}'
         type: tool
       height: 104
       id: '1720000000003'
       position:
-        x: 680
+        x: 830
         y: 282
       positionAbsolute:
-        x: 680
+        x: 830
         y: 282
       selected: false
       sourcePosition: right
@@ -299,10 +399,10 @@ workflow:
       height: 54
       id: '1720000000004'
       position:
-        x: 980
+        x: 1130
         y: 282
       positionAbsolute:
-        x: 980
+        x: 1130
         y: 282
       selected: false
       sourcePosition: right
@@ -313,7 +413,7 @@ workflow:
         cases:
         - case_id: 'true'
           conditions:
-          - comparison_operator: '='
+          - comparison_operator: 'contains'
             id: cond_1
             value: 'true'
             varType: boolean
@@ -329,10 +429,10 @@ workflow:
       height: 126
       id: '1720000000005'
       position:
-        x: 1280
+        x: 1430
         y: 282
       positionAbsolute:
-        x: 1280
+        x: 1430
         y: 282
       selected: false
       sourcePosition: right
@@ -350,7 +450,7 @@ workflow:
             value: '{"status": "SKIPPED_DUPLICATE"}'
           type: json
         desc: ''
-        headers: "Authorization:Bearer {{#1720000000001.supabase_key#}}\napikey:{{#1720000000001.supabase_key#}}\nContent-Type:application/json"
+        headers: "Authorization:Bearer {{#1720000000001.supabase_key#}}\napikey:{{#1720000000001.supabase_key#}}\nContent-Type:application/json\nPrefer: return=representation"
         method: patch
         params: ''
         selected: false
@@ -365,10 +465,10 @@ workflow:
       height: 104
       id: '1720000000006'
       position:
-        x: 1580
+        x: 1730
         y: 100
       positionAbsolute:
-        x: 1580
+        x: 1730
         y: 100
       selected: false
       sourcePosition: right
@@ -389,12 +489,37 @@ workflow:
         prompt_template:
         - id: system_msg
           role: system
-          text: Jesteś dziennikarzem lokalnym.
+          text: |
+            Jesteś doświadczonym dziennikarzem i redaktorem w lokalnym portalu informacyjnym w Polsce.
+            Twoim celem jest tworzenie angażujących, rzetelnych i świetnie czytających się artykułów (newsów) na podstawie surowych danych.
+            
+            WYTYCZNE REDAKCYJNE:
+            1. **Styl:** Dziennikarski, konkretny, ale lekki. Unikaj urzędowego żargonu ("funkcjonariusze udali się", "dokonano zatrzymania" zamień na "policjanci pojechali", "zatrzymali").
+            2. **Struktura:** 
+               - **Chwytliwy Tytuł (Click-worthy, ale nie clickbait):** Musi przyciągać uwagę lokalnego czytelnika.
+               - **Lead (Wstęp):** Esencja newsa - Kto? Co? Gdzie? Kiedy? (max 2-3 zdania, pogrubione).
+               - **Body:** Rozwinięcie tematu, kontekst, cytaty (jeśli są), skutki dla mieszkańców.
+               - **Ekspert/Kontekst:** Jeśli temat tego wymaga, dodaj krótkie wyjaśnienie prawne lub społeczne.
+            3. **Formatowanie:** Używaj tagów HTML dla czytelności: `<h2>` dla śródtytułów, `<p>` dla akapitów, `<ul>/<li>` dla list. NIE używaj Markdown (```, **).
+            4. **Język:** Polski, poprawny gramatycznie i interpunkcyjnie.
+            5. **Długość:** Optimum to 300-500 słów. Nie lej wody, ale wyczerp temat.
+
+            Zadanie: Przeanalizuj poniższy tekst wejściowy i napisz na jego podstawie profesjonalny artykuł do serwisu lokalnego.
         - id: user_msg
           role: user
-          text: "Tekst wejściowy:\n{{#1720000000004.cleaned_text#}}\n\nZadanie: Przepisz ten news dla lokalnego portalu. Zwróć WYŁĄCZNIE obiekt JSON z kluczami: 'title', 'content' (format HTML, tylko tagi h2 i p), 'excerpt'."
+          text: |
+            Tekst wejściowy (źródło):
+            {{#1720000000004.cleaned_text#}}
+
+            ZWROT DANYCH:
+            Zwróć WYŁĄCZNIE surowy obiekt JSON (bez znaczników ```json) o następującej strukturze:
+            {
+              "title": "Twój tytuł tutaj",
+              "content": "Twój artykuł w HTML (lead jako pierwszy akapit, potem h2, p itd.)",
+              "excerpt": "Krótkie streszczenie (do 160 znaków) pod SEO/Social Media"
+            }
         selected: false
-        title: AI Rewrite (Dziennikarz)
+        title: AI Rewrite (Dziennikarz PRO)
         type: llm
         variables: []
         vision:
@@ -402,10 +527,10 @@ workflow:
       height: 98
       id: '1720000000007'
       position:
-        x: 1580
+        x: 1730
         y: 400
       positionAbsolute:
-        x: 1580
+        x: 1730
         y: 400
       selected: false
       sourcePosition: right
@@ -436,10 +561,10 @@ workflow:
       height: 54
       id: '1720000000008'
       position:
-        x: 1880
+        x: 2030
         y: 400
       positionAbsolute:
-        x: 1880
+        x: 2030
         y: 400
       selected: false
       sourcePosition: right
@@ -450,9 +575,9 @@ workflow:
         cases:
         - case_id: 'true'
           conditions:
-          - comparison_operator: equal
+          - comparison_operator: 'contains'
             id: cond_sanity
-            value: pass
+            value: 'pass'
             varType: string
             variable_selector:
             - '1720000000008'
@@ -466,10 +591,10 @@ workflow:
       height: 126
       id: '1720000000009'
       position:
-        x: 2180
+        x: 2330
         y: 400
       positionAbsolute:
-        x: 2180
+        x: 2330
         y: 400
       selected: false
       sourcePosition: right
@@ -477,35 +602,126 @@ workflow:
       type: custom
       width: 242
     - data:
-        authorization:
-          config: null
-          type: no-auth
-        body:
-          data:
-          - key: ''
-            type: text
-            value: "{\n  \"title\": \"{{#1720000000008.title#}}\",\n  \"content\": \"{{#1720000000008.content#}}\",\n  \"status\": \"publish\"\n}"
-          type: json
-        desc: ''
-        headers: "Authorization:Basic {{#1720000000002.body[0].sources.wp_auth_header#}}\nContent-Type:application/json"
-        method: post
-        params: ''
+        code: |
+          def main(domain, api_user, api_key, title, content):
+              import requests
+              import json
+              try:
+                  def normalize_url(url):
+                      if not url.startswith(('http://', 'https://')):
+                          url = 'https://' + url
+                      return url.rstrip('/')
+
+                  base_url = normalize_url(domain)
+                  api_endpoint = f"{base_url}/wp-json/wp/v2/posts"
+                  
+                  # Use raw basic auth construction instead of HTTPBasicAuth to be safe in Dify environment
+                  import base64
+                  creds = f"{api_user}:{api_key}"
+                  token = base64.b64encode(creds.encode("utf-8")).decode("utf-8")
+                  headers = {
+                      "Authorization": f"Basic {token}",
+                      "Content-Type": "application/json"
+                  }
+                  
+                  post_data = {
+                      'title': title,
+                      'content': content,
+                      'status': 'draft'
+                  }
+                  
+                  resp = requests.post(api_endpoint, json=post_data, headers=headers, timeout=30)
+                  
+                  if resp.status_code == 201:
+                      data = resp.json()
+                      return {
+                          "success": "true", 
+                          "id": str(data.get('id')), 
+                          "link": data.get('link'), 
+                          "message": "Oublikowano pomyslnie",
+                          "error": ""
+                      }
+                  elif resp.status_code == 401:
+                      return {"success": "false", "id": "", "link": "", "error": "401 Remote Auth Failed", "message": "Auth Failed"}
+                  else:
+                      return {"success": "false", "id": "", "link": "", "error": f"API Error {resp.status_code}: {resp.text[:100]}", "message": "Failed"}
+                      
+              except Exception as e:
+                  return {"success": "false", "id": "", "link": "", "error": str(e), "message": "Exception"}
+        code_language: python3
+        desc: 'Publikuje draft na WP używając kodu Python'
+        outputs:
+          success:
+            type: string
+          id:
+            type: string
+          link:
+            type: string
+          message:
+            type: string
+          error:
+            type: string
         selected: false
-        timeout:
-          max_connect_timeout: 0
-          max_read_timeout: 0
-          max_write_timeout: 0
-        title: Publish to WP
-        type: http-request
-        url: "{{#1720000000002.body[0].sources.wp_api_endpoint#}}/posts"
-        variables: []
-      height: 104
+        title: WP Publisher (Python)
+        type: code
+        variables:
+        - value_selector:
+          - '1720000000095'
+          - wp_domain
+          variable: domain
+        - value_selector:
+          - '1720000000095'
+          - wp_user
+          variable: api_user
+        - value_selector:
+          - '1720000000095'
+          - wp_app_password
+          variable: api_key
+        - value_selector:
+          - '1720000000008'
+          - title
+          variable: title
+        - value_selector:
+          - '1720000000008'
+          - content
+          variable: content
+      height: 54
       id: '1720000000010'
       position:
-        x: 2480
+        x: 2630
         y: 200
       positionAbsolute:
-        x: 2480
+        x: 2630
+        y: 200
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        cases:
+        - case_id: 'true'
+          conditions:
+          - comparison_operator: 'contains'
+            id: cond_wp_ok
+            value: 'true'
+            varType: string
+            variable_selector:
+            - '1720000000010'
+            - success
+          id: 'true'
+          logical_operator: and
+        desc: ''
+        selected: false
+        title: WP Success?
+        type: if-else
+      height: 126
+      id: '1720000000100'
+      position:
+        x: 2930
+        y: 200
+      positionAbsolute:
+        x: 2930
         y: 200
       selected: false
       sourcePosition: right
@@ -520,10 +736,10 @@ workflow:
           data:
           - key: ''
             type: text
-            value: "{\"status\": \"PUBLISHED\", \"wp_post_id\": \"{{#1720000000010.body.id#}}\"}"
+            value: "{\"status\": \"PUBLISHED\", \"wp_post_id\": \"{{#1720000000010.id#}}\", \"published_url\": \"{{#1720000000010.link#}}\"}"
           type: json
         desc: ''
-        headers: "Authorization:Bearer {{#1720000000001.supabase_key#}}\napikey:{{#1720000000001.supabase_key#}}\nContent-Type:application/json"
+        headers: "Authorization:Bearer {{#1720000000001.supabase_key#}}\napikey:{{#1720000000001.supabase_key#}}\nContent-Type:application/json\nPrefer: return=representation"
         method: patch
         params: ''
         selected: false
@@ -538,11 +754,47 @@ workflow:
       height: 104
       id: '1720000000011'
       position:
-        x: 2880
-        y: 200
+        x: 3230
+        y: 100
       positionAbsolute:
-        x: 2880
-        y: 200
+        x: 3230
+        y: 100
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        authorization:
+          config: null
+          type: no-auth
+        body:
+          data:
+          - key: ''
+            type: text
+            value: "{\"status\": \"FAILED_WP\", \"error_message\": \"{{#1720000000010.error#}}\"}"
+          type: json
+        desc: ''
+        headers: "Authorization:Bearer {{#1720000000001.supabase_key#}}\napikey:{{#1720000000001.supabase_key#}}\nContent-Type:application/json\nPrefer: return=representation"
+        method: patch
+        params: ''
+        selected: false
+        timeout:
+          max_connect_timeout: 0
+          max_read_timeout: 0
+          max_write_timeout: 0
+        title: WP Fail Log
+        type: http-request
+        url: "{{#1720000000001.supabase_url#}}/rest/v1/items?id=eq.{{#1720000000001.item_id#}}"
+        variables: []
+      height: 104
+      id: '1720000000101'
+      position:
+        x: 3230
+        y: 300
+      positionAbsolute:
+        x: 3230
+        y: 300
       selected: false
       sourcePosition: right
       targetPosition: left
@@ -559,7 +811,7 @@ workflow:
             value: "{\"status\": \"FAILED_SANITY\", \"error_message\": \"{{#1720000000008.error#}}\"}"
           type: json
         desc: ''
-        headers: "Authorization:Bearer {{#1720000000001.supabase_key#}}\napikey:{{#1720000000001.supabase_key#}}\nContent-Type:application/json"
+        headers: "Authorization:Bearer {{#1720000000001.supabase_key#}}\napikey:{{#1720000000001.supabase_key#}}\nContent-Type:application/json\nPrefer: return=representation"
         method: patch
         params: ''
         selected: false
@@ -574,10 +826,10 @@ workflow:
       height: 104
       id: '1720000000012'
       position:
-        x: 2480
+        x: 2630
         y: 500
       positionAbsolute:
-        x: 2480
+        x: 2630
         y: 500
       selected: false
       sourcePosition: right
@@ -601,10 +853,10 @@ workflow:
       height: 54
       id: '1720000000099'
       position:
-        x: 3200
+        x: 3550
         y: 350
       positionAbsolute:
-        x: 3200
+        x: 3550
         y: 350
       selected: false
       sourcePosition: right
