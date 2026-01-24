@@ -4,7 +4,9 @@ from supabase import create_client, Client
 import os
 import hashlib
 import feedparser
+import feedparser
 import time
+from io import BytesIO
 
 # --- Configuration & Setup ---
 st.set_page_config(
@@ -100,18 +102,22 @@ def safe_query(table_name, select="*", order=None, limit=None, filters=None):
         return pd.DataFrame()
 
 # CRUD: Sources
-def add_source(name, rss, wp_endpoint, wp_user, wp_pass):
+def add_source(name, rss, wp_endpoint, wp_user, wp_pass, categories=None):
     # Auto-generate slug from name to satisfy DB constraint
     city_slug = name.lower().replace(" ", "-").replace("ą", "a").replace("ę", "e").replace("ś", "s").replace("ć", "c").replace("ż", "z").replace("ź", "z").replace("ł", "l").replace("ó", "o").replace("ń", "n")
     
-    supabase.table("sources").insert({
+    data = {
         "name": name,
         "city_slug": city_slug,
         "rss_url": rss,
         "wp_api_endpoint": wp_endpoint,
         "wp_username": wp_user,
         "wp_app_password": wp_pass
-    }).execute()
+    }
+    if categories:
+        data["target_categories"] = categories
+
+    supabase.table("sources").insert(data).execute()
 
 def delete_source(source_id):
     supabase.table("sources").delete().eq("id", source_id).execute()
@@ -365,7 +371,7 @@ def show_sources():
     
     st.info("Manage your WordPress instances / City Domains here.")
     
-    tab_view, tab_add = st.tabs(["Active Sources", "Add New Source"])
+    tab_view, tab_add, tab_mass = st.tabs(["Active Sources", "Add New Source", "Mass Import (XLSX)"])
     
     with tab_view:
         df = safe_query("sources", order=("name", "asc"))
@@ -377,6 +383,9 @@ def show_sources():
                     with c1:
                         st.text_input("Endpoint", value=row['wp_api_endpoint'], disabled=True, key=f"ep_{row['id']}")
                         st.text_input("RSS", value=row['rss_url'], disabled=True, key=f"rss_{row['id']}")
+                        # Show categories if present
+                        cats = row.get('target_categories')
+                        st.text_input("Target Categories", value=cats if cats else "N/A", disabled=True, key=f"cat_{row['id']}")
                         
                         if st.button("📡 Fetch Articles from RSS", key=f"fetch_{row['id']}"):
                             with st.spinner("Parsing RSS Feed..."):
@@ -432,6 +441,7 @@ def show_sources():
             with c1:
                 n_name = st.text_input("Friendly Name (e.g. Wroclaw News)")
                 n_rss = st.text_input("RSS Feed URL")
+                n_cats = st.text_input("Target Categories (comma separated, e.g. News, Sport)")
             with c2:
                 n_domain = st.text_input("WP Domain (e.g. domain.com)")
                 n_user = st.text_input("WP User")
@@ -444,13 +454,95 @@ def show_sources():
                     n_endpoint = f"https://{clean_domain}/wp-json/wp/v2"
                     
                     try:
-                        add_source(n_name, n_rss, n_endpoint, n_user, n_pass)
+                        add_source(n_name, n_rss, n_endpoint, n_user, n_pass, categories=n_cats)
                         st.success(f"Created {n_name}!")
                         st.rerun()
                     except Exception as e:
                          st.error(f"Error creating source: {e}")
                 else:
                     st.error("Missing required fields.")
+
+    with tab_mass:
+        st.header("Mass Import from Excel")
+        st.markdown("Upload an XLSX file with columns: `name`, `rss_url`, `wp_domain`, `wp_user`, `wp_password`, `target_categories`.")
+        
+        # Template Download
+        # Create dummy dataframe
+        dummy_data = {
+            "name": ["Example News", "Another City"],
+            "rss_url": ["https://example.com/feed", "https://city.com/rss"],
+            "wp_domain": ["example.com", "city.com"],
+            "wp_user": ["admin", "editor"],
+            "wp_password": ["xxxx xxxx xxxx xxxx", "yyyy yyyy yyyy yyyy"],
+            "target_categories": ["News, World", "Sport, Local"]
+        }
+        df_dummy = pd.DataFrame(dummy_data)
+        
+        # Convert to BytesIO
+        output = BytesIO()
+        try:
+            with pd.ExcelWriter(output, engine='openpyxl') as writer:
+                df_dummy.to_excel(writer, index=False, sheet_name='Sheet1')
+            processed_data = output.getvalue()
+            
+            st.download_button(
+                label="📥 Download Sample Template",
+                data=processed_data,
+                file_name="import_template.xlsx",
+                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            )
+        except Exception as e:
+            st.error(f"Could not generate template (missing openpyxl?): {e}")
+
+        uploaded_file = st.file_uploader("Choose XLSX file", type="xlsx")
+        
+        if uploaded_file:
+            try:
+                df_import = pd.read_excel(uploaded_file)
+                st.info("Preview of data to be imported. You can edit the cells below before confirming.")
+                
+                # Editable dataframe
+                edited_df = st.data_editor(df_import, num_rows="dynamic")
+                
+                if st.button("🚀 Import All Sources"):
+                    success_count = 0
+                    fail_count = 0
+                    
+                    progress_bar = st.progress(0)
+                    total = len(edited_df)
+                    
+                    for i, row in edited_df.iterrows():
+                        try:
+                            # Basic validation
+                            if pd.isna(row['name']) or pd.isna(row['rss_url']):
+                                continue
+                                
+                            clean_domain = str(row['wp_domain']).replace("https://", "").replace("http://", "").strip("/")
+                            n_endpoint = f"https://{clean_domain}/wp-json/wp/v2"
+                            
+                            cats = str(row['target_categories']) if not pd.isna(row['target_categories']) else None
+                            
+                            add_source(
+                                name=str(row['name']), 
+                                rss=str(row['rss_url']), 
+                                wp_endpoint=n_endpoint, 
+                                wp_user=str(row['wp_user']), 
+                                wp_pass=str(row['wp_password']),
+                                categories=cats
+                            )
+                            success_count += 1
+                        except Exception as e:
+                            st.error(f"Failed to import row {i}: {e}")
+                            fail_count += 1
+                        
+                        progress_bar.progress((i + 1) / total)
+                        
+                    st.success(f"Import Finished! Success: {success_count}, Failed: {fail_count}")
+                    time.sleep(2)
+                    st.rerun()
+                    
+            except Exception as e:
+                st.error(f"Error processing file: {e}")
 
 # --- Main ---
 def main():

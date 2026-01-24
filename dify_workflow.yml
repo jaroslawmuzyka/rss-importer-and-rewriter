@@ -257,15 +257,18 @@ workflow:
                   user = source.get("wp_username", "")
                   pwd = source.get("wp_app_password", "").replace(" ", "")
                   
+                  cats = source.get("target_categories", "")
+                  
                   return {
                       "original_url": url, 
                       "wp_domain": wp_domain, 
                       "wp_user": user, 
                       "wp_app_password": pwd,
+                      "target_categories": cats,
                       "error": ""
                   }
               except Exception as e:
-                  return {"original_url": "", "wp_domain": "", "wp_user": "", "wp_app_password": "", "error": str(e)}
+                  return {"original_url": "", "wp_domain": "", "wp_user": "", "wp_app_password": "", "target_categories": "", "error": str(e)}
         code_language: python3
         desc: 'Parsuje JSON z Supabase i wyciąga dane do publikacji'
         outputs:
@@ -276,6 +279,8 @@ workflow:
           wp_user:
             type: string
           wp_app_password:
+            type: string
+          target_categories:
             type: string
           error:
             type: string
@@ -603,9 +608,11 @@ workflow:
       width: 242
     - data:
         code: |
-          def main(domain, api_user, api_key, title, content):
+          def main(domain, api_user, api_key, title, content, target_categories):
               import requests
               import json
+              import base64
+
               try:
                   def normalize_url(url):
                       if not url.startswith(('http://', 'https://')):
@@ -615,8 +622,7 @@ workflow:
                   base_url = normalize_url(domain)
                   api_endpoint = f"{base_url}/wp-json/wp/v2/posts"
                   
-                  # Use raw basic auth construction instead of HTTPBasicAuth to be safe in Dify environment
-                  import base64
+                  # Auth
                   creds = f"{api_user}:{api_key}"
                   token = base64.b64encode(creds.encode("utf-8")).decode("utf-8")
                   headers = {
@@ -624,11 +630,37 @@ workflow:
                       "Content-Type": "application/json"
                   }
                   
+                  # Category Logic
+                  category_ids = []
+                  if target_categories:
+                      # 1. Fetch all categories
+                      cat_url = f"{base_url}/wp-json/wp/v2/categories?per_page=100"
+                      try:
+                          cat_resp = requests.get(cat_url, headers=headers, timeout=10)
+                          if cat_resp.status_code == 200:
+                              all_cats = cat_resp.json()
+                              # Split target names
+                              target_names = [c.strip().lower() for c in target_categories.split(",")]
+                              
+                              for t_name in target_names:
+                                  # Find match
+                                  for cat in all_cats:
+                                      if cat['name'].lower() == t_name:
+                                          category_ids.append(cat['id'])
+                                          break
+                          else:
+                              print(f"Warning: Could not fetch categories. Status: {cat_resp.status_code}")
+                      except Exception as e:
+                          print(f"Warning: Category fetch error: {e}")
+
                   post_data = {
                       'title': title,
                       'content': content,
                       'status': 'draft'
                   }
+                  
+                  if category_ids:
+                      post_data['categories'] = category_ids
                   
                   resp = requests.post(api_endpoint, json=post_data, headers=headers, timeout=30)
                   
@@ -685,6 +717,10 @@ workflow:
           - '1720000000008'
           - content
           variable: content
+        - value_selector:
+          - '1720000000095'
+          - target_categories
+          variable: target_categories
       height: 54
       id: '1720000000010'
       position:
@@ -729,28 +765,72 @@ workflow:
       type: custom
       width: 242
     - data:
-        authorization:
-          config: null
-          type: no-auth
-        body:
-          data:
-          - key: ''
-            type: text
-            value: "{\"status\": \"PUBLISHED\", \"wp_post_id\": \"{{#1720000000010.id#}}\", \"published_url\": \"{{#1720000000010.link#}}\"}"
-          type: json
-        desc: ''
-        headers: "Authorization:Bearer {{#1720000000001.supabase_key#}}\napikey:{{#1720000000001.supabase_key#}}\nContent-Type:application/json\nPrefer: return=representation"
-        method: patch
-        params: ''
+        code: |
+          def main(item_id, supabase_url, supabase_key, wp_post_id, published_url):
+              import requests
+              import json
+              
+              try:
+                  headers = {
+                      "Authorization": f"Bearer {supabase_key}",
+                      "apikey": supabase_key,
+                      "Content-Type": "application/json",
+                      "Prefer": "return=representation"
+                  }
+                  
+                  url = f"{supabase_url}/rest/v1/items?id=eq.{item_id}"
+                  
+                  # Ensure ID is int if possible, though PostgREST handles strings often if column matches
+                  wpid_val = None
+                  if wp_post_id and str(wp_post_id).isdigit():
+                      wpid_val = int(wp_post_id)
+                  
+                  payload = {
+                      "status": "PUBLISHED",
+                      "wp_post_id": wpid_val if wpid_val else None,
+                      "published_url": published_url
+                  }
+                  
+                  resp = requests.patch(url, json=payload, headers=headers, timeout=10)
+                  
+                  if resp.status_code >= 200 and resp.status_code < 300:
+                      return {"result": "success", "error": ""}
+                  else:
+                      return {"result": "error", "error": f"Supabase Error {resp.status_code}: {resp.text}"}
+                      
+              except Exception as e:
+                  return {"result": "exception", "error": str(e)}
+        code_language: python3
+        desc: 'Updates Supabase Status via Python'
+        outputs:
+          result:
+            type: string
+          error:
+            type: string
         selected: false
-        timeout:
-          max_connect_timeout: 0
-          max_read_timeout: 0
-          max_write_timeout: 0
-        title: Update Success
-        type: http-request
-        url: "{{#1720000000001.supabase_url#}}/rest/v1/items?id=eq.{{#1720000000001.item_id#}}"
-        variables: []
+        title: Update Success (Python)
+        type: code
+        variables:
+        - value_selector:
+          - '1720000000001'
+          - item_id
+          variable: item_id
+        - value_selector:
+          - '1720000000001'
+          - supabase_url
+          variable: supabase_url
+        - value_selector:
+          - '1720000000001'
+          - supabase_key
+          variable: supabase_key
+        - value_selector:
+          - '1720000000010'
+          - id
+          variable: wp_post_id
+        - value_selector:
+          - '1720000000010'
+          - link
+          variable: published_url
       height: 104
       id: '1720000000011'
       position:

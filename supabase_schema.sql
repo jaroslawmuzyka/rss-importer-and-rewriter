@@ -23,6 +23,7 @@ CREATE TABLE public.sources (
     wp_api_endpoint TEXT NOT NULL,   -- e.g., "https://warszawa-news.pl/wp-json/wp/v2"
     wp_username TEXT NOT NULL,       -- WP Username for auth
     wp_app_password TEXT NOT NULL,   -- WP Application Password
+    target_categories TEXT,          -- Comma-separated list of category names (e.g., 'News, Sport')
     is_active BOOLEAN DEFAULT TRUE,
     last_checked_at TIMESTAMPTZ,
     created_at TIMESTAMPTZ DEFAULT NOW(),

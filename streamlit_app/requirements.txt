@@ -3,3 +3,4 @@ pandas
 supabase
 feedparser
 requests
+openpyxl
