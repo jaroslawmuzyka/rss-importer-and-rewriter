@@ -140,16 +140,17 @@ def retry_item(item_id):
 def delete_item(item_id):
     supabase.table("items").delete().eq("id", item_id).execute()
 
-def add_item(source_id, url):
+def add_item(source_id, url, title=None):
     # Calculate dummy hashes for initial insert (real ones happen in Dify)
     url_hash = hashlib.sha256(url.encode('utf-8')).hexdigest()
-    supabase.table("items").insert({
+    data = {
         "source_id": source_id,
         "original_url": url,
         "url_hash": url_hash,
         "status": "PENDING",
-        "title_original": "Manual Add"
-    }).execute()
+        "title_original": title if title else "Manual Add"
+    }
+    supabase.table("items").insert(data).execute()
 
 # --- Dify Integration ---
 def trigger_dify_workflow(item_id, supabase_url, supabase_key):
@@ -283,8 +284,15 @@ def show_queue():
             
             # Display
             if not df.empty:
+                # UX: Show Title and URL, hide hash
                 st.dataframe(
-                    df[['id', 'source_name', 'status', 'created_at', 'url_hash']],
+                    df[['id', 'source_name', 'status', 'created_at', 'title_original', 'original_url']],
+                    column_config={
+                        "original_url": st.column_config.LinkColumn("Link"),
+                        "title_original": "Article Title",
+                        "source_name": "Source",
+                        "status": "Status"
+                    },
                     use_container_width=True,
                     hide_index=True
                 )
@@ -399,7 +407,7 @@ def show_sources():
                                              h = hashlib.sha256(link.encode('utf-8')).hexdigest()
                                              res = supabase.table("items").select("id", count="exact").eq("url_hash", h).execute()
                                              if res.count == 0:
-                                                 add_item(row['id'], link)
+                                                 add_item(row['id'], link, title=entry.title)
                                                  count_new += 1
                                         if count_new > 0:
                                             st.success(f"Added {count_new} new items to Queue!")
