@@ -772,6 +772,7 @@ workflow:
           def main(item_id, supabase_url, supabase_key, wp_post_id, published_url):
               import requests
               import json
+              from datetime import datetime
               
               try:
                   headers = {
@@ -791,7 +792,8 @@ workflow:
                   payload = {
                       "status": "PUBLISHED",
                       "wp_post_id": wpid_val if wpid_val else None,
-                      "published_url": published_url
+                      "published_url": published_url,
+                      "published_at": datetime.utcnow().isoformat()
                   }
                   
                   resp = requests.patch(url, json=payload, headers=headers, timeout=10)

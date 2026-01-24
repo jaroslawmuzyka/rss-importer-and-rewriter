@@ -45,6 +45,7 @@ CREATE TABLE public.items (
     original_url TEXT NOT NULL,
     url_hash CHAR(64) NOT NULL,      -- SHA256 of original_url for deduplication
     title_original TEXT,
+    source_published_at TIMESTAMPTZ,
     
     -- Processed Data
     content_hash CHAR(64),           -- SHA256 of extracted content (filled after Jina fetch)

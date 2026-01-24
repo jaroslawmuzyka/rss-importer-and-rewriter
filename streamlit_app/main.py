@@ -140,7 +140,7 @@ def retry_item(item_id):
 def delete_item(item_id):
     supabase.table("items").delete().eq("id", item_id).execute()
 
-def add_item(source_id, url, title=None):
+def add_item(source_id, url, title=None, pub_date=None):
     # Calculate dummy hashes for initial insert (real ones happen in Dify)
     url_hash = hashlib.sha256(url.encode('utf-8')).hexdigest()
     data = {
@@ -148,7 +148,8 @@ def add_item(source_id, url, title=None):
         "original_url": url,
         "url_hash": url_hash,
         "status": "PENDING",
-        "title_original": title if title else "Manual Add"
+        "title_original": title if title else "Manual Add",
+        "source_published_at": pub_date
     }
     supabase.table("items").insert(data).execute()
 
@@ -284,23 +285,73 @@ def show_queue():
             
             # Display
             if not df.empty:
-                # UX: Show Title and URL, hide hash
-                st.dataframe(
-                    df[['id', 'source_name', 'status', 'created_at', 'title_original', 'original_url']],
+                # Bulk Selection UX
+                # Prepare dataframe for editor
+                # Add a 'Selected' column
+                df['Select'] = False
+                
+                # Cols to show
+                cols_to_show = ['Select', 'source_name', 'status', 'created_at', 'title_original', 'source_published_at', 'original_url']
+                
+                edited_df = st.data_editor(
+                    df[cols_to_show],
                     column_config={
                         "original_url": st.column_config.LinkColumn("Link"),
                         "title_original": "Article Title",
                         "source_name": "Source",
-                        "status": "Status"
+                        "status": "Status",
+                        "source_published_at": "Pub Date (RSS)",
+                        "Select": st.column_config.CheckboxColumn("Select", help="Select to run workflow"),
                     },
                     use_container_width=True,
-                    hide_index=True
+                    hide_index=True,
+                    disabled=['source_name', 'status', 'created_at', 'title_original', 'source_published_at', 'original_url'] # Only Select is editable
                 )
                 
-                st.divider()
-                st.subheader("Action Console")
+                # Bulk Action Button
+                selected_rows = edited_df[edited_df['Select'] == True]
                 
-                sel_id = st.selectbox("Select Item Context:", df['id'].tolist(), format_func=lambda x: f"{x[:8]}... - {df[df['id']==x]['status'].values[0]}")
+                st.divider()
+                st.subheader("Bulk Actions")
+                
+                if not selected_rows.empty:
+                    st.write(f"Selected {len(selected_rows)} items.")
+                    if st.button("🚀 Run Workflow for Selected"):
+                        progress_bar = st.progress(0)
+                        success_count = 0
+                        
+                        total = len(selected_rows)
+                        for i, (index, row) in enumerate(selected_rows.iterrows()):
+                            # Get real ID from original df (index should match if we didn't reset it, but safe to lookup)
+                            # Actually safe_query returns new index. 
+                            # We can merge back or just trust the index if we didn't sort differently. 
+                            # Better: Join with original DF on some unique key if index is shaky, but here data_editor preserves index.
+                            # Wait, data_editor returns same index.
+                            real_id = df.loc[index, 'id'] 
+                            status = df.loc[index, 'status']
+                            
+                            if status == 'PENDING' or 'FAILED' in status:
+                                try:
+                                    sb_url = st.secrets["SUPABASE"]["URL"]
+                                    sb_key = st.secrets["SUPABASE"]["KEY"]
+                                    if trigger_dify_workflow(real_id, sb_url, sb_key):
+                                        supabase.table("items").update({"status": "PROCESSING"}).eq("id", real_id).execute()
+                                        success_count += 1
+                                except Exception as e:
+                                    st.error(f"Failed to trigger {row['title_original']}: {e}")
+                            
+                            progress_bar.progress((i + 1) / total)
+                        
+                        st.success(f"Triggered {success_count} workflows!")
+                        time.sleep(2)
+                        st.rerun()
+                else:
+                    st.info("Select items above to perform bulk actions.")
+
+                st.divider()
+                st.subheader("Single Item Console")
+                
+                sel_id = st.selectbox("Select Item Context:", df['id'].tolist(), format_func=lambda x: f"{df[df['id']==x]['title_original'].values[0][:30]}... ({df[df['id']==x]['status'].values[0]})")
                 
                 if sel_id:
                     row = df[df['id'] == sel_id].iloc[0]
@@ -407,7 +458,14 @@ def show_sources():
                                              h = hashlib.sha256(link.encode('utf-8')).hexdigest()
                                              res = supabase.table("items").select("id", count="exact").eq("url_hash", h).execute()
                                              if res.count == 0:
-                                                 add_item(row['id'], link, title=entry.title)
+                                                 # Try to get published date
+                                                 pub_date = None
+                                                 if hasattr(entry, 'published'):
+                                                     pub_date = entry.published
+                                                 elif hasattr(entry, 'updated'):
+                                                     pub_date = entry.updated
+                                                     
+                                                 add_item(row['id'], link, title=entry.title, pub_date=pub_date)
                                                  count_new += 1
                                         if count_new > 0:
                                             st.success(f"Added {count_new} new items to Queue!")
